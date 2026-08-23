@@ -3,6 +3,8 @@ node_modules/
 dist/
 .vinext/
 .next/
+next-env.d.ts
+*.tsbuildinfo
 out/
 .pnp
 .pnp.*
