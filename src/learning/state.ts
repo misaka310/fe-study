@@ -1,0 +1,82 @@
+import { SUBJECT_BLUEPRINT } from '../domain/catalog';
+import type { LearningState, Question, Subject, WeaknessSummary } from '../domain/types';
+
+export function createEmptyState(): LearningState {
+  return { schemaVersion: 1, attempts: {}, activeExam: null };
+}
+
+export function recordAttempt(
+  state: LearningState,
+  questionId: string,
+  picks: number[],
+  correct: boolean,
+  answeredAt: string,
+): LearningState {
+  const attempts = state.attempts[questionId] ?? [];
+  return {
+    ...state,
+    attempts: {
+      ...state.attempts,
+      [questionId]: [...attempts, { picks: [...picks], correct, answeredAt }],
+    },
+  };
+}
+
+export function buildWeaknessRanking(
+  state: LearningState,
+  questions: readonly Question[],
+): WeaknessSummary[] {
+  const topics = new Map<string, WeaknessSummary>();
+  for (const question of questions) {
+    for (const attempt of state.attempts[question.id] ?? []) {
+      const current = topics.get(question.topic) ?? {
+        topic: question.topic,
+        wrong: 0,
+        correct: 0,
+        score: 0,
+        latestWrongAt: '',
+      };
+      if (attempt.correct) current.correct += 1;
+      else {
+        current.wrong += 1;
+        if (attempt.answeredAt > current.latestWrongAt) current.latestWrongAt = attempt.answeredAt;
+      }
+      current.score = current.wrong * 3 - current.correct;
+      topics.set(question.topic, current);
+    }
+  }
+  return [...topics.values()]
+    .filter((item) => item.wrong > 0)
+    .sort((left, right) => right.score - left.score || right.latestWrongAt.localeCompare(left.latestWrongAt));
+}
+
+function shuffled<T>(items: readonly T[], random: () => number): T[] {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+  return result;
+}
+
+export function createExamSession(
+  subject: Subject,
+  questions: readonly Question[],
+  startedAt: string,
+  random: () => number = Math.random,
+) {
+  const blueprint = SUBJECT_BLUEPRINT[subject];
+  const pool = questions.filter((question) => question.subject === subject);
+  if (pool.length < blueprint.count) {
+    throw new Error(`科目${subject}模試には${blueprint.count}問以上が必要です`);
+  }
+  return {
+    subject,
+    questionIds: shuffled(pool, random).slice(0, blueprint.count).map((question) => question.id),
+    currentIndex: 0,
+    startedAt,
+    durationMinutes: blueprint.durationMinutes,
+    picks: {},
+    completedAt: null,
+  };
+}
