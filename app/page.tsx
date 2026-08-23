@@ -1,10 +1,12 @@
+import { MaterialReader } from '../src/components/MaterialReader';
+
 const learningPaths = [
   { href: '?view=materials', label: '教材から始める', description: '12章の教材で、科目A・Bの全体像から順番に理解する', tone: 'cyan' },
   { href: '?view=practice&mode=all', label: '問題演習', description: '独自問題を解き、全選択肢の理由まで確認する', tone: 'amber' },
   { href: '?view=exams', label: '模擬試験', description: '科目A 60問・科目B 20問を本番時間で実施する', tone: 'navy' },
 ] as const;
 
-export default function Home() {
+function Landing() {
   return (
     <main className="site-shell">
       <header className="topbar">
@@ -50,4 +52,16 @@ export default function Home() {
       </section>
     </main>
   );
+}
+
+interface PageProps {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export default async function Home({ searchParams = Promise.resolve({}) }: PageProps = {}) {
+  const params = await searchParams;
+  if (params.view === 'materials') {
+    return <MaterialReader initialMaterialId={typeof params.material === 'string' ? params.material : '01-roadmap'} />;
+  }
+  return <Landing />;
 }
