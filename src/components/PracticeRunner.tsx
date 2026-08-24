@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { questions } from '../content/questions';
 import { buildWeaknessRanking, recordAttempt } from '../learning/state';
 import { useLearningState } from '../learning/useLearningState';
+import { PageVisual } from './PageVisual';
 
 type PracticeMode = 'all' | 'unanswered' | 'wrong' | 'weakness';
 
@@ -57,6 +58,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject }: {
         <a aria-current={subject === 'B' ? 'page' : undefined} href={`?view=practice&mode=${selectedMode}&subject=B`}>科目B</a>
         {['theory','computer','software','database','network','security','development','management','strategy','algorithm','security-case'].map((item) => <a aria-current={domain === item ? 'page' : undefined} href={`?view=practice&mode=${selectedMode}&domain=${item}`} key={item}>{item}</a>)}
       </nav>
+      <PageVisual kind="practice" />
       {message ? <p className="status-message" role="status">{message}</p> : null}
       <p className="question-count">{labels[selectedMode]} · {pool.length}問</p>
       {!current ? (
