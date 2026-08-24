@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { materials } from '../content/materials';
 import { officialLinks } from '../content/official-links';
 import { VisualGallery } from './VisualGallery';
+import { PageVisual } from './PageVisual';
 
 export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMaterialId?: string }) {
   const initialIndex = Math.max(0, materials.findIndex((material) => material.id === initialMaterialId));
@@ -60,6 +61,7 @@ export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMa
         <h1>{current.title}</h1>
         <p className="material-summary">{current.summary}</p>
         <a className="practice-link" href={`?view=practice&material=${current.id}`}>この章の問題を解く</a>
+        <PageVisual kind="materials" />
         {current.sections.map((section) => (
           <section key={section.heading}>
             <h2>{section.heading}</h2>

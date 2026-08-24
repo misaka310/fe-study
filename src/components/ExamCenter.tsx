@@ -5,6 +5,7 @@ import { questions } from '../content/questions';
 import type { Subject } from '../domain/types';
 import { createExamSession, recordAttempt } from '../learning/state';
 import { useLearningState } from '../learning/useLearningState';
+import { PageVisual } from './PageVisual';
 
 const formatTime = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2,'0')}:${String(seconds % 60).padStart(2,'0')}`;
 
@@ -60,6 +61,7 @@ export function ExamCenter() {
     <main className="study-shell">
       <header className="study-header"><a className="brand" href="?"><span className="brand-mark">FE</span><span>基本情報技術者 合格ナビ</span></a></header>
       <section className="study-toolbar"><div><p className="eyebrow">Mock exams</p><h1>模擬試験</h1></div></section>
+      <PageVisual kind="exam" />
       <p className="exam-note">本番と同じ問題数・制限時間で実施します。正答率は学習目安であり、公式のIRT評価点は再現しません。</p>
       {result ? <section className="result-card"><p>直前の結果</p><strong>{result.correct} / {result.total}</strong><span>回答済み {result.answered}問・正答率 {Math.round(result.correct / result.total * 100)}%</span><div><a href="?view=practice&mode=wrong">誤答を復習する</a><a href="?view=materials&material=12-final-review">直前確認へ戻る</a></div></section> : null}
       <div className="exam-grid">
@@ -73,6 +75,7 @@ export function ExamCenter() {
   return (
     <main className="study-shell exam-active">
       <header className="exam-header"><div><span>科目{session.subject} 模試</span><strong>{session.currentIndex + 1} / {session.questionIds.length}</strong></div><div aria-live="polite"><span>残り時間</span><strong>{formatTime(remaining)}</strong></div><a href="?">保存して中断</a></header>
+      <PageVisual kind="exam" />
       <article className="question-card">
         <h2>{current.stem}</h2>{current.code ? <pre><code>{current.code}</code></pre> : null}
         <fieldset><legend className="sr-only">回答を一つ選択</legend>{current.choices.map((choice, index) => <label className="choice" key={choice}><input checked={pick === index} name="exam-choice" onChange={() => update((value) => ({ ...value, activeExam: value.activeExam ? { ...value.activeExam, picks: { ...value.activeExam.picks, [current.id]: [index] } } : null }))} type="radio"/><span>{String.fromCharCode(65+index)}</span>{choice}</label>)}</fieldset>

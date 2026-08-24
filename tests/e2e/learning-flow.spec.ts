@@ -36,6 +36,13 @@ test('図解ギャラリーを開き教材内の関連画像を拡大できる',
   assertNoErrors();
 });
 
+test('各主要ページに学習画像が表示される', async ({ page }) => {
+  for (const url of ['/?view=materials', '/?view=practice&mode=all', '/?view=exams', '/?view=dashboard']) {
+    await page.goto(url);
+    await expect(page.locator('.page-visual img')).toBeVisible();
+  }
+});
+
 test('問題回答を保存して誤答復習と学習記録へ反映する', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=all');

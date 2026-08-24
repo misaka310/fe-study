@@ -5,6 +5,7 @@ import { questions } from '../content/questions';
 import { parseBackup, serializeBackup } from '../learning/backup';
 import { buildWeaknessRanking } from '../learning/state';
 import { useLearningState } from '../learning/useLearningState';
+import { PageVisual } from './PageVisual';
 
 const knownIds = new Set(questions.map((question) => question.id));
 
@@ -42,6 +43,7 @@ export function LearningDashboard() {
     <main className="study-shell">
       <header className="study-header"><a className="brand" href="?"><span className="brand-mark">FE</span><span>基本情報技術者 合格ナビ</span></a><a href="?view=practice&mode=weakness">弱点演習へ</a></header>
       <section className="study-toolbar"><div><p className="eyebrow">Learning record</p><h1>学習記録</h1></div></section>
+      <PageVisual kind="dashboard" />
       <div className="stats-grid"><section><span>学習進捗</span><strong>{progress}%</strong><p>{answered} / {questions.length}問に回答</p></section><section><span>累計正答率</span><strong>{attempts.length ? Math.round(correct / attempts.length * 100) : 0}%</strong><p>{correct} / {attempts.length}回答が正解</p></section><section><span>弱点トピック</span><strong>{weaknesses.length}</strong><p>誤答履歴から優先順位を算出</p></section></div>
       <section className="weakness-card"><h2>復習優先トピック</h2>{weaknesses.length ? <ol>{weaknesses.map((item) => <li key={item.topic}><strong>{item.topic}</strong><span>誤答 {item.wrong}・正解 {item.correct}</span><a href="?view=practice&mode=weakness">復習する</a></li>)}</ol> : <p>まだ弱点データがありません。問題演習から始めましょう。</p>}</section>
       <section className="weakness-card"><h2>分野別成績</h2><div className="domain-scores">{domainScores.map((item) => <a href={`?view=practice&domain=${item.domain}`} key={item.domain}><strong>{item.domain}</strong><span>{item.attempts ? `正答率 ${item.rate}%（${item.attempts}回答）` : '未着手'}</span></a>)}</div></section>
