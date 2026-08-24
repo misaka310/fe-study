@@ -4,6 +4,18 @@ ITパスポート相当の基礎知識から、基本情報技術者試験（FE�
 
 > **非公式教材です。** 情報処理推進機構（IPA）による承認・後援を受けたものではありません。サイト内の正答率は学習上の目安であり、公式のIRT評価点は再現しません。
 
+## ▶ 所有者限定サイトを開く
+
+### [基本情報技術者 合格ナビ →](https://fe-study.misaka310.chatgpt.site)
+
+- [教材から始める](https://fe-study.misaka310.chatgpt.site/?view=materials)
+- [202問の問題演習を始める](https://fe-study.misaka310.chatgpt.site/?view=practice&mode=all)
+- [科目A・科目B模試を開く](https://fe-study.misaka310.chatgpt.site/?view=exams)
+- [弱点補強を開く](https://fe-study.misaka310.chatgpt.site/?view=practice&mode=weakness)
+- [学習記録を開く](https://fe-study.misaka310.chatgpt.site/?view=dashboard)
+
+Sitesは所有者限定、GitHubリポジトリはPrivateです。
+
 ## この教材でできること
 
 - 12章の教材で、基礎理論から科目Bの擬似言語・セキュリティ事例まで学習
