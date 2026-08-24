@@ -10,6 +10,8 @@ out/
 .pnp.*
 .wrangler/
 outputs/
+output/
+artifacts/
 work/
 coverage/
 playwright-report/
