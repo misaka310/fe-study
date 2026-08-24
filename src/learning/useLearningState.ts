@@ -1,0 +1,37 @@
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import { questions } from '../content/questions';
+import type { LearningState } from '../domain/types';
+import { createEmptyState } from './state';
+import { loadLearningState, saveLearningState } from './storage';
+
+const knownIds = new Set(questions.map((question) => question.id));
+
+export function useLearningState() {
+  const [state, setState] = useState<LearningState>(createEmptyState);
+  const [message, setMessage] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      const loaded = loadLearningState(knownIds);
+      setState(loaded.state);
+      setMessage(loaded.message);
+      setReady(true);
+    });
+    return () => { active = false; };
+  }, []);
+
+  const update = useCallback((next: LearningState | ((current: LearningState) => LearningState)) => {
+    setState((current) => {
+      const resolved = typeof next === 'function' ? next(current) : next;
+      saveLearningState(resolved);
+      return resolved;
+    });
+  }, []);
+
+  return { state, update, ready, message, setMessage };
+}
