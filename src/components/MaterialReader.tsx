@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { materials } from '../content/materials';
 import { officialLinks } from '../content/official-links';
+import { VisualGallery } from './VisualGallery';
 
 export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMaterialId?: string }) {
   const initialIndex = Math.max(0, materials.findIndex((material) => material.id === initialMaterialId));
@@ -71,6 +72,7 @@ export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMa
           {previous ? <a href={`?view=materials&material=${previous.id}`}>前の章</a> : <span />}
           {next ? <a href={`?view=materials&material=${next.id}`}>次の章</a> : <span />}
         </nav>
+        {['05-algorithms', '07-network', '08-security'].includes(current.id) ? <VisualGallery compact /> : null}
       </article>
     </div>
   );

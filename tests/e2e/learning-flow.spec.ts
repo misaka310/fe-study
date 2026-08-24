@@ -22,6 +22,20 @@ test('トップから教材と公式資料へ移動できる', async ({ page }) 
   assertNoErrors();
 });
 
+test('図解ギャラリーを開き教材内の関連画像を拡大できる', async ({ page }) => {
+  const assertNoErrors = rejectBrowserErrors(page);
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: '図解でつかむFEの全体像' })).toBeVisible();
+  await expect(page.getByRole('figure', { name: /合格までの全体像/ }).getByRole('img')).toBeVisible();
+  await page.getByRole('button', { name: 'アルゴリズムと擬似言語を拡大表示' }).click();
+  await expect(page.getByRole('dialog', { name: 'アルゴリズムと擬似言語の拡大画像' })).toBeVisible();
+  await page.getByRole('button', { name: '画像を閉じる' }).click();
+  await page.goto('/?view=materials&material=08-security');
+  await expect(page.getByRole('heading', { name: '情報セキュリティ' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '図解でつかむFEの全体像' })).toBeVisible();
+  assertNoErrors();
+});
+
 test('問題回答を保存して誤答復習と学習記録へ反映する', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=all');
