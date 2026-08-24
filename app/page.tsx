@@ -1,4 +1,8 @@
 import { MaterialReader } from '../src/components/MaterialReader';
+import { PracticeRunner } from '../src/components/PracticeRunner';
+import { ExamCenter } from '../src/components/ExamCenter';
+import { LearningDashboard } from '../src/components/LearningDashboard';
+import { ProgressSummary } from '../src/components/ProgressSummary';
 
 const learningPaths = [
   { href: '?view=materials', label: '教材から始める', description: '12章の教材で、科目A・Bの全体像から順番に理解する', tone: 'cyan' },
@@ -29,10 +33,7 @@ function Landing() {
             <a className="secondary-action" href="?view=practice&mode=weakness">弱点を確認</a>
           </div>
         </div>
-        <aside className="progress-card" aria-label="学習進捗">
-          <p>YOUR PROGRESS</p><strong>0%</strong><span>まだ回答履歴はありません</span>
-          <div className="progress-track"><span style={{ width: '0%' }} /></div>
-        </aside>
+        <ProgressSummary />
       </section>
 
       <section className="path-section" aria-labelledby="path-title">
@@ -63,5 +64,10 @@ export default async function Home({ searchParams = Promise.resolve({}) }: PageP
   if (params.view === 'materials') {
     return <MaterialReader initialMaterialId={typeof params.material === 'string' ? params.material : '01-roadmap'} />;
   }
+  if (params.view === 'practice') {
+    return <PracticeRunner mode={typeof params.mode === 'string' ? params.mode : 'all'} materialId={typeof params.material === 'string' ? params.material : undefined} domain={typeof params.domain === 'string' ? params.domain : undefined} subject={typeof params.subject === 'string' ? params.subject : undefined} />;
+  }
+  if (params.view === 'exams') return <ExamCenter />;
+  if (params.view === 'dashboard') return <LearningDashboard />;
   return <Landing />;
 }
