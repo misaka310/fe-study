@@ -21,6 +21,21 @@ describe('教材カタログ', () => {
     }
   });
 
+  it('各章に本文へ表示する代表図がある', () => {
+    for (const material of materials) expect(material.visualId || material.sections.some((section) => section.visualId), material.id).toBeTruthy();
+  });
+
+  it('各章に判断軸と混同注意を明示した解説節がある', () => {
+    for (const material of materials) {
+      const structuredSections = material.sections.filter((section) => (
+        (section.decisionAxes?.length ?? 0) >= 2
+        && (section.contrast?.length ?? 0) >= 1
+        && (section.pitfalls?.length ?? 0) >= 1
+      ));
+      expect(structuredSections.length, material.id).toBeGreaterThanOrEqual(1);
+    }
+  });
+
   it('科目Aと科目Bの必須領域を章として網羅する', () => {
     expect(materials.map((material) => material.category)).toEqual([
       '学習計画', 'テクノロジ', 'テクノロジ', 'テクノロジ', '科目B', 'テクノロジ',

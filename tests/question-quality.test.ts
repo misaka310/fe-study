@@ -43,6 +43,7 @@ describe('独自問題バンクの品質', () => {
       expect(question.correct.length, question.id).toBeGreaterThanOrEqual(1);
       expect(question.correct.every((index) => Number.isInteger(index) && index >= 0 && index < question.choices.length), question.id).toBe(true);
       expect(question.explanation.length, question.id).toBeGreaterThanOrEqual(20);
+      expect(/条件|決め手|要件/.test(question.explanation), question.id).toBe(true);
       expect(question.choiceReasons.length, question.id).toBe(question.choices.length);
       expect(question.choiceReasons.every((reason) => reason.length >= 10), question.id).toBe(true);
       expect(materialIds.has(question.materialId), question.id).toBe(true);

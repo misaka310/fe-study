@@ -20,4 +20,12 @@ describe('教材リーダー', () => {
     expect(screen.getByRole('link', { name: '06 データベース' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: '03 コンピュータ構成要素' })).not.toBeInTheDocument();
   });
+
+  it('本文の用語と判断軸を学習者がその場で確認できる', () => {
+    render(<MaterialReader initialMaterialId="07-network" />);
+
+    expect(screen.getByRole('button', { name: 'TTL 用語解説' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '判断軸' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '混同注意' })).toBeInTheDocument();
+  });
 });

@@ -3,6 +3,7 @@ import {
   buildWeaknessRanking,
   createEmptyState,
   createExamSession,
+  orderQuestionIds,
   recordAttempt,
 } from '../src/learning/state';
 import type { Question } from '../src/domain/types';
@@ -71,5 +72,15 @@ describe('学習状態', () => {
 
     expect(() => createExamSession('A', questions, '2026-08-24T02:00:00.000Z', () => 0.5))
       .toThrow('科目A模試には60問以上が必要です');
+  });
+
+  it('演習順は同じセッションなら再現し、別セッションでは変わる', () => {
+    const ids = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
+    const first = orderQuestionIds(ids, 20260825);
+
+    expect(first).toEqual(orderQuestionIds(ids, 20260825));
+    expect(first).not.toEqual(ids);
+    expect(first).not.toEqual(orderQuestionIds(ids, 20260826));
+    expect(new Set(first)).toEqual(new Set(ids));
   });
 });

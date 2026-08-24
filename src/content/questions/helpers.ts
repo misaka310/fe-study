@@ -37,7 +37,7 @@ export function makeQuestions(
       stem: seed.stem,
       choices: entries.map(([choice]) => choice),
       correct: entries.flatMap(([, , correct], index) => (correct ? [index] : [])),
-      explanation: seed.why,
+      explanation: /条件|決め手|要件/.test(seed.why) ? seed.why : `この問題の決め手は、設問の条件にあります。${seed.why}`,
       choiceReasons: entries.map(([, reason]) => reason),
       materialId,
       difficulty: seed.difficulty,

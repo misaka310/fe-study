@@ -22,38 +22,77 @@ test('トップから教材と公式資料へ移動できる', async ({ page }) 
   assertNoErrors();
 });
 
-test('図解ギャラリーを開き教材内の関連画像を拡大できる', async ({ page }) => {
+test('説明図ギャラリーを開き教材内の関連画像を拡大できる', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: '図解でつかむFEの全体像' })).toBeVisible();
-  await expect(page.getByRole('figure', { name: /合格までの全体像/ }).getByRole('img')).toBeVisible();
-  await page.getByRole('button', { name: 'アルゴリズムと擬似言語を拡大表示' }).click();
-  await expect(page.getByRole('dialog', { name: 'アルゴリズムと擬似言語の拡大画像' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '図解画像一覧' })).toBeVisible();
+  await expect(page.locator('.visual-section').getByRole('figure', { name: /DNSとTTLのしくみ/ }).getByRole('img')).toBeVisible();
+  await page.getByRole('button', { name: 'DNSとTTLのしくみを拡大表示' }).click();
+  await expect(page.getByRole('dialog', { name: 'DNSとTTLのしくみの拡大画像' })).toBeVisible();
   await page.getByRole('button', { name: '画像を閉じる' }).click();
   await page.goto('/?view=materials&material=08-security');
   await expect(page.getByRole('heading', { name: '情報セキュリティ' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '図解でつかむFEの全体像' })).toBeVisible();
+  await expect(page.locator('.markdown-visual img')).toHaveCount(2);
+  await expect(page.locator('.markdown-visual button')).toHaveCount(0);
+  await page.locator('.markdown-visual img').first().click();
+  await expect(page.locator('.visual-lightbox')).toHaveCount(0);
   assertNoErrors();
 });
 
-test('各主要ページに学習画像が表示される', async ({ page }) => {
-  for (const url of ['/?view=materials', '/?view=practice&mode=all', '/?view=exams', '/?view=dashboard']) {
-    await page.goto(url);
-    await expect(page.locator('.page-visual img')).toBeVisible();
+test('ネットワーク教材でTTLの略語と意味を確認できる', async ({ page }) => {
+  const assertNoErrors = rejectBrowserErrors(page);
+  await page.goto('/?view=materials&material=07-network');
+  await page.getByRole('button', { name: 'TTL 用語解説' }).click();
+  await expect(page.getByRole('dialog')).toContainText('Time To Live');
+  await expect(page.getByRole('dialog')).toContainText('キャッシュの有効期間');
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  assertNoErrors();
+});
+
+test('共通目的ナビから主要画面へ移動でき、教材本文の途中に図が表示される', async ({ page }) => {
+  await page.goto('/?view=materials&material=07-network');
+  await expect(page.getByRole('navigation', { name: '主な機能' })).toBeVisible();
+  await expect(page.locator('.markdown-visual img')).toHaveCount(3);
+  for (const link of ['問題演習', '弱点補強', '模試', '学習記録']) {
+    await expect(page.getByRole('link', { name: link }).first()).toHaveAttribute('href', /view=/);
   }
 });
 
 test('問題回答を保存して誤答復習と学習記録へ反映する', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=all');
-  await page.getByRole('radio').first().check();
-  await page.getByRole('button', { name: '解答する' }).click();
-  await expect(page.getByRole('heading', { name: '不正解' })).toBeVisible();
+  let sawWrong = false;
+  for (let attempt = 0; attempt < 20 && !sawWrong; attempt += 1) {
+    await page.getByRole('radio').first().check();
+    await page.getByRole('button', { name: '解答する' }).click();
+    await expect(page.getByText(/^(正解|不正解)$/)).toBeVisible();
+    sawWrong = await page.getByText('不正解', { exact: true }).count() > 0;
+    if (!sawWrong) await page.getByRole('button', { name: '次の問題' }).click();
+  }
+  expect(sawWrong).toBe(true);
+  await expect(page.getByText('条件', { exact: true })).toBeVisible();
+  await expect(page.getByText('決め手', { exact: true })).toBeVisible();
   await expect(page.getByTestId('choice-reason')).toHaveCount(4);
   await page.goto('/?view=practice&mode=wrong');
-  await expect(page.getByText(/誤答復習 · 1問/)).toBeVisible();
+  await expect(page.getByText(/間違いだけ · 1問/)).toBeVisible();
   await page.goto('/?view=dashboard');
   await expect(page.getByText(/1 \/ \d+問に回答/)).toBeVisible();
+  assertNoErrors();
+});
+
+test('基礎単語の20問セットを選び、意味の説明まで確認できる', async ({ page }) => {
+  const assertNoErrors = rejectBrowserErrors(page);
+  await page.goto('/?view=practice&mode=vocabulary&vocabSet=2');
+  await expect(page.getByText('基礎単語 · セット2')).toBeVisible();
+  await expect(page.getByText('基礎単語 · 20問')).toBeVisible();
+  await expect(page.getByText('セット1（20問）')).toBeVisible();
+  await expect(page.getByText('セット3（20問）')).toBeVisible();
+  await page.getByRole('radio').first().check();
+  await page.getByRole('button', { name: '解答する' }).click();
+  await expect(page.getByText(/^(正解|不正解)$/)).toBeVisible();
+  await expect(page.getByText('決め手', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '選択肢ごとの判定' })).toBeVisible();
   assertNoErrors();
 });
 

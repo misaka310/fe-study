@@ -9,9 +9,13 @@ describe('学習ポータルの入口', () => {
     expect(
       screen.getByRole('heading', { name: '基本情報技術者 合格ナビ' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '教材から始める' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /1\. はじめる/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '問題演習' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '模擬試験' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '模試' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'この順番で進める' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '弱点補強' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '学習記録' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '図解画像一覧' })).toBeInTheDocument();
   });
 
   it('教材URLでは指定した章を直接開く', async () => {
