@@ -3,19 +3,21 @@
 import { useState } from 'react';
 import { studyVisuals } from '../content/visuals';
 
-export function VisualGallery({ compact = false }: { compact?: boolean }) {
+export function VisualGallery({ compact = false, materialId }: { compact?: boolean; materialId?: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = studyVisuals.find((visual) => visual.id === selectedId);
+  const related = materialId ? studyVisuals.filter((visual) => visual.relatedMaterialIds.includes(materialId)) : studyVisuals;
+  const visibleVisuals = related.length ? related : studyVisuals;
 
   return (
     <section className={`visual-section${compact ? ' visual-section-compact' : ''}`} aria-labelledby="visual-title">
       <div className="section-heading">
         <p className="eyebrow">Visual study notes</p>
-        <h2 id="visual-title">図解でつかむFEの全体像</h2>
-        <p>教材の理解を助ける図をまとめています。画像を選ぶと大きく表示できます。</p>
+        <h2 id="visual-title">図解画像一覧</h2>
+        <p>本文の途中で使っている説明図をまとめています。画像を選ぶと大きく表示できます。</p>
       </div>
       <div className="visual-grid">
-        {studyVisuals.filter((visual) => !compact || visual.id !== 'hero').map((visual) => (
+        {visibleVisuals.filter((visual) => !compact || visual.id !== 'dns-ttl' || Boolean(materialId)).map((visual) => (
           <figure className="visual-card" key={visual.id}>
             <button type="button" onClick={() => setSelectedId(visual.id)} aria-label={`${visual.label}を拡大表示`}>
               <img src={visual.src} alt={visual.alt} loading="lazy" />

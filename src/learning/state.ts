@@ -59,6 +59,19 @@ function shuffled<T>(items: readonly T[], random: () => number): T[] {
   return result;
 }
 
+function seededRandom(seed: number) {
+  let value = seed >>> 0;
+  return () => {
+    value = (value * 1664525 + 1013904223) >>> 0;
+    return value / 4294967296;
+  };
+}
+
+export function orderQuestionIds(ids: readonly string[], seed: number): string[] {
+  const random = seededRandom(seed);
+  return shuffled(ids, random);
+}
+
 export function createExamSession(
   subject: Subject,
   questions: readonly Question[],

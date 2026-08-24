@@ -13,6 +13,8 @@ export interface Question {
   materialId: string;
   difficulty: 1 | 2 | 3;
   code?: string;
+  practiceKind?: 'standard' | 'vocabulary';
+  vocabularySet?: 1 | 2 | 3;
 }
 
 export interface MaterialSection {
@@ -20,6 +22,11 @@ export interface MaterialSection {
   paragraphs: string[];
   bullets?: string[];
   code?: string;
+  visualId?: string;
+  takeaways?: string[];
+  decisionAxes?: string[];
+  contrast?: string[];
+  pitfalls?: string[];
 }
 
 export interface Material {
@@ -28,6 +35,7 @@ export interface Material {
   title: string;
   summary: string;
   category: string;
+  visualId?: string;
   sections: MaterialSection[];
   relatedQuestionTopics: string[];
 }
