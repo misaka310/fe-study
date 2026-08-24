@@ -19,6 +19,7 @@ Sitesは所有者限定、GitHubリポジトリはPrivateです。
 ## この教材でできること
 
 - 12章の教材で、基礎理論から科目Bの擬似言語・セキュリティ事例まで学習
+- ima2で生成した3枚の図解（全体像、アルゴリズム、セキュリティ／ネットワーク）を教材内で確認・拡大表示
 - 独自問題 **202問**（科目A 150問・科目B 52問）
 - 全問、科目別、分野別、未回答、誤答、弱点優先の各演習モード
 - 全問題で、総合解説と4選択肢それぞれの採否理由を確認
@@ -76,6 +77,8 @@ npm run verify:ai
 ## データと設計
 
 - 教材: `src/content/materials/`
+- 画像メタデータ: `src/content/visuals.ts`
+- 画像資産: `public/images/`（ローカルima2生成）
 - 問題: `src/content/questions/`
 - 学習状態・バックアップ: `src/learning/`
 - 仕様の正本: [`docs/SPEC.md`](./docs/SPEC.md)

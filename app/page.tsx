@@ -3,6 +3,7 @@ import { PracticeRunner } from '../src/components/PracticeRunner';
 import { ExamCenter } from '../src/components/ExamCenter';
 import { LearningDashboard } from '../src/components/LearningDashboard';
 import { ProgressSummary } from '../src/components/ProgressSummary';
+import { VisualGallery } from '../src/components/VisualGallery';
 
 const learningPaths = [
   { href: '?view=materials', label: '教材から始める', description: '12章の教材で、科目A・Bの全体像から順番に理解する', tone: 'cyan' },
@@ -33,6 +34,9 @@ function Landing() {
             <a className="secondary-action" href="?view=practice&mode=weakness">弱点を確認</a>
           </div>
         </div>
+        <div className="hero-visual">
+          <img src="/images/fe-hero.png" alt="ネットワーク、データベース、アルゴリズム、学習の進捗を表す学習イメージ" />
+        </div>
         <ProgressSummary />
       </section>
 
@@ -51,6 +55,7 @@ function Landing() {
         <div><span>科目A</span><strong>60問 / 90分</strong></div><div><span>科目B</span><strong>20問 / 100分</strong></div>
         <p>サイト内の正答率は学習目安です。公式のIRT評価点は再現しません。</p>
       </section>
+      <VisualGallery />
     </main>
   );
 }
