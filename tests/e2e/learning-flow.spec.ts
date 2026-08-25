@@ -22,6 +22,20 @@ test('トップから教材と公式資料へ移動できる', async ({ page }) 
   assertNoErrors();
 });
 
+test('教材左ペインで章を切り替えるとURLを更新してページ上部へ戻る', async ({ page }) => {
+  const assertNoErrors = rejectBrowserErrors(page);
+  await page.goto('/?view=materials&material=05-algorithms');
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(300);
+
+  await page.getByRole('navigation', { name: '教材一覧' }).getByRole('link', { name: '06 データベース' }).click();
+
+  await expect(page).toHaveURL(/view=materials&material=06-database/);
+  await expect(page.getByRole('heading', { name: '06 データベース' })).toBeVisible();
+  expect(await page.evaluate(() => window.scrollY)).toBeLessThan(80);
+  assertNoErrors();
+});
+
 test('説明図ギャラリーを開き教材内の関連画像を拡大できる', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/');
@@ -32,7 +46,7 @@ test('説明図ギャラリーを開き教材内の関連画像を拡大でき�
   await page.getByRole('button', { name: '画像を閉じる' }).click();
   await page.goto('/?view=materials&material=08-security');
   await expect(page.getByRole('heading', { name: '情報セキュリティ' })).toBeVisible();
-  await expect(page.locator('.markdown-visual img')).toHaveCount(2);
+  await expect(page.locator('.markdown-visual img')).toHaveCount(1);
   await expect(page.locator('.markdown-visual button')).toHaveCount(0);
   await page.locator('.markdown-visual img').first().click();
   await expect(page.locator('.visual-lightbox')).toHaveCount(0);

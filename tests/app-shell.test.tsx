@@ -16,6 +16,9 @@ describe('学習ポータルの入口', () => {
     expect(screen.getByRole('link', { name: '弱点補強' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '学習記録' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '図解画像一覧' })).toBeInTheDocument();
+    expect(screen.getByText('217問')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /全217問練習/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '教材' })).not.toHaveAttribute('aria-current');
   });
 
   it('教材URLでは指定した章を直接開く', async () => {

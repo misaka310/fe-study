@@ -1,13 +1,5 @@
 export const studyVisuals = [
   {
-    id: 'roadmap',
-    src: '/images/fe-roadmap.png',
-    alt: '基本情報技術者試験の12章を基礎理論から最終復習までつなぐ学習ロードマップ',
-    label: 'FE試験の学習ロードマップ',
-    description: '12章を基礎から応用、最終確認までつなげて、今どこを学んでいるかを一枚で確認します。',
-    relatedMaterialIds: ['01-roadmap'],
-  },
-  {
     id: 'theory',
     src: '/images/fe-theory.png',
     alt: '二進数と十六進数、論理ゲート、真理値表、文字コード、ビットとバイトを整理した情報理論図解',
@@ -30,14 +22,6 @@ export const studyVisuals = [
     label: 'OSとソフトウェア',
     description: 'OSがアプリケーションとハードウェアの間で何を管理するかを流れで理解します。',
     relatedMaterialIds: ['04-software'],
-  },
-  {
-    id: 'algorithm',
-    src: '/images/fe-algorithm.png',
-    alt: 'フローチャート、探索、整列、配列、データ構造、計算量を示すアルゴリズム図解',
-    label: 'アルゴリズムとデータ構造',
-    description: '処理の流れ、データ構造、探索・整列、計算量を問題の追跡手順へつなげます。',
-    relatedMaterialIds: ['05-algorithms'],
   },
   {
     id: 'database',
@@ -77,14 +61,6 @@ export const studyVisuals = [
     alt: '認証、認可、操作、監査ログ、多要素認証、最小権限の流れを示す説明図',
     label: '認証とアクセス制御',
     description: '認証は誰か、認可は何ができるか。MFAと最小権限まで流れで確認します。',
-    relatedMaterialIds: ['08-security'],
-  },
-  {
-    id: 'security-overview',
-    src: '/images/fe-security.png',
-    alt: '情報セキュリティの脅威、認証、アクセス制御、暗号、ネットワーク防御を示す全体図',
-    label: '情報セキュリティの全体像',
-    description: '脅威を見つけ、本人確認と権限制御を行い、暗号と防御で被害を抑える流れを確認します。',
     relatedMaterialIds: ['08-security'],
   },
   {

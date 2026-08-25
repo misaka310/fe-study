@@ -9,13 +9,13 @@ const studyPath = [
   { href: '?view=materials&material=01-roadmap', title: '1. はじめる', text: '試験の全体像と、今日からの学習順を確認する' },
   { href: '?view=materials&material=02-theory', title: '2. 基礎を整理する', text: '理論・構成要素・OSを土台から理解する' },
   { href: '?view=materials&material=07-network', title: '3. 主要分野を学ぶ', text: 'ネットワーク、DB、セキュリティ、開発をつなげる' },
-  { href: '?view=practice&mode=all', title: '4. 問題で判断力を付ける', text: '202問を条件から選び、全選択肢の理由を確認する' },
+  { href: '?view=practice&mode=all', title: '4. 問題で判断力を付ける', text: '217問を条件から選び、全選択肢の理由を確認する' },
   { href: '?view=practice&mode=weakness', title: '5. 弱点を補強する', text: '誤答履歴から未解決の論点へ戻る' },
   { href: '?view=materials&material=12-final-review', title: '6. 最終確認', text: '科目Bの追跡手順と本番の判断を確認する' },
 ];
 
 const practiceLinks = [
-  { href: '?view=practice&mode=all', title: '全202問練習', text: '標準問題を一通り解く' },
+  { href: '?view=practice&mode=all', title: '全217問練習', text: '標準問題を一通り解く' },
   { href: '?view=practice&mode=vocabulary&vocabSet=1', title: '基礎単語20問', text: '用語の意味を3セットで確認する' },
   { href: '?view=exams', title: '科目A・B模試', text: '本番と同じ問題数・時間で確認する' },
   { href: '?view=practice&mode=unanswered', title: '未回答だけ', text: 'まだ解いていない問題を進める' },
@@ -27,7 +27,7 @@ const practiceLinks = [
 function Landing() {
   return (
     <div className="portal-page">
-      <PortalHeader active="materials" />
+      <PortalHeader />
       <main className="portal-main">
         <section className="portal-section" aria-labelledby="study-path-title">
           <p className="eyebrow">Study path</p>

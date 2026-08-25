@@ -19,7 +19,7 @@ export function PortalHeader({ active }: { active?: PortalArea }) {
         </div>
         <div className="exam-card" aria-label="試験構成">
           <span>問題バンク</span>
-          <strong>202問</strong>
+          <strong>217問</strong>
           <b>科目A・B模試に対応</b>
         </div>
       </header>
