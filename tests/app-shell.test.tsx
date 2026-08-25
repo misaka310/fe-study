@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import Home from '../app/page';
+import { questions } from '../src/content/questions';
 
 describe('学習ポータルの入口', () => {
   it('主要な学習開始操作を一画面で選べる', async () => {
@@ -16,8 +17,8 @@ describe('学習ポータルの入口', () => {
     expect(screen.getByRole('link', { name: '弱点補強' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '学習記録' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '図解画像一覧' })).toBeInTheDocument();
-    expect(screen.getByText('217問')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /全217問練習/ })).toBeInTheDocument();
+    expect(screen.getByText(`${questions.length}問`)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: new RegExp(`全${questions.length}問練習`) })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '教材' })).not.toHaveAttribute('aria-current');
   });
 

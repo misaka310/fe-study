@@ -18,7 +18,7 @@ describe('基礎単語問題', () => {
 
   it('セット2を選ぶと20問だけ表示し、回答後に意味を説明する', async () => {
     localStorage.clear();
-    render(<PracticeRunner mode="vocabulary" vocabSet="2" />);
+    render(<PracticeRunner questionCount={217} mode="vocabulary" vocabSet="2" />);
     expect(await screen.findByText('基礎単語 · セット2')).toBeInTheDocument();
     expect(screen.getByText('基礎単語 · 20問')).toBeInTheDocument();
     fireEvent.click((await screen.findAllByRole('radio'))[0]);

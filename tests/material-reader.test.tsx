@@ -4,7 +4,7 @@ import { MaterialReader } from '../src/components/MaterialReader';
 
 describe('教材リーダー', () => {
   it('指定章を開き、前後章と関連問題へ移動できる', () => {
-    render(<MaterialReader initialMaterialId="05-algorithms" />);
+    render(<MaterialReader questionCount={217} initialMaterialId="05-algorithms" />);
 
     expect(screen.getByRole('heading', { name: '05 データ構造とアルゴリズム' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '前の章' })).toHaveAttribute('href', '?view=materials&material=04-software');
@@ -13,7 +13,7 @@ describe('教材リーダー', () => {
   });
 
   it('検索語に一致する章だけを一覧へ残す', () => {
-    render(<MaterialReader initialMaterialId="01-roadmap" />);
+    render(<MaterialReader questionCount={217} initialMaterialId="01-roadmap" />);
 
     fireEvent.change(screen.getByRole('searchbox', { name: '教材を検索' }), { target: { value: 'SQL' } });
 
@@ -22,7 +22,7 @@ describe('教材リーダー', () => {
   });
 
   it('本文の用語と判断軸を学習者がその場で確認できる', () => {
-    render(<MaterialReader initialMaterialId="07-network" />);
+    render(<MaterialReader questionCount={217} initialMaterialId="07-network" />);
 
     expect(screen.getByRole('button', { name: 'TTL 用語解説' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '判断軸' })).toBeInTheDocument();

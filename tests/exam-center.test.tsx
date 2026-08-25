@@ -7,7 +7,7 @@ describe('ExamCenter', () => {
   it('科目A 60問の模試を開始してセッションを保存する', async () => {
     localStorage.clear();
     vi.spyOn(Math, 'random').mockReturnValue(0.5);
-    render(<ExamCenter />);
+    render(<ExamCenter questionCount={217} />);
     fireEvent.click(await screen.findByRole('button', { name: '科目A模試を開始' }));
     expect(screen.getByText('1 / 60')).toBeInTheDocument();
     expect(screen.getByText(/残り時間/)).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe('ExamCenter', () => {
 
   it('科目Bは20問・100分として案内する', async () => {
     localStorage.clear();
-    render(<ExamCenter />);
+    render(<ExamCenter questionCount={217} />);
     expect(await screen.findByText('20問 / 100分')).toBeInTheDocument();
     expect(screen.getByText(/IRT評価点は再現しません/)).toBeInTheDocument();
   });

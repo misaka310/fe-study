@@ -11,7 +11,7 @@ import { PortalHeader } from './PortalHeader';
 const allQuestions = [...questions, ...vocabularyQuestions];
 const knownIds = new Set(allQuestions.map((question) => question.id));
 
-export function LearningDashboard() {
+export function LearningDashboard({ questionCount }: { questionCount: number }) {
   const { state, update, ready } = useLearningState();
   const [notice, setNotice] = useState('');
   const input = useRef<HTMLInputElement>(null);
@@ -43,7 +43,7 @@ export function LearningDashboard() {
   };
   return (
     <div className="portal-page">
-      <PortalHeader active="dashboard" />
+      <PortalHeader active="dashboard" questionCount={questionCount} />
       <main className="study-shell portal-main">
       <section className="study-toolbar"><div><p className="eyebrow">Learning record</p><h1>学習記録</h1></div></section>
       <div className="stats-grid"><section><span>学習進捗</span><strong>{progress}%</strong><p>{answered} / {allQuestions.length}問に回答（標準{questions.length}＋単語{vocabularyQuestions.length}）</p></section><section><span>累計正答率</span><strong>{attempts.length ? Math.round(correct / attempts.length * 100) : 0}%</strong><p>{correct} / {attempts.length}回答が正解</p></section><section><span>弱点トピック</span><strong>{weaknesses.length}</strong><p>標準問題と基礎単語の誤答履歴から算出</p></section></div>

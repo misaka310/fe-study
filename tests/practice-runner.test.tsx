@@ -7,7 +7,7 @@ import { STORAGE_KEY } from '../src/learning/storage';
 describe('PracticeRunner', () => {
   it('回答後に正誤と全選択肢の理由を表示し、履歴を保存する', async () => {
     localStorage.clear();
-    render(<PracticeRunner mode="all" />);
+    render(<PracticeRunner questionCount={217} mode="all" />);
     const choices = await screen.findAllByRole('radio');
     fireEvent.click(choices[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
@@ -21,11 +21,11 @@ describe('PracticeRunner', () => {
 
   it('未回答モードでは回答済み問題を除外する', async () => {
     localStorage.clear();
-    const { unmount } = render(<PracticeRunner mode="all" />);
+    const { unmount } = render(<PracticeRunner questionCount={217} mode="all" />);
     fireEvent.click((await screen.findAllByRole('radio'))[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     unmount();
-    render(<PracticeRunner mode="unanswered" />);
+    render(<PracticeRunner questionCount={217} mode="unanswered" />);
     expect(await screen.findByRole('link', { name: /未回答だけ/ })).toBeInTheDocument();
     expect(screen.getByText(new RegExp(`${questions.length - 1}問`))).toBeInTheDocument();
   });

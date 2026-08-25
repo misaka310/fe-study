@@ -30,8 +30,8 @@ function percent(value: number, total: number) {
   return total ? `${Math.round(value / total * 100)}%` : '-';
 }
 
-export function PracticeRunner({ mode = 'all', materialId, domain, subject, vocabSet }: {
-  mode?: string; materialId?: string; domain?: string; subject?: string; vocabSet?: string;
+export function PracticeRunner({ mode = 'all', materialId, domain, subject, vocabSet, questionCount }: {
+  mode?: string; materialId?: string; domain?: string; subject?: string; vocabSet?: string; questionCount: number;
 }) {
   const selectedMode: PracticeMode = mode in labels ? mode as PracticeMode : 'all';
   const selectedVocabularySet = vocabSet === '2' || vocabSet === '3' ? Number(vocabSet) as 2 | 3 : 1;
@@ -81,7 +81,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
 
   return (
     <div className="portal-page">
-      <PortalHeader active={selectedMode === 'weakness' ? 'weakness' : 'practice'} />
+      <PortalHeader active={selectedMode === 'weakness' ? 'weakness' : 'practice'} questionCount={questionCount} />
       <main className="portal-main practice-page-main">
         <div className="practice-layout">
           <aside className="practice-sidebar practice-sidebar-left" aria-label="問題演習のメニュー">
