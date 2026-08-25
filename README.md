@@ -1,43 +1,44 @@
 # 基本情報技術者 合格ナビ
 
-ITパスポート相当の基礎知識から、基本情報技術者試験（FE）の科目A・科目Bを学ぶための日本語学習サイトです。12章の教材、217問の独自問題、弱点復習、本番と同じ問題数・制限時間の模擬試験をブラウザだけで利用できます。
+基本情報技術者試験（FE）の科目A・科目Bを、教材・問題演習・弱点復習・模擬試験まで一つのブラウザ画面で学べる日本語学習サイトです。12章の教材と217問の独自問題を収録し、回答履歴や弱点はブラウザ内に保存します。
 
-> **非公式教材です。** 情報処理推進機構（IPA）による承認・後援を受けたものではありません。サイト内の正答率は学習上の目安であり、公式のIRT評価点は再現しません。
+> **非公式教材です。** 情報処理推進機構（IPA）による承認・後援・提供を受けたものではありません。掲載する第三者の名称・商標・公式資料は各権利者に帰属します。サイト内の正答率は学習上の目安であり、公式のIRT評価点は再現しません。
 
-## ▶ 所有者限定サイトを開く
+## 主な機能
 
-### [基本情報技術者 合格ナビ →](https://fe-study.misaka310.chatgpt.site)
-
-- [教材から始める](https://fe-study.misaka310.chatgpt.site/?view=materials)
-- [217問の問題演習を始める](https://fe-study.misaka310.chatgpt.site/?view=practice&mode=all)
-- [科目A・科目B模試を開く](https://fe-study.misaka310.chatgpt.site/?view=exams)
-- [弱点補強を開く](https://fe-study.misaka310.chatgpt.site/?view=practice&mode=weakness)
-- [学習記録を開く](https://fe-study.misaka310.chatgpt.site/?view=dashboard)
-
-Sitesは所有者限定、GitHubリポジトリはPrivateです。
-
-## この教材でできること
-
-- SAA-C03学習ポータルを参考にした、目的ナビ・学習パス・教材サイドバー・本文・図解一覧のポータル構造
 - 12章の教材で、基礎理論から科目Bの擬似言語・セキュリティ事例まで学習
-- 教材として意味のある説明図だけを採用し、関連する章・節へ埋め込み
-- TTL、DNS、TCP、UDPなどの略語を本文中のツールチップで確認
 - 独自問題 **217問**（科目A 165問・科目B 52問）
-- 全問、科目別、分野別、未回答、誤答、弱点優先の各演習モード
-- 演習開始時に問題順をセッションごとにシャッフルし、固定順の暗記を防止
-- 全問題で、条件・決め手・4選択肢それぞれの採否理由を確認
+- 全問、科目別、分野別、未回答、誤答、弱点優先の演習モード
+- 問題順をセッションごとにシャッフルし、固定順の暗記を抑制
+- 全問題で「条件」「決め手」「正答理由」「各選択肢を外す理由」を確認
 - 科目A **60問 / 90分**、科目B **20問 / 100分**の模擬試験
-- 回答履歴、累積正答率、分野別成績、弱点ランキングをブラウザ内へ保存
+- TTL、DNS、TCP、UDPなどの略語を本文中で確認できる用語チップ
+- 教材内容を補助する説明図と、章・節から関連問題へ進める導線
+- 回答履歴、正答率、分野別成績、弱点ランキングをブラウザ内へ保存
 - 学習履歴をJSONで書き出し・復元
-- IPAシラバスVer.9.2、試験要綱、2023〜2026年度公開問題への公式リンク
+- IPAのシラバス、試験要綱、公開問題への公式リンク
 
-## 推奨学習順
+## ローカルで起動
 
-1. トップの「この順番で進める」から01 合格ロードマップを開く。
-2. 各章を読み、「この章の問題を解く」で理解を確認する。
-3. 「未回答」で一周し、「誤答復習」で判断理由を言語化する。
-4. 学習記録の分野別成績と弱点トピックから復習する。
-5. 科目A・科目B模試を本番時間で解き、結果から教材へ戻る。
+### 必要環境
+
+- Node.js 22.13以上
+- npm
+
+### 起動手順
+
+```bash
+npm ci
+npm run dev
+```
+
+ブラウザで `http://localhost:3000` を開きます。
+
+## データとプライバシー
+
+学習履歴は利用中のブラウザの `localStorage` に保存します。認証、サーバー側の学習履歴保存、外部解析サービスは使用していません。履歴はJSONとして書き出し・復元できます。
+
+ブラウザのサイトデータを削除すると、そのブラウザに保存された学習履歴も削除されます。必要な場合は事前にJSONバックアップを書き出してください。
 
 ## 教材構成
 
@@ -54,40 +55,22 @@ Sitesは所有者限定、GitHubリポジトリはPrivateです。
 11. ストラテジ・企業活動
 12. 科目B攻略・直前確認
 
-## ローカルで使う
+## リポジトリ構成
 
-Node.js 22.13以上が必要です。
+- `app/` — ページ構成とスタイル
+- `src/components/` — UIコンポーネント
+- `src/content/materials/` — 教材本文
+- `src/content/questions/` — 独自問題
+- `src/content/glossary.ts` — 用語データ
+- `src/content/visuals.ts` / `public/images/` — 説明図のメタデータと画像資産
+- `src/learning/` — 学習状態、保存、バックアップ
+- `tests/` — 単体・統合・E2Eテスト
+- [`docs/SPEC.md`](./docs/SPEC.md) — 仕様の正本
+- [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — 実装構成の概要
 
-```bash
-npm install
-npm run dev
-```
+開発・検証手順は [`CONTRIBUTING.md`](./CONTRIBUTING.md) を参照してください。
 
-`http://localhost:3000` を開きます。回答履歴はサーバーへ送信されず、利用中のブラウザのlocalStorageだけに保存されます。
-
-## 検証
-
-```bash
-npm run lint
-npm test
-npm run typecheck
-npm run build
-npm run verify:ai
-```
-
-`verify:ai` は実際のChromiumとローカルサーバーを使い、教材、問題回答、誤答復習、学習記録、模試再開、モバイル表示を検証します。失敗時のtraceとスクリーンショットだけを `artifacts/verify/` に保存します。
-
-## データと設計
-
-- 教材: `src/content/materials/`
-- 画像メタデータ: `src/content/visuals.ts`
-- 画像資産: `public/images/`（ローカルima2生成）
-- 問題: `src/content/questions/`
-- 学習状態・バックアップ: `src/learning/`
-- 仕様の正本: [`docs/SPEC.md`](./docs/SPEC.md)
-- 実装計画: [`docs/superpowers/plans/2026-08-25-fe-portal-rebuild.md`](./docs/superpowers/plans/2026-08-25-fe-portal-rebuild.md)
-
-問題は全て本リポジトリ向けに独自作成しています。IPA公開問題の本文は収録せず、公式ページへのリンクだけを掲載しています。
+問題は本リポジトリ向けに独自作成しています。IPA公開問題の本文は収録せず、公式ページへのリンクだけを掲載しています。
 
 ## 公式情報
 
@@ -95,3 +78,7 @@ npm run verify:ai
 - [IPA SG・FE公開問題一覧](https://www.ipa.go.jp/shiken/mondai-kaiotu/sg_fe/koukai/index.html)
 - [IPA 2026年度FE公開問題](https://www.ipa.go.jp/shiken/mondai-kaiotu/sg_fe/koukai/2026r08.html)
 - [IPA 2027年度以降の試験制度見直し](https://www.ipa.go.jp/shiken/syllabus/henkou/2025/20260331.html)
+
+## ライセンス
+
+このリポジトリは [MIT License](./LICENSE) で提供します。第三者の名称・商標・公式資料へのリンクなど、本リポジトリが権利を持たないものには、それぞれの権利者の条件が適用されます。

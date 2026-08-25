@@ -9,6 +9,7 @@ out/
 .pnp
 .pnp.*
 .wrangler/
+.ai-bridge/
 outputs/
 output/
 artifacts/
@@ -16,8 +17,11 @@ work/
 coverage/
 playwright-report/
 test-results/
-.env
-.env.local
+.env*
+!.env.example
 *.pem
+*.key
+*.p12
 .DS_Store
+Thumbs.db
 *.log
