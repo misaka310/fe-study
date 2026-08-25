@@ -2,7 +2,7 @@ import type { Material } from '../../domain/types';
 
 export const algorithms: Material = {
   id: '05-algorithms', order: 5, title: '05 データ構造とアルゴリズム', category: '科目B',
-  summary: '科目Bの擬似言語を、変数表、境界条件、データ構造、計算量の四つの視点で一行ずつ追跡する方法を身につけます。', visualId: 'algorithm',
+  summary: '科目Bの擬似言語を、変数表、境界条件、データ構造、計算量の四つの視点で一行ずつ追跡する方法を身につけます。',
   relatedQuestionTopics: ['擬似言語', '探索', '整列', 'データ構造', '計算量'],
   sections: [
     { heading: '擬似言語の読み方', paragraphs: ['擬似言語は記号を眺めず、入力、出力、更新される変数、不変条件へ分けます。配列の添字が0始まりか1始まりか、繰返しの終端を含むか、整数除算か実数除算かを最初に印付けします。小さな入力で変数表を作り、各行を実行した直後の値だけを書けば、頭の中だけで追うより境界の誤りを発見できます。'], decisionAxes: ['添字の開始値、終端条件、更新順序を最初に固定する', '各行の直後の変数値と、処理が終わったときの戻り値を分けて追う'], contrast: ['コードの見た目から推測するのではなく、入力例を一行ずつ実行する'], pitfalls: ['ループ終端の含む・含まない、整数除算、空配列を確認しないまま答えを選ばない'], code: 'sum ← 0\nfor i を 0 から length(values) - 1 まで増やす\n  sum ← sum + values[i]\nendfor\nreturn sum' },

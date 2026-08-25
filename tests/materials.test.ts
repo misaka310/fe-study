@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { materials } from '../src/content/materials';
 import { officialLinks } from '../src/content/official-links';
+import { studyVisuals } from '../src/content/visuals';
 
 describe('教材カタログ', () => {
   it('学習順に並んだ12章を収録する', () => {
@@ -21,8 +22,14 @@ describe('教材カタログ', () => {
     }
   });
 
-  it('各章に本文へ表示する代表図がある', () => {
-    for (const material of materials) expect(material.visualId || material.sections.some((section) => section.visualId), material.id).toBeTruthy();
+  it('採用した説明図だけを教材から参照する', () => {
+    const visualIds = new Set(studyVisuals.map((visual) => visual.id));
+    for (const material of materials) {
+      if (material.visualId) expect(visualIds.has(material.visualId), `${material.id}/${material.visualId}`).toBe(true);
+      for (const section of material.sections) {
+        if (section.visualId) expect(visualIds.has(section.visualId), `${material.id}/${section.visualId}`).toBe(true);
+      }
+    }
   });
 
   it('各章に判断軸と混同注意を明示した解説節がある', () => {

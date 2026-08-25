@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { materials } from '../content/materials';
 import { officialLinks } from '../content/official-links';
 import { VisualGallery } from './VisualGallery';
@@ -26,6 +26,28 @@ export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMa
   const previous = materials[currentIndex - 1];
   const next = materials[currentIndex + 1];
 
+  useEffect(() => {
+    const syncFromLocation = () => {
+      const materialId = new URLSearchParams(window.location.search).get('material');
+      if (materialId && materials.some((material) => material.id === materialId)) {
+        setSelectedId(materialId);
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      }
+    };
+
+    window.addEventListener('popstate', syncFromLocation);
+    return () => window.removeEventListener('popstate', syncFromLocation);
+  }, []);
+
+  const handleMaterialClick = (event: MouseEvent<HTMLAnchorElement>, materialId: string) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const href = `?view=materials&material=${materialId}`;
+    setSelectedId(materialId);
+    window.history.pushState(null, '', href);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  };
+
   return (
     <div className="portal-page">
       <PortalHeader active="materials" />
@@ -48,7 +70,7 @@ export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMa
               aria-current={material.id === current.id ? 'page' : undefined}
               href={`?view=materials&material=${material.id}`}
               key={material.id}
-              onClick={(event) => { event.preventDefault(); setSelectedId(material.id); }}
+              onClick={(event) => handleMaterialClick(event, material.id)}
             >
               {material.title}
             </a>
