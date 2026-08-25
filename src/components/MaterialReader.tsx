@@ -8,7 +8,7 @@ import { RichText } from './RichText';
 import { InlineVisual } from './InlineVisual';
 import { PortalHeader } from './PortalHeader';
 
-export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMaterialId?: string }) {
+export function MaterialReader({ initialMaterialId = '01-roadmap', questionCount }: { initialMaterialId?: string; questionCount: number }) {
   const initialIndex = Math.max(0, materials.findIndex((material) => material.id === initialMaterialId));
   const [selectedId, setSelectedId] = useState(materials[initialIndex].id);
   const [query, setQuery] = useState('');
@@ -29,15 +29,16 @@ export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMa
   useEffect(() => {
     const syncFromLocation = () => {
       const materialId = new URLSearchParams(window.location.search).get('material');
-      if (materialId && materials.some((material) => material.id === materialId)) {
-        setSelectedId(materialId);
-        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-      }
+      const nextId = materialId && materials.some((material) => material.id === materialId)
+        ? materialId
+        : materials[initialIndex].id;
+      setSelectedId(nextId);
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     };
 
     window.addEventListener('popstate', syncFromLocation);
     return () => window.removeEventListener('popstate', syncFromLocation);
-  }, []);
+  }, [initialIndex]);
 
   const handleMaterialClick = (event: MouseEvent<HTMLAnchorElement>, materialId: string) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -50,7 +51,7 @@ export function MaterialReader({ initialMaterialId = '01-roadmap' }: { initialMa
 
   return (
     <div className="portal-page">
-      <PortalHeader active="materials" />
+      <PortalHeader active="materials" questionCount={questionCount} />
       <main className="portal-main">
         <div className="material-layout">
           <aside className="material-nav">

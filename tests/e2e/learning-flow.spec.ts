@@ -36,6 +36,21 @@ test('教材左ペインで章を切り替えるとURLを更新してページ�
   assertNoErrors();
 });
 
+test('教材一覧URLへ戻ると先頭章へ復元する', async ({ page }) => {
+  const assertNoErrors = rejectBrowserErrors(page);
+  await page.goto('/?view=materials');
+  await expect(page.getByRole('heading', { name: '01 合格ロードマップ' })).toBeVisible();
+
+  await page.getByRole('navigation', { name: '教材一覧' }).getByRole('link', { name: '02 基礎理論・情報表現' }).click();
+  await expect(page).toHaveURL(/view=materials&material=02-theory/);
+  await expect(page.getByRole('heading', { name: '02 基礎理論・情報表現' })).toBeVisible();
+
+  await page.goBack();
+  await expect(page).toHaveURL(/\?view=materials$/);
+  await expect(page.getByRole('heading', { name: '01 合格ロードマップ' })).toBeVisible();
+  assertNoErrors();
+});
+
 test('説明図ギャラリーを開き教材内の関連画像を拡大できる', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/');

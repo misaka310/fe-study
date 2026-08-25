@@ -8,7 +8,7 @@ const links: Array<{ area: PortalArea; label: string; href: string }> = [
   { area: 'dashboard', label: '学習記録', href: '?view=dashboard' },
 ];
 
-export function PortalHeader({ active }: { active?: PortalArea }) {
+export function PortalHeader({ active, questionCount }: { active?: PortalArea; questionCount: number }) {
   return (
     <>
       <header className="portal-header">
@@ -19,7 +19,7 @@ export function PortalHeader({ active }: { active?: PortalArea }) {
         </div>
         <div className="exam-card" aria-label="試験構成">
           <span>問題バンク</span>
-          <strong>217問</strong>
+          <strong>{questionCount}問</strong>
           <b>科目A・B模試に対応</b>
         </div>
       </header>
