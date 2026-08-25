@@ -9,7 +9,7 @@ ITパスポート相当の基礎知識から、基本情報技術者試験（FE�
 ### [基本情報技術者 合格ナビ →](https://fe-study.misaka310.chatgpt.site)
 
 - [教材から始める](https://fe-study.misaka310.chatgpt.site/?view=materials)
-- [202問の問題演習を始める](https://fe-study.misaka310.chatgpt.site/?view=practice&mode=all)
+- [217問の問題演習を始める](https://fe-study.misaka310.chatgpt.site/?view=practice&mode=all)
 - [科目A・科目B模試を開く](https://fe-study.misaka310.chatgpt.site/?view=exams)
 - [弱点補強を開く](https://fe-study.misaka310.chatgpt.site/?view=practice&mode=weakness)
 - [学習記録を開く](https://fe-study.misaka310.chatgpt.site/?view=dashboard)

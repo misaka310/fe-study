@@ -16,10 +16,14 @@ const similarity = (left: string, right: string) => {
 };
 
 describe('独自問題バンクの品質', () => {
-  it('科目A 150問以上、科目B 50問以上を収録する', () => {
-    expect(questions.length).toBeGreaterThanOrEqual(200);
-    expect(questions.filter((question) => question.subject === 'A').length).toBeGreaterThanOrEqual(150);
+  it('科目A 165問以上、科目B 50問以上、合計215問以上を収録する', () => {
+    expect(questions.length).toBeGreaterThanOrEqual(215);
+    expect(questions.filter((question) => question.subject === 'A').length).toBeGreaterThanOrEqual(165);
     expect(questions.filter((question) => question.subject === 'B').length).toBeGreaterThanOrEqual(50);
+  });
+
+  it('追加教材から選別した15問を独立IDで統合する', () => {
+    expect(questions.filter((question) => question.id.startsWith('a-supp-')).length).toBe(15);
   });
 
   it('科目Aの分野別最低数を満たす', () => {
