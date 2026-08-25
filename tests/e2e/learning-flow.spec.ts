@@ -92,12 +92,14 @@ test('問題回答を保存して誤答復習と学習記録へ反映する', as
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=all');
   let sawWrong = false;
+  let answeredCount = 0;
   for (let attempt = 0; attempt < 20 && !sawWrong; attempt += 1) {
     await page.getByRole('radio').first().check();
     await page.getByRole('button', { name: '解答する' }).click();
+    answeredCount += 1;
     await expect(page.getByText(/^(正解|不正解)$/)).toBeVisible();
     sawWrong = await page.getByText('不正解', { exact: true }).count() > 0;
-    if (!sawWrong) await page.getByRole('button', { name: '次の問題' }).click();
+    if (!sawWrong) await page.getByRole('button', { name: '次へ' }).click();
   }
   expect(sawWrong).toBe(true);
   await expect(page.getByText('条件', { exact: true })).toBeVisible();
@@ -106,7 +108,7 @@ test('問題回答を保存して誤答復習と学習記録へ反映する', as
   await page.goto('/?view=practice&mode=wrong');
   await expect(page.getByText(/間違いだけ · 1問/)).toBeVisible();
   await page.goto('/?view=dashboard');
-  await expect(page.getByText(/1 \/ \d+問に回答/)).toBeVisible();
+  await expect(page.getByText(new RegExp(`${answeredCount} / \\d+問に回答`))).toBeVisible();
   assertNoErrors();
 });
 
