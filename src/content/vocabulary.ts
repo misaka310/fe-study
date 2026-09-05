@@ -1,5 +1,7 @@
 import type { Question } from '../domain/types';
-import { questions } from './questions';
+import { conceptQuestions } from './questions/a-concepts';
+import { supplementQuestions } from './questions/a-supplement';
+import { theoryQuestions } from './questions/a-theory';
 
 type BasicSet = 1 | 2 | 3 | 4 | 5;
 
@@ -19,7 +21,8 @@ const DOMAIN_PLAN = [
   { domain: 'strategy', perSet: 2 },
 ] as const;
 
-const subjectAQuestions = questions.filter((question) => question.subject === 'A');
+const subjectAQuestions = [...theoryQuestions, ...conceptQuestions, ...supplementQuestions]
+  .filter((question) => question.subject === 'A');
 
 /**
  * 旧「基礎単語」カードは使わない。
