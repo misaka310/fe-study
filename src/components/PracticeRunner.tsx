@@ -3,22 +3,30 @@
 import { useMemo, useState } from 'react';
 import { questions } from '../content/questions';
 import { vocabularyQuestions } from '../content/vocabulary';
+import type { Question } from '../domain/types';
 import { buildWeaknessRanking, orderQuestionIds, recordAttempt } from '../learning/state';
 import { useLearningState } from '../learning/useLearningState';
 import { PortalHeader } from './PortalHeader';
 import { RichText } from './RichText';
 
 type PracticeMode = 'all' | 'unanswered' | 'wrong' | 'weakness' | 'vocabulary';
+type BasicSet = 1 | 2 | 3 | 4 | 5;
+
+interface AnsweredContext {
+  question: Question;
+  index: number;
+  total: number;
+}
 
 const labels: Record<PracticeMode, string> = {
-  all: '全問題', unanswered: '未回答だけ', wrong: '間違いだけ', weakness: '弱点補強', vocabulary: '基礎単語',
+  all: '全問題', unanswered: '未回答だけ', wrong: '間違いだけ', weakness: '弱点補強', vocabulary: '基本問題',
 };
 
 const domainLabels: Record<string, string> = {
   theory: '基礎理論・情報表現', computer: 'コンピュータ構成要素', software: 'OS・ソフトウェア',
   database: 'データベース', network: 'ネットワーク', security: '情報セキュリティ',
   development: 'システム開発・設計', management: 'マネジメント', strategy: 'ストラテジ',
-  algorithm: 'アルゴリズム', 'security-case': 'セキュリティ事例', vocabulary: '基礎単語',
+  algorithm: 'アルゴリズム', 'security-case': 'セキュリティ事例',
 };
 
 function latestAttempt(questionId: string, attempts: Record<string, { correct: boolean }[]>) {
@@ -30,15 +38,21 @@ function percent(value: number, total: number) {
   return total ? `${Math.round(value / total * 100)}%` : '-';
 }
 
+function parseBasicSet(value?: string): BasicSet {
+  if (value === '2' || value === '3' || value === '4' || value === '5') return Number(value) as BasicSet;
+  return 1;
+}
+
 export function PracticeRunner({ mode = 'all', materialId, domain, subject, vocabSet, questionCount }: {
   mode?: string; materialId?: string; domain?: string; subject?: string; vocabSet?: string; questionCount: number;
 }) {
   const selectedMode: PracticeMode = mode in labels ? mode as PracticeMode : 'all';
-  const selectedVocabularySet = vocabSet === '2' || vocabSet === '3' ? Number(vocabSet) as 2 | 3 : 1;
+  const selectedVocabularySet = parseBasicSet(vocabSet);
   const { state, update, ready, message } = useLearningState();
   const [index, setIndex] = useState(0);
   const [pick, setPick] = useState<number | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [answeredContext, setAnsweredContext] = useState<AnsweredContext | null>(null);
   const [sessionSeed, setSessionSeed] = useState(() => Date.now());
   const allPracticeQuestions = useMemo(() => [...questions, ...vocabularyQuestions], []);
   const weakTopics = useMemo(() => new Set(buildWeaknessRanking(state, allPracticeQuestions).map((item) => item.topic)), [allPracticeQuestions, state]);
@@ -58,16 +72,27 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     const order = new Map(orderQuestionIds(filtered.map((question) => question.id), sessionSeed).map((id, orderIndex) => [id, orderIndex]));
     return [...filtered].sort((left, right) => order.get(left.id)! - order.get(right.id)!);
   }, [allPracticeQuestions, domain, materialId, selectedMode, selectedVocabularySet, sessionSeed, state, subject, weakTopics]);
-  const current = pool[Math.min(index, Math.max(0, pool.length - 1))];
+
+  const currentIndex = Math.min(index, Math.max(0, pool.length - 1));
+  const current = pool[currentIndex];
+  const answeredQuestionRemoved = Boolean(revealed && answeredContext && !pool.some((question) => question.id === answeredContext.question.id));
+  const displayQuestion = revealed && answeredContext ? answeredContext.question : current;
+  const displayIndex = revealed && answeredContext ? answeredContext.index : currentIndex;
+  const displayTotal = revealed && answeredContext ? answeredContext.total : pool.length;
+
   const answered = pool.filter((question) => latestAttempt(question.id, state.attempts));
   const correctCount = answered.filter((question) => latestAttempt(question.id, state.attempts)?.correct).length;
   const wrongQuestions = pool.filter((question) => latestAttempt(question.id, state.attempts) && !latestAttempt(question.id, state.attempts)?.correct);
   const weaknessRanking = useMemo(() => buildWeaknessRanking(state, allPracticeQuestions).slice(0, 5), [allPracticeQuestions, state]);
 
   const move = (direction: number) => {
-    setIndex((value) => Math.max(0, Math.min(pool.length - 1, value + direction)));
+    setIndex((value) => {
+      const requested = answeredQuestionRemoved && direction > 0 ? value : value + direction;
+      return Math.max(0, Math.min(Math.max(0, pool.length - 1), requested));
+    });
     setPick(null);
     setRevealed(false);
+    setAnsweredContext(null);
   };
 
   const shuffle = () => {
@@ -75,7 +100,11 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     setIndex(0);
     setPick(null);
     setRevealed(false);
+    setAnsweredContext(null);
   };
+
+  const previousDisabled = displayIndex <= 0;
+  const nextDisabled = answeredQuestionRemoved ? index >= pool.length : currentIndex >= pool.length - 1;
 
   if (!ready) return <main className="study-shell"><p>学習履歴を読み込んでいます…</p></main>;
 
@@ -97,14 +126,14 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
               <a className="practice-menu-link" href="?view=exams"><span>→</span>科目A・B模試</a>
             </section>
             <section className="practice-menu-group" aria-labelledby="vocabulary-set-title">
-              <h2 id="vocabulary-set-title">基礎単語20問セット</h2>
-              {[1, 2, 3].map((set) => <a aria-current={selectedMode === 'vocabulary' && selectedVocabularySet === set ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=vocabulary&vocabSet=${set}`} key={set}><span>#{set}</span>セット{set}（20問）</a>)}
+              <h2 id="vocabulary-set-title">基本問題 20問×5セット</h2>
+              {[1, 2, 3, 4, 5].map((set) => <a aria-current={selectedMode === 'vocabulary' && selectedVocabularySet === set ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=vocabulary&vocabSet=${set}`} key={set}><span>#{set}</span>セット{set}（20問）</a>)}
             </section>
             <section className="practice-menu-group" aria-labelledby="practice-domain-title">
               <h2 id="practice-domain-title">分野</h2>
-              <a aria-current={!domain ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=${selectedMode}`}>全分野</a>
+              <a aria-current={!domain ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=${selectedMode}${selectedMode === 'vocabulary' ? `&vocabSet=${selectedVocabularySet}` : ''}`}>全分野</a>
               {Object.entries(domainLabels).map(([key, label]) => (
-                <a aria-current={domain === key ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=${selectedMode}&domain=${key}`} key={key}>{label}</a>
+                <a aria-current={domain === key ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=${selectedMode}&domain=${key}${selectedMode === 'vocabulary' ? `&vocabSet=${selectedVocabularySet}` : ''}`} key={key}>{label}</a>
               ))}
             </section>
             <div className="practice-notice">現在のセットは、問題文の条件と選択肢の理由を確認しながら進めます。回答履歴はこのブラウザに保存されます。</div>
@@ -116,46 +145,46 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
           </aside>
 
           <section className="practice-center" aria-labelledby="practice-board-title">
-            <div className="practice-board-title" id="practice-board-title">{selectedMode === 'vocabulary' ? `基礎単語 · セット${selectedVocabularySet}` : labels[selectedMode]}</div>
-            <p className="practice-set-count">{labels[selectedMode]} · {pool.length}問</p>
+            <div className="practice-board-title" id="practice-board-title">{selectedMode === 'vocabulary' ? `基本問題 · セット${selectedVocabularySet}` : labels[selectedMode]}</div>
+            <p className="practice-set-count">{labels[selectedMode]} · {displayTotal}問</p>
             {message ? <p className="status-message" role="status">{message}</p> : null}
-            {!current ? (
+            {!displayQuestion ? (
               <section className="practice-empty"><h2>該当する問題はありません</h2><p>{selectedMode === 'weakness' ? 'まだ弱点履歴がありません。まず問題を解いて誤答すると、ここへ関連問題が表示されます。' : '別のモードか分野を選ぶと、対象の問題が表示されます。'}</p><a href="?view=practice&mode=all">全問題へ戻る</a></section>
             ) : (
-              <>
-                <section className="practice-question-card">
-                  <div className="practice-meta-row"><span className="practice-pill">科目{current.subject}</span><span className="practice-pill">{domainLabels[current.domain] ?? current.domain}</span><span className="practice-pill">{current.topic}</span><span className="practice-pill">難易度 {current.difficulty}</span><strong>{index + 1} / {pool.length}</strong></div>
-                  <div className="practice-progress" aria-label={`進捗 ${index + 1} / ${pool.length}`}><span style={{ width: `${((index + 1) / pool.length) * 100}%` }} /></div>
-                  <h2>{<RichText text={current.stem} />}</h2>
-                  {current.code ? <pre><code>{current.code}</code></pre> : null}
-                  <fieldset disabled={revealed}>
-                    <legend className="sr-only">回答を一つ選択</legend>
-                    {current.choices.map((choice, choiceIndex) => {
-                      const isCorrect = current.correct.includes(choiceIndex);
-                      const isWrongPick = revealed && pick === choiceIndex && !isCorrect;
-                      return <label className={`practice-choice ${revealed && isCorrect ? 'is-correct' : ''}${isWrongPick ? ' is-wrong' : ''}`} key={choice}>
-                        <input checked={pick === choiceIndex} name="choice" onChange={() => setPick(choiceIndex)} type="radio" />
-                        <span>{String.fromCharCode(65 + choiceIndex)}</span><RichText text={choice} />
-                      </label>;
-                    })}
-                  </fieldset>
-                  {!revealed ? <button className="practice-answer-button" disabled={pick === null} onClick={() => {
-                    if (pick === null) return;
-                    update((value) => recordAttempt(value, current.id, [pick], current.correct.includes(pick), new Date().toISOString()));
-                    setRevealed(true);
-                  }} type="button">解答する</button> : (
-                    <section className="practice-answer-panel" aria-live="polite">
-                      <div className={pick !== null && current.correct.includes(pick) ? 'practice-result-good' : 'practice-result-bad'}>{pick !== null && current.correct.includes(pick) ? '正解' : '不正解'}</div>
-                      <div className="practice-answer-block"><strong>条件</strong><p><RichText text={current.stem} /></p></div>
-                      <div className="practice-answer-block"><strong>決め手</strong><p><RichText text={current.explanation} /></p></div>
-                      <h3>選択肢ごとの判定</h3>
-                      <ol className="practice-choice-reasons">{current.choices.map((choice, choiceIndex) => <li data-testid="choice-reason" key={choice}><strong>{String.fromCharCode(65 + choiceIndex)}. {current.correct.includes(choiceIndex) ? '正解' : '不正解'}</strong><span><RichText text={current.choiceReasons[choiceIndex]} /></span></li>)}</ol>
-                      <a href={`?view=materials&material=${current.materialId}`}>関連教材を復習する</a>
-                    </section>
-                  )}
-                  <nav className="practice-question-actions" aria-label="問題の移動"><button disabled={index === 0} onClick={() => move(-1)} type="button">前へ</button><button disabled={index >= pool.length - 1} onClick={() => move(1)} type="button">次へ</button></nav>
-                </section>
-              </>
+              <section className="practice-question-card">
+                <div className="practice-meta-row"><span className="practice-pill">科目{displayQuestion.subject}</span><span className="practice-pill">{domainLabels[displayQuestion.domain] ?? displayQuestion.domain}</span><span className="practice-pill">{displayQuestion.topic}</span><span className="practice-pill">難易度 {displayQuestion.difficulty}</span><strong>{displayIndex + 1} / {displayTotal}</strong></div>
+                <div className="practice-progress" aria-label={`進捗 ${displayIndex + 1} / ${displayTotal}`}><span style={{ width: `${displayTotal ? ((displayIndex + 1) / displayTotal) * 100 : 0}%` }} /></div>
+                <h2>{<RichText text={displayQuestion.stem} />}</h2>
+                {displayQuestion.code ? <pre><code>{displayQuestion.code}</code></pre> : null}
+                <fieldset disabled={revealed}>
+                  <legend className="sr-only">回答を一つ選択</legend>
+                  {displayQuestion.choices.map((choice, choiceIndex) => {
+                    const isCorrect = displayQuestion.correct.includes(choiceIndex);
+                    const isWrongPick = revealed && pick === choiceIndex && !isCorrect;
+                    return <label className={`practice-choice ${revealed && isCorrect ? 'is-correct' : ''}${isWrongPick ? ' is-wrong' : ''}`} key={choice}>
+                      <input checked={pick === choiceIndex} name="choice" onChange={() => setPick(choiceIndex)} type="radio" />
+                      <span>{String.fromCharCode(65 + choiceIndex)}</span><RichText text={choice} />
+                    </label>;
+                  })}
+                </fieldset>
+                {!revealed ? <button className="practice-answer-button" disabled={pick === null} onClick={() => {
+                  if (pick === null || !current) return;
+                  const answeredQuestion = current;
+                  setAnsweredContext({ question: answeredQuestion, index: currentIndex, total: pool.length });
+                  update((value) => recordAttempt(value, answeredQuestion.id, [pick], answeredQuestion.correct.includes(pick), new Date().toISOString()));
+                  setRevealed(true);
+                }} type="button">解答する</button> : (
+                  <section className="practice-answer-panel" aria-live="polite">
+                    <div className={pick !== null && displayQuestion.correct.includes(pick) ? 'practice-result-good' : 'practice-result-bad'}>{pick !== null && displayQuestion.correct.includes(pick) ? '正解' : '不正解'}</div>
+                    <div className="practice-answer-block"><strong>条件</strong><p><RichText text={displayQuestion.stem} /></p></div>
+                    <div className="practice-answer-block"><strong>決め手</strong><p><RichText text={displayQuestion.explanation} /></p></div>
+                    <h3>選択肢ごとの判定</h3>
+                    <ol className="practice-choice-reasons">{displayQuestion.choices.map((choice, choiceIndex) => <li data-testid="choice-reason" key={choice}><strong>{String.fromCharCode(65 + choiceIndex)}. {displayQuestion.correct.includes(choiceIndex) ? '正解' : '不正解'}</strong><span><RichText text={displayQuestion.choiceReasons[choiceIndex]} /></span></li>)}</ol>
+                    <a href={`?view=materials&material=${displayQuestion.materialId}`}>関連教材を復習する</a>
+                  </section>
+                )}
+                <nav className="practice-question-actions" aria-label="問題の移動"><button disabled={previousDisabled} onClick={() => move(-1)} type="button">前へ</button><button disabled={nextDisabled} onClick={() => move(1)} type="button">次へ</button></nav>
+              </section>
             )}
           </section>
 
