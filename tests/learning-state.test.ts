@@ -83,4 +83,13 @@ describe('学習状態', () => {
     expect(first).not.toEqual(orderQuestionIds(ids, 20260826));
     expect(new Set(first)).toEqual(new Set(ids));
   });
+
+  it('回答済み問題がpoolから消えても残り問題の相対順序を変えない', () => {
+    const ids = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
+    const full = orderQuestionIds(ids, 20260906);
+    const removedId = full[2];
+    const reduced = orderQuestionIds(ids.filter((id) => id !== removedId), 20260906);
+
+    expect(reduced).toEqual(full.filter((id) => id !== removedId));
+  });
 });

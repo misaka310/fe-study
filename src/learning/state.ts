@@ -67,9 +67,26 @@ function seededRandom(seed: number) {
   };
 }
 
+function stableQuestionRank(id: string, seed: number) {
+  let hash = (2166136261 ^ (seed >>> 0)) >>> 0;
+  for (let index = 0; index < id.length; index += 1) {
+    hash ^= id.charCodeAt(index);
+    hash = Math.imul(hash, 16777619) >>> 0;
+  }
+  hash ^= hash >>> 16;
+  hash = Math.imul(hash, 0x7feb352d) >>> 0;
+  hash ^= hash >>> 15;
+  hash = Math.imul(hash, 0x846ca68b) >>> 0;
+  hash ^= hash >>> 16;
+  return hash >>> 0;
+}
+
 export function orderQuestionIds(ids: readonly string[], seed: number): string[] {
-  const random = seededRandom(seed);
-  return shuffled(ids, random);
+  return [...ids].sort((left, right) => {
+    const leftRank = stableQuestionRank(left, seed);
+    const rightRank = stableQuestionRank(right, seed);
+    return leftRank - rightRank || left.localeCompare(right);
+  });
 }
 
 export function createExamSession(
