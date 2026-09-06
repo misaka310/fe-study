@@ -112,18 +112,36 @@ test('問題回答を保存して誤答復習と学習記録へ反映する', as
   assertNoErrors();
 });
 
-test('基礎単語の20問セットを選び、意味の説明まで確認できる', async ({ page }) => {
+test('基本問題の20問セットを選び、意味の説明まで確認できる', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=vocabulary&vocabSet=2');
-  await expect(page.getByText('基礎単語 · セット2')).toBeVisible();
-  await expect(page.getByText('基礎単語 · 20問')).toBeVisible();
+  await expect(page.getByText('基本問題 · セット2')).toBeVisible();
+  await expect(page.getByText('基本問題 · 20問')).toBeVisible();
   await expect(page.getByText('セット1（20問）')).toBeVisible();
   await expect(page.getByText('セット3（20問）')).toBeVisible();
+  await expect(page.getByText('セット5（20問）')).toBeVisible();
+  const questionHeading = page.locator('.practice-question-card h2');
+  const stemBeforeAnswer = await questionHeading.innerText();
   await page.getByRole('radio').first().check();
   await page.getByRole('button', { name: '解答する' }).click();
   await expect(page.getByText(/^(正解|不正解)$/)).toBeVisible();
+  await expect(questionHeading).toHaveText(stemBeforeAnswer);
   await expect(page.getByText('決め手', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: '選択肢ごとの判定' })).toBeVisible();
+  assertNoErrors();
+});
+
+test('未回答だけで回答した直後も同じ問題の結果を表示する', async ({ page }) => {
+  const assertNoErrors = rejectBrowserErrors(page);
+  await page.goto('/?view=practice&mode=unanswered');
+  const questionHeading = page.locator('.practice-question-card h2');
+  const stemBeforeAnswer = await questionHeading.innerText();
+  await page.getByRole('radio').first().check();
+  await page.getByRole('button', { name: '解答する' }).click();
+  await expect(page.getByText(/^(正解|不正解)$/)).toBeVisible();
+  await expect(questionHeading).toHaveText(stemBeforeAnswer);
+  await page.getByRole('button', { name: '次へ' }).click();
+  await expect(questionHeading).not.toHaveText(stemBeforeAnswer);
   assertNoErrors();
 });
 
