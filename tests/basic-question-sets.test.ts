@@ -48,4 +48,15 @@ describe('基本問題 20問×5セット', () => {
       }
     }
   });
+
+  it('セキュリティ問題の誤答も同じ論点で迷える現実的な選択肢にする', () => {
+    const sqlInjection = vocabularyQuestions.find((question) => question.id === 'basic-set1-14');
+    expect(sqlInjection).toBeDefined();
+    expect(sqlInjection?.choices).toEqual([
+      '入力値をプレースホルダへ渡すパラメータ化クエリを使う',
+      '危険そうな文字だけを独自ルールで置換してから文字列連結する',
+      'WAFでSQLインジェクションらしい要求を遮断し、アプリ側の文字列連結はそのままにする',
+      '入力値を正規表現で検査した後、エスケープせずSQL文へ文字列連結する',
+    ]);
+  });
 });
