@@ -14,7 +14,7 @@ export interface Question {
   difficulty: 1 | 2 | 3;
   code?: string;
   practiceKind?: 'standard' | 'vocabulary';
-  vocabularySet?: 1 | 2 | 3;
+  vocabularySet?: 1 | 2 | 3 | 4 | 5;
 }
 
 export interface MaterialSection {

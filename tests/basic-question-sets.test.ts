@@ -1,0 +1,62 @@
+import { describe, expect, it } from 'vitest';
+import { vocabularyQuestions } from '../src/content/vocabulary';
+
+const definitionOnlyPatterns = [
+  /^次の意味・役割を表す用語はどれか。/,
+  /次の説明に該当する情報技術上の用語として、最も適切なものはどれか/,
+  /次の性質を表す概念はどれか/,
+  /見出しに置く用語はどれか/,
+  /次の特徴を正しく分類するとき、該当する選択肢はどれか/,
+];
+
+describe('基本問題 20問×5セット', () => {
+  it('100問を5セットに20問ずつ収録する', () => {
+    expect(vocabularyQuestions).toHaveLength(100);
+    for (const set of [1, 2, 3, 4, 5]) {
+      expect(vocabularyQuestions.filter((question) => question.vocabularySet === set)).toHaveLength(20);
+    }
+  });
+
+  it('単純な用語当てではなくFE科目A相当の知識判断問題にする', () => {
+    for (const question of vocabularyQuestions) {
+      expect(question.subject).toBe('A');
+      expect(question.domain).not.toBe('vocabulary');
+      for (const pattern of definitionOnlyPatterns) expect(question.stem, question.id).not.toMatch(pattern);
+      expect(question.stem.length, question.id).toBeGreaterThanOrEqual(28);
+      expect(question.choices).toHaveLength(4);
+      expect(question.correct).toHaveLength(1);
+      expect(question.choiceReasons).toHaveLength(4);
+      expect(question.choiceReasons.every((reason) => reason.length >= 12), question.id).toBe(true);
+      expect(question.explanation.length, question.id).toBeGreaterThanOrEqual(28);
+      expect(question.difficulty, question.id).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('各セットで主要9分野と難易度3を扱い、同じ問題や選択肢セットを使い回さない', () => {
+    const stems = new Set<string>();
+    const choiceSets = new Set<string>();
+    for (const set of [1, 2, 3, 4, 5]) {
+      const setQuestions = vocabularyQuestions.filter((question) => question.vocabularySet === set);
+      expect(new Set(setQuestions.map((question) => question.domain)).size).toBe(9);
+      expect(setQuestions.filter((question) => question.difficulty === 3).length).toBeGreaterThanOrEqual(4);
+      for (const question of setQuestions) {
+        expect(stems.has(question.stem), question.id).toBe(false);
+        stems.add(question.stem);
+        const key = [...question.choices].sort().join('\n');
+        expect(choiceSets.has(key), question.id).toBe(false);
+        choiceSets.add(key);
+      }
+    }
+  });
+
+  it('セキュリティ問題の誤答も同じ論点で迷える現実的な選択肢にする', () => {
+    const sqlInjection = vocabularyQuestions.find((question) => question.id === 'basic-set1-14');
+    expect(sqlInjection).toBeDefined();
+    expect(sqlInjection?.choices).toEqual([
+      '入力値をプレースホルダへ渡すパラメータ化クエリを使う',
+      '危険そうな文字だけを独自ルールで置換してから文字列連結する',
+      'WAFでSQLインジェクションらしい要求を遮断し、アプリ側の文字列連結はそのままにする',
+      '入力値を正規表現で検査した後、エスケープせずSQL文へ文字列連結する',
+    ]);
+  });
+});

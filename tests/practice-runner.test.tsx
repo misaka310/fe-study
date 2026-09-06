@@ -29,4 +29,19 @@ describe('PracticeRunner', () => {
     expect(await screen.findByRole('link', { name: /未回答だけ/ })).toBeInTheDocument();
     expect(screen.getByText(new RegExp(`${questions.length - 1}問`))).toBeInTheDocument();
   });
+
+  it('未回答モードで解答しても結果表示中の問題文を別問題へすり替えない', async () => {
+    localStorage.clear();
+    const { container } = render(<PracticeRunner questionCount={questions.length} mode="unanswered" />);
+    await screen.findAllByRole('radio');
+    const questionHeading = container.querySelector('.practice-question-card h2');
+    const answeredStem = questionHeading?.textContent;
+    expect(answeredStem).toBeTruthy();
+
+    fireEvent.click((await screen.findAllByRole('radio'))[0]);
+    fireEvent.click(screen.getByRole('button', { name: '解答する' }));
+
+    expect(container.querySelector('.practice-question-card h2')?.textContent).toBe(answeredStem);
+    expect(screen.getByText(/^(正解|不正解)$/)).toBeInTheDocument();
+  });
 });
