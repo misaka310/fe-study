@@ -17,7 +17,7 @@ const studyPath = (questionCount: number) => [
 
 const practiceLinks = (questionCount: number) => [
   { href: '?view=practice&mode=all', title: `全${questionCount}問練習`, text: '標準問題を一通り解く' },
-  { href: '?view=practice&mode=vocabulary&vocabSet=1', title: '基礎単語20問', text: '用語の意味を3セットで確認する' },
+  { href: '?view=practice&mode=vocabulary&vocabSet=1', title: '基本問題 20問×5セット', text: '科目Aで問われる知識判断を100問で確認する' },
   { href: '?view=exams', title: '科目A・B模試', text: '本番と同じ問題数・時間で確認する' },
   { href: '?view=practice&mode=unanswered', title: '未回答だけ', text: 'まだ解いていない問題を進める' },
   { href: '?view=practice&mode=wrong', title: '間違いだけ', text: '直近で間違えた問題を解き直す' },
