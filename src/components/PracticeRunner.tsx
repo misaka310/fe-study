@@ -52,6 +52,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const [index, setIndex] = useState(0);
   const [pick, setPick] = useState<number | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
   const [answeredContext, setAnsweredContext] = useState<AnsweredContext | null>(null);
   const [sessionSeed, setSessionSeed] = useState(() => Date.now());
   const allPracticeQuestions = useMemo(() => [...questions, ...vocabularyQuestions], []);
@@ -92,6 +93,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     });
     setPick(null);
     setRevealed(false);
+    setShowExplanation(false);
     setAnsweredContext(null);
   };
 
@@ -100,6 +102,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     setIndex(0);
     setPick(null);
     setRevealed(false);
+    setShowExplanation(false);
     setAnsweredContext(null);
   };
 
@@ -173,17 +176,24 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
                   setAnsweredContext({ question: answeredQuestion, index: currentIndex, total: pool.length });
                   update((value) => recordAttempt(value, answeredQuestion.id, [pick], answeredQuestion.correct.includes(pick), new Date().toISOString()));
                   setRevealed(true);
+                  setShowExplanation(false);
                 }} type="button">解答する</button> : (
-                  <section className="practice-answer-panel" aria-live="polite">
+                  <div className="practice-answer-summary" aria-live="polite">
                     <div className={pick !== null && displayQuestion.correct.includes(pick) ? 'practice-result-good' : 'practice-result-bad'}>{pick !== null && displayQuestion.correct.includes(pick) ? '正解' : '不正解'}</div>
+                    <button aria-controls="practice-explanation" aria-expanded={showExplanation} className="practice-explanation-toggle" onClick={() => setShowExplanation((value) => !value)} type="button">{showExplanation ? '解説を閉じる' : '解説を見る'}</button>
+                  </div>
+                )}
+                <nav className="practice-question-actions" aria-label="問題の移動"><button disabled={previousDisabled} onClick={() => move(-1)} type="button">前へ</button><button className={revealed ? 'practice-next-primary' : undefined} disabled={nextDisabled} onClick={() => move(1)} type="button">次へ</button></nav>
+                {revealed && showExplanation ? (
+                  <section className="practice-answer-panel" id="practice-explanation">
                     <div className="practice-answer-block"><strong>条件</strong><p><RichText text={displayQuestion.stem} /></p></div>
                     <div className="practice-answer-block"><strong>決め手</strong><p><RichText text={displayQuestion.explanation} /></p></div>
                     <h3>選択肢ごとの判定</h3>
                     <ol className="practice-choice-reasons">{displayQuestion.choices.map((choice, choiceIndex) => <li data-testid="choice-reason" key={choice}><strong>{String.fromCharCode(65 + choiceIndex)}. {displayQuestion.correct.includes(choiceIndex) ? '正解' : '不正解'}</strong><span><RichText text={displayQuestion.choiceReasons[choiceIndex]} /></span></li>)}</ol>
                     <a href={`?view=materials&material=${displayQuestion.materialId}`}>関連教材を復習する</a>
                   </section>
-                )}
-                <nav className="practice-question-actions" aria-label="問題の移動"><button disabled={previousDisabled} onClick={() => move(-1)} type="button">前へ</button><button disabled={nextDisabled} onClick={() => move(1)} type="button">次へ</button></nav>
+                ) : null}
+
               </section>
             )}
           </section>
