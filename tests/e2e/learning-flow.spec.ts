@@ -102,6 +102,7 @@ test('問題回答を保存して誤答復習と学習記録へ反映する', as
     if (!sawWrong) await page.getByRole('button', { name: '次へ' }).click();
   }
   expect(sawWrong).toBe(true);
+  await page.getByRole('button', { name: '解説を見る' }).click();
   await expect(page.getByText('条件', { exact: true })).toBeVisible();
   await expect(page.getByText('決め手', { exact: true })).toBeVisible();
   await expect(page.getByTestId('choice-reason')).toHaveCount(4);
@@ -112,7 +113,7 @@ test('問題回答を保存して誤答復習と学習記録へ反映する', as
   assertNoErrors();
 });
 
-test('基本問題の20問セットを選び、意味の説明まで確認できる', async ({ page }) => {
+test('基本問題の20問セットを選び、回答後は解説を開かず次へ進める', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=vocabulary&vocabSet=2');
   await expect(page.getByText('基本問題 · セット2')).toBeVisible();
@@ -126,8 +127,10 @@ test('基本問題の20問セットを選び、意味の説明まで確認でき
   await page.getByRole('button', { name: '解答する' }).click();
   await expect(page.getByText(/^(正解|不正解)$/)).toBeVisible();
   await expect(questionHeading).toHaveText(stemBeforeAnswer);
-  await expect(page.getByText('決め手', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '選択肢ごとの判定' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '解説を見る' })).toBeVisible();
+  await expect(page.getByText('決め手', { exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: '次へ' }).click();
+  await expect(questionHeading).not.toHaveText(stemBeforeAnswer);
   assertNoErrors();
 });
 

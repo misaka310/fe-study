@@ -5,13 +5,18 @@ import { questions } from '../src/content/questions';
 import { STORAGE_KEY } from '../src/learning/storage';
 
 describe('PracticeRunner', () => {
-  it('回答後に正誤と全選択肢の理由を表示し、履歴を保存する', async () => {
+  it('回答後は次へ進め、必要なときだけ解説を展開できる', async () => {
     localStorage.clear();
     render(<PracticeRunner questionCount={217} mode="all" />);
     const choices = await screen.findAllByRole('radio');
     fireEvent.click(choices[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     expect(screen.getByText(/^(正解|不正解)$/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '次へ' })).toBeEnabled();
+    const explanationButton = screen.getByRole('button', { name: '解説を見る' });
+    expect(explanationButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('条件')).not.toBeInTheDocument();
+    fireEvent.click(explanationButton);
     expect(screen.getByText('条件')).toBeInTheDocument();
     expect(screen.getByText('決め手')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '選択肢ごとの判定' })).toBeInTheDocument();
