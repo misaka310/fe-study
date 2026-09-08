@@ -1,10 +1,17 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { questions } from '../content/questions';
 import { vocabularyQuestions } from '../content/vocabulary';
 import type { Question } from '../domain/types';
-import { buildWeaknessRanking, orderQuestionIds, recordAttempt } from '../learning/state';
+import {
+  firstUnansweredIndex,
+  loadOrCreatePracticeSession,
+  resetPracticeSession,
+  savePracticeAnswer,
+  type PracticeSession,
+} from '../learning/practiceSession';
+import { buildWeaknessRanking, recordAttempt } from '../learning/state';
 import { useLearningState } from '../learning/useLearningState';
 import { PortalHeader } from './PortalHeader';
 import { RichText } from './RichText';
@@ -54,29 +61,63 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const [revealed, setRevealed] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [answeredContext, setAnsweredContext] = useState<AnsweredContext | null>(null);
-  const [sessionSeed, setSessionSeed] = useState(() => Date.now());
+  const [practiceSession, setPracticeSession] = useState<PracticeSession | null>(null);
+  const [activeSessionKey, setActiveSessionKey] = useState<string | null>(null);
   const allPracticeQuestions = useMemo(() => [...questions, ...vocabularyQuestions], []);
   const weakTopics = useMemo(() => new Set(buildWeaknessRanking(state, allPracticeQuestions).map((item) => item.topic)), [allPracticeQuestions, state]);
-  const pool = useMemo(() => {
+
+  const basePool = useMemo(() => {
     const sourceQuestions = selectedMode === 'vocabulary' ? vocabularyQuestions : selectedMode === 'weakness' ? allPracticeQuestions : questions;
-    const filtered = sourceQuestions.filter((question) => {
+    return sourceQuestions.filter((question) => {
       if (subject && question.subject !== subject) return false;
       if (materialId && question.materialId !== materialId) return false;
       if (domain && question.domain !== domain) return false;
       if (selectedMode === 'vocabulary' && question.vocabularySet !== selectedVocabularySet) return false;
-      const attempts = state.attempts[question.id] ?? [];
-      if (selectedMode === 'unanswered') return attempts.length === 0;
-      if (selectedMode === 'wrong') return attempts.length > 0 && !attempts.at(-1)!.correct;
-      if (selectedMode === 'weakness') return weakTopics.has(question.topic);
       return true;
     });
-    const order = new Map(orderQuestionIds(filtered.map((question) => question.id), sessionSeed).map((id, orderIndex) => [id, orderIndex]));
-    return [...filtered].sort((left, right) => order.get(left.id)! - order.get(right.id)!);
-  }, [allPracticeQuestions, domain, materialId, selectedMode, selectedVocabularySet, sessionSeed, state, subject, weakTopics]);
+  }, [allPracticeQuestions, domain, materialId, selectedMode, selectedVocabularySet, subject]);
+
+  const candidatePool = useMemo(() => basePool.filter((question) => {
+    const attempts = state.attempts[question.id] ?? [];
+    if (selectedMode === 'unanswered') return attempts.length === 0;
+    if (selectedMode === 'wrong') return attempts.length > 0 && !attempts.at(-1)!.correct;
+    if (selectedMode === 'weakness') return weakTopics.has(question.topic);
+    return true;
+  }), [basePool, selectedMode, state, weakTopics]);
+
+  const sessionKey = useMemo(() => [
+    'practice-v1', selectedMode, subject ?? '', materialId ?? '', domain ?? '', selectedMode === 'vocabulary' ? selectedVocabularySet : '',
+  ].join('|'), [domain, materialId, selectedMode, selectedVocabularySet, subject]);
+  const candidateIds = useMemo(() => candidatePool.map((question) => question.id), [candidatePool]);
+  const validIds = useMemo(() => new Set(basePool.map((question) => question.id)), [basePool]);
+
+  useEffect(() => {
+    if (!ready || activeSessionKey === sessionKey) return;
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      const nextSession = loadOrCreatePracticeSession(sessionKey, candidateIds, validIds);
+      setPracticeSession(nextSession);
+      setIndex(nextSession ? firstUnansweredIndex(nextSession) : 0);
+      setPick(null);
+      setRevealed(false);
+      setShowExplanation(false);
+      setAnsweredContext(null);
+      setActiveSessionKey(sessionKey);
+    });
+    return () => { active = false; };
+  }, [activeSessionKey, candidateIds, ready, sessionKey, validIds]);
+
+  const pool = useMemo(() => {
+    if (activeSessionKey !== sessionKey || !practiceSession) return [];
+    const byId = new Map(basePool.map((question) => [question.id, question]));
+    return practiceSession.questionIds
+      .map((questionId) => byId.get(questionId))
+      .filter((question): question is Question => Boolean(question));
+  }, [activeSessionKey, basePool, practiceSession, sessionKey]);
 
   const currentIndex = Math.min(index, Math.max(0, pool.length - 1));
   const current = pool[currentIndex];
-  const answeredQuestionRemoved = Boolean(revealed && answeredContext && !pool.some((question) => question.id === answeredContext.question.id));
   const displayQuestion = revealed && answeredContext ? answeredContext.question : current;
   const displayIndex = revealed && answeredContext ? answeredContext.index : currentIndex;
   const displayTotal = revealed && answeredContext ? answeredContext.total : pool.length;
@@ -85,12 +126,22 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const correctCount = answered.filter((question) => latestAttempt(question.id, state.attempts)?.correct).length;
   const wrongQuestions = pool.filter((question) => latestAttempt(question.id, state.attempts) && !latestAttempt(question.id, state.attempts)?.correct);
   const weaknessRanking = useMemo(() => buildWeaknessRanking(state, allPracticeQuestions).slice(0, 5), [allPracticeQuestions, state]);
+  const sessionAnsweredIds = useMemo(() => new Set(practiceSession?.answeredIds ?? []), [practiceSession]);
+
+  const findMoveTarget = (direction: number) => {
+    for (let target = currentIndex + direction; target >= 0 && target < pool.length; target += direction) {
+      if (!sessionAnsweredIds.has(pool[target].id)) return target;
+    }
+    return -1;
+  };
+
+  const previousTarget = findMoveTarget(-1);
+  const nextTarget = findMoveTarget(1);
 
   const move = (direction: number) => {
-    setIndex((value) => {
-      const requested = answeredQuestionRemoved && direction > 0 ? value : value + direction;
-      return Math.max(0, Math.min(Math.max(0, pool.length - 1), requested));
-    });
+    const target = direction < 0 ? previousTarget : nextTarget;
+    if (target < 0) return;
+    setIndex(target);
     setPick(null);
     setRevealed(false);
     setShowExplanation(false);
@@ -98,7 +149,9 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   };
 
   const shuffle = () => {
-    setSessionSeed(Date.now());
+    const nextSession = resetPracticeSession(sessionKey, candidateIds);
+    setPracticeSession(nextSession);
+    setActiveSessionKey(sessionKey);
     setIndex(0);
     setPick(null);
     setRevealed(false);
@@ -106,10 +159,10 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     setAnsweredContext(null);
   };
 
-  const previousDisabled = displayIndex <= 0;
-  const nextDisabled = answeredQuestionRemoved ? index >= pool.length : currentIndex >= pool.length - 1;
+  const previousDisabled = previousTarget < 0;
+  const nextDisabled = nextTarget < 0;
 
-  if (!ready) return <main className="study-shell"><p>学習履歴を読み込んでいます…</p></main>;
+  if (!ready || activeSessionKey !== sessionKey) return <main className="study-shell"><p>学習履歴を読み込んでいます…</p></main>;
 
   return (
     <div className="portal-page">
@@ -171,9 +224,10 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
                   })}
                 </fieldset>
                 {!revealed ? <button className="practice-answer-button" disabled={pick === null} onClick={() => {
-                  if (pick === null || !current) return;
+                  if (pick === null || !current || !practiceSession) return;
                   const answeredQuestion = current;
                   setAnsweredContext({ question: answeredQuestion, index: currentIndex, total: pool.length });
+                  setPracticeSession(savePracticeAnswer(sessionKey, practiceSession, answeredQuestion.id));
                   update((value) => recordAttempt(value, answeredQuestion.id, [pick], answeredQuestion.correct.includes(pick), new Date().toISOString()));
                   setRevealed(true);
                   setShowExplanation(false);
