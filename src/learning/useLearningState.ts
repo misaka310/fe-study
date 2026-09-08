@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { questions } from '../content/questions';
+import { vocabularyQuestions } from '../content/vocabulary';
 import type { LearningState } from '../domain/types';
 import { createEmptyState } from './state';
 import { loadLearningState, saveLearningState } from './storage';
 
-const knownIds = new Set(questions.map((question) => question.id));
+const knownIds = new Set([...questions, ...vocabularyQuestions].map((question) => question.id));
 
 export function useLearningState() {
   const [state, setState] = useState<LearningState>(createEmptyState);
