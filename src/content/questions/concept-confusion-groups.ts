@@ -5,7 +5,7 @@ export const conceptConfusionGroups: Record<string, readonly (readonly string[])
     ['パイプライン', 'マルチコア', 'GPU', 'ALU', 'アムダールの法則'],
   ],
   'a-software': [
-    ['プロセス', 'スレッド', '排他制御', 'デッドロック', 'ラウンドロビン'],
+    ['プロセス', 'スレッド', '排他制御', 'デッドロック', 'ラウンドロビン', 'スプーリング'],
     ['コンパイラ', 'インタプリタ', 'リンカ', 'ローダ'],
   ],
   'a-database': [
@@ -14,7 +14,7 @@ export const conceptConfusionGroups: Record<string, readonly (readonly string[])
     ['トランザクション', '原子性', '直列可能性', '共有ロック', 'ロールバック', 'チェックポイント'],
   ],
   'a-network': [
-    ['IPアドレス', 'サブネットマスク', 'デフォルトゲートウェイ', 'ARP', 'DNS', 'DHCP', 'NAT', 'ルーティング'],
+    ['OSI基本参照モデル', 'IPアドレス', 'サブネットマスク', 'デフォルトゲートウェイ', 'ARP', 'DNS', 'DHCP', 'NAT', 'ルーティング'],
     ['TCP', 'UDP', 'HTTP', 'SMTP', 'IMAP', 'DNS'],
     ['ルーティング', 'VLAN', 'CDN', 'ロードバランサ', 'QoS', 'NAT'],
   ],
