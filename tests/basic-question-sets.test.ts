@@ -49,7 +49,7 @@ describe('基本問題 20問×5セット', () => {
     }
   });
 
-  it('セキュリティ問題の誤答も同じ論点で迷える現実的な選択肢にする', () => {
+  it('誤答も同じ論点・比較軸で迷える現実的な選択肢にする', () => {
     const sqlInjection = vocabularyQuestions.find((question) => question.id === 'basic-set1-14');
     expect(sqlInjection).toBeDefined();
     expect(sqlInjection?.choices).toEqual([
@@ -58,5 +58,39 @@ describe('基本問題 20問×5セット', () => {
       'WAFでSQLインジェクションらしい要求を遮断し、アプリ側の文字列連結はそのままにする',
       '入力値を正規表現で検査した後、エスケープせずSQL文へ文字列連結する',
     ]);
+
+    const outerJoin = vocabularyQuestions.find((question) => question.id === 'basic-set2-07');
+    expect(outerJoin?.choices).toEqual([
+      '顧客表を左側にしたLEFT OUTER JOIN',
+      '顧客表を左側にしたINNER JOIN',
+      '顧客表を左側にしたRIGHT OUTER JOIN',
+      '顧客表と注文表のCROSS JOIN',
+    ]);
+
+    const unrelatedDistractors = [
+      /画面のリフレッシュレート/,
+      /キーボード配列/,
+      /ファイル名の拡張子/,
+      /CPU温度/,
+      /サーバラックの色/,
+      /作者の好きな色/,
+      /開発PCの壁紙/,
+      /異なる文字コード/,
+      /画像を自動圧縮/,
+      /テーブル名を短い名前/,
+      /列名を変更/,
+      /全列を一つの文字列/,
+      /ページサイズを必ず1バイト/,
+      /主記憶が不要/,
+      /割込みが完全になくなる/,
+      /ファイル名を連番/,
+      /データベースの列名を短く/,
+      /HTTPレスポンスをgzip圧縮/,
+    ];
+    for (const question of vocabularyQuestions) {
+      for (const choice of question.choices) {
+        for (const pattern of unrelatedDistractors) expect(choice, `${question.id}: ${choice}`).not.toMatch(pattern);
+      }
+    }
   });
 });
