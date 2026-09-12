@@ -59,14 +59,6 @@ function shuffled<T>(items: readonly T[], random: () => number): T[] {
   return result;
 }
 
-function seededRandom(seed: number) {
-  let value = seed >>> 0;
-  return () => {
-    value = (value * 1664525 + 1013904223) >>> 0;
-    return value / 4294967296;
-  };
-}
-
 function stableQuestionRank(id: string, seed: number) {
   let hash = (2166136261 ^ (seed >>> 0)) >>> 0;
   for (let index = 0; index < id.length; index += 1) {

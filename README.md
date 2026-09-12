@@ -12,6 +12,7 @@
 - 全問、科目別、分野別、未回答、誤答、弱点優先の演習モード
 - 問題順をセッションごとに安定シャッフルし、回答済み問題が除外されても残りの相対順序を維持
 - 全問題で「条件」「決め手」「正答理由」「各選択肢を外す理由」を確認
+- 難度の高い問題ではWebPの解説図を表示し、「次へ」押下時に次問の解説図を先読み
 - 科目A **60問 / 90分**、科目B **20問 / 100分**の模擬試験
 - TTL、DNS、TCP、UDPなどの略語を本文中で確認できる用語チップ
 - 教材内容を補助する説明図と、章・節から関連問題へ進める導線
@@ -63,7 +64,8 @@ npm run dev
 - `src/content/materials/` — 教材本文
 - `src/content/questions/` — 独自問題
 - `src/content/glossary.ts` — 用語データ
-- `src/content/visuals.ts` / `public/images/` — 説明図のメタデータと画像資産
+- `src/content/visuals.ts` / `public/images/` — 教材説明図のメタデータと画像資産
+- `src/content/explanationVisuals.ts` / `public/images/explanations/` — 問題解説図のメタデータとWebP画像資産
 - `src/learning/` — 学習状態、保存、バックアップ
 - `tests/` — 単体・統合・E2Eテスト
 - [`docs/SPEC.md`](./docs/SPEC.md) — 仕様の正本

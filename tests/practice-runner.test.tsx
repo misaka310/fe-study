@@ -1,8 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PracticeRunner } from '../src/components/PracticeRunner';
 import { questions } from '../src/content/questions';
 import { STORAGE_KEY } from '../src/learning/storage';
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe('PracticeRunner', () => {
   it('回答後は次へ進め、必要なときだけ解説を展開できる', async () => {
@@ -22,6 +26,33 @@ describe('PracticeRunner', () => {
     expect(screen.getByRole('heading', { name: '選択肢ごとの判定' })).toBeInTheDocument();
     expect(screen.getAllByTestId('choice-reason')).toHaveLength(4);
     expect(localStorage.getItem(STORAGE_KEY)).toContain('attempts');
+  });
+
+  it('次へを押すと次のアルゴリズム問題の解説画像を先読みする', async () => {
+    localStorage.clear();
+    const loadedSources: string[] = [];
+
+    class MockImage {
+      private value = '';
+
+      set src(value: string) {
+        this.value = value;
+        loadedSources.push(value);
+      }
+
+      get src() {
+        return this.value;
+      }
+    }
+
+    vi.stubGlobal('Image', MockImage);
+    render(<PracticeRunner questionCount={questions.length} mode="all" domain="algorithm" />);
+    fireEvent.click((await screen.findAllByRole('radio'))[0]);
+    fireEvent.click(screen.getByRole('button', { name: '解答する' }));
+    fireEvent.click(screen.getByRole('button', { name: '次へ' }));
+
+    expect(loadedSources).toHaveLength(1);
+    expect(loadedSources[0]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
   });
 
   it('未回答モードでは回答済み問題を除外する', async () => {

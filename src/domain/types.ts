@@ -1,5 +1,12 @@
 export type Subject = 'A' | 'B';
 
+export interface ExplanationVisual {
+  src: string;
+  alt: string;
+  label: string;
+  description: string;
+}
+
 export interface Question {
   id: string;
   subject: Subject;
@@ -13,6 +20,7 @@ export interface Question {
   materialId: string;
   difficulty: 1 | 2 | 3;
   code?: string;
+  explanationVisual?: ExplanationVisual;
   practiceKind?: 'standard' | 'vocabulary';
   vocabularySet?: 1 | 2 | 3 | 4 | 5;
 }
