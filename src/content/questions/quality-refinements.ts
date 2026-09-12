@@ -9,6 +9,8 @@ interface ChoicePatch {
 interface QuestionPatch {
   stem?: string;
   explanation?: string;
+  correctChoice?: string;
+  correctReason?: string;
   choices?: readonly ChoicePatch[];
 }
 
@@ -16,6 +18,8 @@ const patches: Record<string, QuestionPatch> = {
   'a-theory-005': {
     stem: 'A=1、B=0のとき、(A XOR B)、(NOT B)、(A XOR B) AND (NOT B) の3値をこの順に並べたものはどれか。',
     explanation: '決め手は各演算を順に追うことです。A XOR Bは1、NOT Bも1、その二つのANDも1なので(1, 1, 1)です。',
+    correctChoice: '(1, 1, 1)',
+    correctReason: 'A XOR Bは1、NOT Bは1、その二つのANDも1なので、3値は(1, 1, 1)です。',
     choices: [
       { index: 0, choice: '(1, 0, 0)', reason: 'B=0なのでNOT Bは1です。NOTの反転を落とした追跡になっています。' },
       { index: 1, choice: '(0, 1, 0)', reason: 'A=1とB=0は異なるためA XOR Bは1です。XORを同値判定のように扱った結果です。' },
@@ -97,6 +101,10 @@ export function strengthenQuestionDistractors(questions: readonly Question[]): Q
 
     const choices = [...question.choices];
     const choiceReasons = [...question.choiceReasons];
+    const correctIndex = question.correct[0];
+    if (patch.correctChoice) choices[correctIndex] = patch.correctChoice;
+    if (patch.correctReason) choiceReasons[correctIndex] = patch.correctReason;
+
     for (const choicePatch of patch.choices ?? []) {
       if (question.correct.includes(choicePatch.index)) {
         throw new Error(`${question.id}: 正答位置を品質パッチで変更できません`);
