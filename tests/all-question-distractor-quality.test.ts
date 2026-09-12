@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { vocabularyQuestions } from '../src/content/vocabulary';
 import { questions } from '../src/content/questions';
+import { conceptConfusionGroups } from '../src/content/questions/concept-confusion-groups';
+import { conceptDistractorOverrides } from '../src/content/questions/concept-distractor-overrides';
 
 const allQuestions = [...questions, ...vocabularyQuestions];
+const conceptQuestionPattern = /^a-(computer|software|database|network|security|development|management|strategy)-\d{3}$/;
 
 const unrelatedFillerPatterns = [
   /画面のリフレッシュレート/,
@@ -51,6 +54,28 @@ describe('全問題バンクの選択肢品質', () => {
       expect(new Set(question.choices).size, question.id).toBe(question.choices.length);
       expect(question.choiceReasons).toHaveLength(question.choices.length);
       expect(question.choiceReasons.every((reason) => reason.trim().length >= 10), question.id).toBe(true);
+    }
+  });
+
+  it('自動生成する用語問題は混同候補グループか明示オーバーライドの中だけから誤答を選ぶ', () => {
+    const conceptQuestions = questions.filter((question) => conceptQuestionPattern.test(question.id));
+    expect(conceptQuestions.length).toBeGreaterThan(100);
+
+    for (const question of conceptQuestions) {
+      const correctIndex = question.correct[0];
+      const correctChoice = question.choices[correctIndex];
+      const wrongChoices = question.choices.filter((_, index) => index !== correctIndex);
+      const override = conceptDistractorOverrides[correctChoice];
+
+      if (override) {
+        expect([...wrongChoices].sort(), question.id).toEqual(override.map(({ term }) => term).sort());
+        continue;
+      }
+
+      const prefix = question.id.replace(/-\d{3}$/, '');
+      const group = conceptConfusionGroups[prefix]?.find((terms) => terms.includes(correctChoice));
+      expect(group, `${question.id}: ${correctChoice}`).toBeDefined();
+      expect(wrongChoices.every((choice) => group?.includes(choice)), question.id).toBe(true);
     }
   });
 
