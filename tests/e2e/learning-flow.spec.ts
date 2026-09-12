@@ -134,6 +134,32 @@ test('基本問題の20問セットを選び、回答後は解説を開かず次
   assertNoErrors();
 });
 
+test('TCO問題の解説では正式名称を表示し、CPUのような基本略語は増やさない', async ({ page }) => {
+  const assertNoErrors = rejectBrowserErrors(page);
+  await page.evaluate(() => {
+    localStorage.setItem('fe-study-practice-sessions-v1', JSON.stringify({
+      'practice-v1|vocabulary|||strategy|3': {
+        seed: 1,
+        questionIds: ['basic-set3-19'],
+        answeredIds: [],
+      },
+    }));
+  });
+  await page.goto('/?view=practice&mode=vocabulary&vocabSet=3&domain=strategy');
+  await expect(page.locator('.practice-question-card h2')).toContainText('5年間');
+  await page.getByRole('radio').first().check();
+  await page.getByRole('button', { name: '解答する' }).click();
+  await page.getByRole('button', { name: '解説を見る' }).click();
+
+  await expect(page.getByText('略語メモ', { exact: true })).toBeVisible();
+  const acronymList = page.locator('.practice-acronym-list');
+  await expect(acronymList).toContainText('TCO');
+  await expect(acronymList).toContainText('Total Cost of Ownership');
+  await expect(acronymList).toContainText('総保有コスト');
+  await expect(acronymList).not.toContainText('CPU');
+  assertNoErrors();
+});
+
 test('未回答だけで回答した直後も同じ問題の結果を表示する', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=unanswered');

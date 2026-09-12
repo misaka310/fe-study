@@ -64,6 +64,15 @@
 
 一つでも満たさなければ、その問題は未完成として修正します。
 
+## 略語の解説ルール
+
+- 317問すべてについて、問題文・選択肢・解説・選択肢理由に現れる英字略語を監査します。
+- TCO、KPI、SLA、WBS、DMA、SPF、DKIM、DMARCなど、正式名称が学習に有用な略語は、解説内の「略語メモ」で `略語 / 英語の正式名称 / 日本語での短い意味` を示します。
+- CPU、GPU、PC、OS、IP、DB、HTML、CSS、RAM、ROM、LANなど、基本用語として十分に一般的なものは解説を過密にしないため対象外にできます。
+- SQL予約語、論理演算子、変数名、単位など、略語ではない大文字表記も対象外です。
+- 表示対象は `src/content/questionAcronyms.ts` の `questionAcronymGlossary`、対象外は `questionAcronymExclusions` を正本とします。
+- 新しい問題で未分類の大文字略語が増えた場合は `tests/question-acronyms.test.ts` を失敗させ、表示対象か対象外かを明示的に決めます。
+
 ## 自動検査
 
 自動テストでは最低限、317問全体に対して次を確認します。
