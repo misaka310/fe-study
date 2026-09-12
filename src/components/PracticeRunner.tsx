@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { questions } from '../content/questions';
+import { preloadExplanationVisual } from '../content/explanationVisuals';
 import { vocabularyQuestions } from '../content/vocabulary';
 import type { Question } from '../domain/types';
 import {
@@ -14,6 +15,7 @@ import {
 import { buildWeaknessRanking, recordAttempt } from '../learning/state';
 import { useLearningState } from '../learning/useLearningState';
 import { PortalHeader } from './PortalHeader';
+import { QuestionExplanationVisual } from './QuestionExplanationVisual';
 import { RichText } from './RichText';
 
 type PracticeMode = 'all' | 'unanswered' | 'wrong' | 'weakness' | 'vocabulary';
@@ -141,6 +143,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const move = (direction: number) => {
     const target = direction < 0 ? previousTarget : nextTarget;
     if (target < 0) return;
+    if (direction > 0) preloadExplanationVisual(pool[target]?.explanationVisual);
     setIndex(target);
     setPick(null);
     setRevealed(false);
@@ -242,6 +245,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
                   <section className="practice-answer-panel" id="practice-explanation">
                     <div className="practice-answer-block"><strong>条件</strong><p><RichText text={displayQuestion.stem} /></p></div>
                     <div className="practice-answer-block"><strong>決め手</strong><p><RichText text={displayQuestion.explanation} /></p></div>
+                    {displayQuestion.explanationVisual ? <QuestionExplanationVisual visual={displayQuestion.explanationVisual} /> : null}
                     <h3>選択肢ごとの判定</h3>
                     <ol className="practice-choice-reasons">{displayQuestion.choices.map((choice, choiceIndex) => <li data-testid="choice-reason" key={choice}><strong>{String.fromCharCode(65 + choiceIndex)}. {displayQuestion.correct.includes(choiceIndex) ? '正解' : '不正解'}</strong><span><RichText text={displayQuestion.choiceReasons[choiceIndex]} /></span></li>)}</ol>
                     <a href={`?view=materials&material=${displayQuestion.materialId}`}>関連教材を復習する</a>

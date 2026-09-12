@@ -5,6 +5,7 @@ import { basicSet2 } from './basic/set2';
 import { basicSet3 } from './basic/set3';
 import { basicSet4 } from './basic/set4';
 import { basicSet5 } from './basic/set5';
+import { attachExplanationVisual } from './explanationVisuals';
 
 /**
  * 旧「基礎単語」カードは廃止済み。
@@ -17,4 +18,4 @@ export const vocabularyQuestions = Object.freeze(strengthenBasicDistractors(refi
   ...basicSet3,
   ...basicSet4,
   ...basicSet5,
-])));
+])).map(attachExplanationVisual));
