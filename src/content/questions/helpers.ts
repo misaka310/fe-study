@@ -77,22 +77,26 @@ function textSimilarity(left: string, right: string) {
   return intersection / new Set([...a, ...b]).size;
 }
 
-function pickNearbyConcepts(cards: ConceptCard[], index: number, prefix: string) {
+function choiceSetKey(answer: string, wrongChoices: readonly string[]) {
+  return [answer, ...wrongChoices].sort().join('\n');
+}
+
+function pickNearbyConcepts(
+  cards: ConceptCard[],
+  index: number,
+  prefix: string,
+  usedChoiceSets: Set<string>,
+) {
   const source = cards[index];
   const group = conceptConfusionGroups[prefix]?.find((terms) => terms.includes(source.term));
   if (!group) {
     throw new Error(`${prefix}/${source.term}: 混同候補グループまたは明示オーバーライドが必要です`);
   }
 
+  const sourceText = `${source.term} ${source.clue}`;
   const candidates = cards
     .map((candidate, candidateIndex) => ({ candidate, candidateIndex }))
-    .filter(({ candidate, candidateIndex }) => candidateIndex !== index && group.includes(candidate.term));
-  if (candidates.length < 3) {
-    throw new Error(`${prefix}/${source.term}: 混同候補は3件以上必要です`);
-  }
-
-  const sourceText = `${source.term} ${source.clue}`;
-  return candidates
+    .filter(({ candidate, candidateIndex }) => candidateIndex !== index && group.includes(candidate.term))
     .map(({ candidate, candidateIndex }) => ({
       candidate,
       candidateIndex,
@@ -103,9 +107,25 @@ function pickNearbyConcepts(cards: ConceptCard[], index: number, prefix: string)
       right.similarity - left.similarity
       || left.distance - right.distance
       || left.candidateIndex - right.candidateIndex
-    ))
-    .slice(0, 3)
-    .map(({ candidate }) => candidate);
+    ));
+
+  if (candidates.length < 3) {
+    throw new Error(`${prefix}/${source.term}: 混同候補は3件以上必要です`);
+  }
+
+  for (let first = 0; first < candidates.length - 2; first += 1) {
+    for (let second = first + 1; second < candidates.length - 1; second += 1) {
+      for (let third = second + 1; third < candidates.length; third += 1) {
+        const selected = [candidates[first], candidates[second], candidates[third]];
+        const key = choiceSetKey(source.term, selected.map(({ candidate }) => candidate.term));
+        if (!usedChoiceSets.has(key)) {
+          return selected.map(({ candidate }) => candidate);
+        }
+      }
+    }
+  }
+
+  throw new Error(`${prefix}/${source.term}: 既存問題と重複しない近接概念3件を選べません。明示オーバーライドが必要です`);
 }
 
 export function makeConceptQuestions(
@@ -116,15 +136,21 @@ export function makeConceptQuestions(
   cards: ConceptCard[],
 ): Question[] {
   if (cards.length < 5) throw new Error(`${prefix}: 概念カードは5件以上必要です`);
+  const usedChoiceSets = new Set<string>();
   return cards.map((card, index) => {
     const override = conceptDistractorOverrides[card.term];
-    const nearby = override ? [] : pickNearbyConcepts(cards, index, prefix);
+    const nearby = override ? [] : pickNearbyConcepts(cards, index, prefix, usedChoiceSets);
     const wrong: [string, string][] = override
       ? override.map(({ term, reason }): [string, string] => [term, reason])
       : nearby.map((candidate): [string, string] => [
         candidate.term,
         `${candidate.term}は「${candidate.clue}」を表すため、設問の役割・目的・処理段階とは一致しません。`,
       ]);
+    const key = choiceSetKey(card.term, wrong.map(([choice]) => choice));
+    if (usedChoiceSets.has(key)) {
+      throw new Error(`${prefix}/${card.term}: 明示オーバーライドの選択肢セットが既存問題と重複しています`);
+    }
+    usedChoiceSets.add(key);
 
     const seed: QuestionSeed = {
       id: `${prefix}-${String(index + 1).padStart(3, '0')}`,
