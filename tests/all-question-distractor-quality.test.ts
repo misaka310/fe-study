@@ -81,6 +81,22 @@ describe('全問題バンクの選択肢品質', () => {
     ]);
   });
 
+  it('プログラム問題は同じ返却型・同じ追跡軸で迷える選択肢にする', () => {
+    const booleanTrace = questions.find((question) => question.id === 'b-algorithm-009');
+    expect(booleanTrace?.choices).toEqual([
+      '(false, false, false)',
+      '(true, true, true)',
+      '(false, true, true)',
+      '(false, true, false)',
+    ]);
+
+    const sentinel = questions.find((question) => question.id === 'b-algorithm-030');
+    expect(sentinel?.choices).toEqual(['(4, true)', '(5, false)', '(5, true)', '(4, false)']);
+
+    const memoization = questions.find((question) => question.id === 'b-algorithm-042');
+    expect(memoization?.choices).toEqual(['ボトムアップ法', '単純再帰', '分割統治法', 'メモ化']);
+  });
+
   it('用語問題の孤立概念は明示した近接概念で比較させる', () => {
     const dma = questions.find((question) => question.id === 'a-computer-012');
     expect(dma?.choices).toEqual(['割込み駆動I/O', 'ポーリングI/O', 'メモリマップドI/O', 'DMA']);
