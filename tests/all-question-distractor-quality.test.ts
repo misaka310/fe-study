@@ -83,11 +83,33 @@ describe('全問題バンクの選択肢品質', () => {
     const booleanTrace = questions.find((question) => question.id === 'a-theory-005');
     expect(booleanTrace?.choices).toEqual(['(1, 0, 0)', '(0, 1, 0)', '(1, 1, 1)', '(1, 1, 0)']);
 
+    const huffman = questions.find((question) => question.id === 'a-theory-011');
+    expect(huffman?.choices).toEqual(['ハフマン符号', 'シャノン・ファノ符号', '算術符号', 'LZ77']);
+
     const errorDetection = questions.find((question) => question.id === 'a-theory-017');
     expect(errorDetection?.choices).toEqual(['CRC', 'ハミング符号', 'チェックサム', 'パリティチェック']);
 
+    const absolutePath = questions.find((question) => question.id === 'a-supp-005');
+    expect(absolutePath?.choices).toEqual([
+      'ルートディレクトリを起点に、目的ファイルまでの全経路を記述する',
+      '現在の作業ディレクトリを起点に、目的ファイルまでの経路を記述する',
+      '親ディレクトリを表す「..」を起点に、目的ファイルまでの経路を記述する',
+      '別のパスを指すシンボリックリンクを作成し、そのリンク名だけを記述する',
+    ]);
+
+    const whereClause = questions.find((question) => question.id === 'a-supp-006');
+    expect(whereClause?.choices).toEqual(['ORDER BY句', 'WHERE句', 'GROUP BY句', 'HAVING句']);
+
     const sizing = questions.find((question) => question.id === 'a-supp-011');
     expect(sizing?.choices).toEqual(['LOC法', 'COCOMO', 'ファンクションポイント法', '類推見積法']);
+
+    const evm = questions.find((question) => question.id === 'a-supp-012');
+    expect(evm?.choices).toEqual([
+      '実際に発生した費用の累計',
+      '実際に完了した作業量を金額換算した価値',
+      'BAC（完了時総予算）',
+      '計画時点で、その時点までに完了しているべき作業に割り当てられた予算(価値)',
+    ]);
 
     const sqlInjection = questions.find((question) => question.id === 'b-security-004');
     expect(sqlInjection?.choices).toEqual([
@@ -104,6 +126,18 @@ describe('全問題バンクの選択肢品質', () => {
       'ログイン失敗回数の制限だけを追加し、第二の認証要素は導入しない',
       '利用者名を推測しにくい形式へ変更し、パスワード認証自体はそのままにする',
     ]);
+
+    const vendor = questions.find((question) => question.id === 'b-security-006');
+    expect(vendor?.choices).toContain('委託先がISO/IEC 27001認証を持つことだけ確認し、事故報告や再委託条件は契約で定めない');
+
+    const logMonitoring = questions.find((question) => question.id === 'b-security-007');
+    expect(logMonitoring?.choices).toContain('認証失敗の送信元IPだけを確認し、成功後の操作ログは調べない');
+
+    const vulnerability = questions.find((question) => question.id === 'b-security-009');
+    expect(vulnerability?.choices).toContain('対象資産と影響は確認するが、検証環境を通さず本番へ修正プログラムを直接適用する');
+
+    const exfiltration = questions.find((question) => question.id === 'b-security-010');
+    expect(exfiltration?.choices).toContain('証拠保全を優先し、調査完了まで当該利用者の権限と外部通信をそのまま維持する');
   });
 
   it('プログラム問題は同じ返却型・同じ追跡軸で迷える選択肢にする', () => {
@@ -131,6 +165,12 @@ describe('全問題バンクの選択肢品質', () => {
 
     const mtbf = questions.find((question) => question.id === 'a-computer-018');
     expect(mtbf?.choices).toEqual(['MTTR', 'MTBF', 'MTTF', '稼働率']);
+
+    const firstNormalForm = questions.find((question) => question.id === 'a-database-003');
+    expect(firstNormalForm?.choices).toEqual(['第1正規形', '第2正規形', '第3正規形', 'BCNF']);
+
+    const osi = questions.find((question) => question.id === 'a-network-001');
+    expect(osi?.choices).toEqual(['OSI基本参照モデル', 'TCP/IPモデル', '5層インターネットモデル', 'DoDモデル']);
 
     const riskTransfer = questions.find((question) => question.id === 'a-management-004');
     expect(riskTransfer?.choices).toEqual(['リスク回避', 'リスク低減', 'リスク受容', 'リスク移転']);
