@@ -1,4 +1,5 @@
 import type { Question, Subject } from '../../domain/types';
+import { conceptConfusionGroups } from './concept-confusion-groups';
 import { conceptDistractorOverrides } from './concept-distractor-overrides';
 
 export interface QuestionSeed {
@@ -76,18 +77,28 @@ function textSimilarity(left: string, right: string) {
   return intersection / new Set([...a, ...b]).size;
 }
 
-function pickNearbyConcepts(cards: ConceptCard[], index: number) {
+function pickNearbyConcepts(cards: ConceptCard[], index: number, prefix: string) {
   const source = cards[index];
-  const sourceText = `${source.term} ${source.clue}`;
+  const group = conceptConfusionGroups[prefix]?.find((terms) => terms.includes(source.term));
+  if (!group) {
+    throw new Error(`${prefix}/${source.term}: 混同候補グループまたは明示オーバーライドが必要です`);
+  }
 
-  return cards
-    .map((candidate, candidateIndex) => ({
+  const candidates = cards
+    .map((candidate, candidateIndex) => ({ candidate, candidateIndex }))
+    .filter(({ candidate, candidateIndex }) => candidateIndex !== index && group.includes(candidate.term));
+  if (candidates.length < 3) {
+    throw new Error(`${prefix}/${source.term}: 混同候補は3件以上必要です`);
+  }
+
+  const sourceText = `${source.term} ${source.clue}`;
+  return candidates
+    .map(({ candidate, candidateIndex }) => ({
       candidate,
       candidateIndex,
-      similarity: candidateIndex === index ? -1 : textSimilarity(sourceText, `${candidate.term} ${candidate.clue}`),
+      similarity: textSimilarity(sourceText, `${candidate.term} ${candidate.clue}`),
       distance: Math.abs(candidateIndex - index),
     }))
-    .filter(({ candidateIndex }) => candidateIndex !== index)
     .sort((left, right) => (
       right.similarity - left.similarity
       || left.distance - right.distance
@@ -107,7 +118,7 @@ export function makeConceptQuestions(
   if (cards.length < 5) throw new Error(`${prefix}: 概念カードは5件以上必要です`);
   return cards.map((card, index) => {
     const override = conceptDistractorOverrides[card.term];
-    const nearby = override ? [] : pickNearbyConcepts(cards, index);
+    const nearby = override ? [] : pickNearbyConcepts(cards, index, prefix);
     const wrong: [string, string][] = override
       ? override.map(({ term, reason }): [string, string] => [term, reason])
       : nearby.map((candidate): [string, string] => [
