@@ -7,7 +7,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
   {
-    files: ['src/components/InlineVisual.tsx', 'src/components/VisualGallery.tsx'],
+    files: ['src/components/InlineVisual.tsx', 'src/components/VisualGallery.tsx', 'src/components/QuestionExplanationVisual.tsx'],
     rules: {
       // Static study assets intentionally use native images so the same markup
       // works in the vinext/Sites runtime without an image optimizer.
