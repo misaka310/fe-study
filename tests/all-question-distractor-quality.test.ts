@@ -167,7 +167,7 @@ describe('全問題バンクの選択肢品質', () => {
     expect(mtbf?.choices).toEqual(['MTTR', 'MTBF', 'MTTF', '稼働率']);
 
     const firstNormalForm = questions.find((question) => question.id === 'a-database-003');
-    expect(firstNormalForm?.choices).toEqual(['第1正規形', '第2正規形', '第3正規形', 'BCNF']);
+    expect(firstNormalForm?.choices).toEqual(['第2正規形', '第3正規形', '第1正規形', 'BCNF']);
 
     const osi = questions.find((question) => question.id === 'a-network-001');
     expect(osi?.choices).toEqual(['OSI基本参照モデル', 'TCP/IPモデル', '5層インターネットモデル', 'DoDモデル']);
