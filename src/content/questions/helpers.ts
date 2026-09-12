@@ -109,8 +109,8 @@ export function makeConceptQuestions(
     const override = conceptDistractorOverrides[card.term];
     const nearby = override ? [] : pickNearbyConcepts(cards, index);
     const wrong: [string, string][] = override
-      ? override.map(({ term, reason }) => [term, reason])
-      : nearby.map((candidate) => [
+      ? override.map(({ term, reason }): [string, string] => [term, reason])
+      : nearby.map((candidate): [string, string] => [
         candidate.term,
         `${candidate.term}は「${candidate.clue}」を表すため、設問の役割・目的・処理段階とは一致しません。`,
       ]);
