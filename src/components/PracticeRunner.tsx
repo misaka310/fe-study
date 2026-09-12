@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { questions } from '../content/questions';
 import { preloadExplanationVisual } from '../content/explanationVisuals';
+import { questionAcronymEntries } from '../content/questionAcronyms';
 import { vocabularyQuestions } from '../content/vocabulary';
 import type { Question } from '../domain/types';
 import {
@@ -123,6 +124,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const displayQuestion = revealed && answeredContext ? answeredContext.question : current;
   const displayIndex = revealed && answeredContext ? answeredContext.index : currentIndex;
   const displayTotal = revealed && answeredContext ? answeredContext.total : pool.length;
+  const acronymEntries = useMemo(() => displayQuestion ? questionAcronymEntries(displayQuestion) : [], [displayQuestion]);
 
   const answered = pool.filter((question) => latestAttempt(question.id, state.attempts));
   const correctCount = answered.filter((question) => latestAttempt(question.id, state.attempts)?.correct).length;
@@ -245,6 +247,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
                   <section className="practice-answer-panel" id="practice-explanation">
                     <div className="practice-answer-block"><strong>条件</strong><p><RichText text={displayQuestion.stem} /></p></div>
                     <div className="practice-answer-block"><strong>決め手</strong><p><RichText text={displayQuestion.explanation} /></p></div>
+                    {acronymEntries.length ? <div className="practice-answer-block practice-acronym-block"><strong>略語メモ</strong><dl className="practice-acronym-list">{acronymEntries.map((entry) => <div key={entry.term}><dt><b>{entry.term}</b><span>{entry.expansion}</span></dt><dd>{entry.meaning}</dd></div>)}</dl></div> : null}
                     {displayQuestion.explanationVisual ? <QuestionExplanationVisual visual={displayQuestion.explanationVisual} /> : null}
                     <h3>選択肢ごとの判定</h3>
                     <ol className="practice-choice-reasons">{displayQuestion.choices.map((choice, choiceIndex) => <li data-testid="choice-reason" key={choice}><strong>{String.fromCharCode(65 + choiceIndex)}. {displayQuestion.correct.includes(choiceIndex) ? '正解' : '不正解'}</strong><span><RichText text={displayQuestion.choiceReasons[choiceIndex]} /></span></li>)}</ol>
