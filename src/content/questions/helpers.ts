@@ -1,4 +1,5 @@
 import type { Question, Subject } from '../../domain/types';
+import { conceptDistractorOverrides } from './concept-distractor-overrides';
 
 export interface QuestionSeed {
   id: string;
@@ -27,6 +28,9 @@ export function makeQuestions(
 ): Question[] {
   return seeds.map((seed) => {
     if (seed.wrong.length !== 3) throw new Error(`${seed.id}: 誤答は3件必要です`);
+    const choiceTexts = [seed.answer, ...seed.wrong.map(([choice]) => choice)];
+    if (new Set(choiceTexts).size !== 4) throw new Error(`${seed.id}: 選択肢は重複できません`);
+
     const entries: [string, string, boolean][] = seed.wrong.map(([choice, reason]) => [choice, reason, false]);
     entries.splice(seed.position, 0, [seed.answer, seed.why, true]);
     return {
@@ -53,6 +57,46 @@ const conceptStems = [
   (clue: string) => `基本情報技術者として次の特徴を正しく分類するとき、該当する選択肢はどれか。${clue}`,
 ];
 
+function normalizeForSimilarity(value: string) {
+  return value
+    .replace(/[\s、。・/＋+()（）「」『』,:：・]/g, '')
+    .toLocaleLowerCase('ja-JP');
+}
+
+function bigrams(value: string) {
+  const normalized = normalizeForSimilarity(value);
+  return new Set(Array.from({ length: Math.max(0, normalized.length - 1) }, (_, index) => normalized.slice(index, index + 2)));
+}
+
+function textSimilarity(left: string, right: string) {
+  const a = bigrams(left);
+  const b = bigrams(right);
+  if (a.size === 0 || b.size === 0) return 0;
+  const intersection = [...a].filter((token) => b.has(token)).length;
+  return intersection / new Set([...a, ...b]).size;
+}
+
+function pickNearbyConcepts(cards: ConceptCard[], index: number) {
+  const source = cards[index];
+  const sourceText = `${source.term} ${source.clue}`;
+
+  return cards
+    .map((candidate, candidateIndex) => ({
+      candidate,
+      candidateIndex,
+      similarity: candidateIndex === index ? -1 : textSimilarity(sourceText, `${candidate.term} ${candidate.clue}`),
+      distance: Math.abs(candidateIndex - index),
+    }))
+    .filter(({ candidateIndex }) => candidateIndex !== index)
+    .sort((left, right) => (
+      right.similarity - left.similarity
+      || left.distance - right.distance
+      || left.candidateIndex - right.candidateIndex
+    ))
+    .slice(0, 3)
+    .map(({ candidate }) => candidate);
+}
+
 export function makeConceptQuestions(
   subject: Subject,
   domain: string,
@@ -62,17 +106,22 @@ export function makeConceptQuestions(
 ): Question[] {
   if (cards.length < 5) throw new Error(`${prefix}: 概念カードは5件以上必要です`);
   return cards.map((card, index) => {
-    const wrongCards = [1, 3, 5].map((offset) => cards[(index + offset) % cards.length]);
+    const override = conceptDistractorOverrides[card.term];
+    const nearby = override ? [] : pickNearbyConcepts(cards, index);
+    const wrong: [string, string][] = override
+      ? override.map(({ term, reason }) => [term, reason])
+      : nearby.map((candidate) => [
+        candidate.term,
+        `${candidate.term}は「${candidate.clue}」を表すため、設問の役割・目的・処理段階とは一致しません。`,
+      ]);
+
     const seed: QuestionSeed = {
       id: `${prefix}-${String(index + 1).padStart(3, '0')}`,
       topic: card.topic ?? card.term,
       stem: conceptStems[index % conceptStems.length](card.clue),
       answer: card.term,
       why: `${card.term}は「${card.clue}」を表す用語であり、設問の特徴を全て満たします。`,
-      wrong: wrongCards.map((wrong) => [
-        wrong.term,
-        `${wrong.term}は「${wrong.clue}」を表すため、設問で示された特徴とは一致しません。`,
-      ]),
+      wrong,
       position: (index % 4) as 0 | 1 | 2 | 3,
       difficulty: card.difficulty ?? (index % 5 === 4 ? 2 : 1),
     };
