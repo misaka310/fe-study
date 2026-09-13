@@ -14,6 +14,10 @@ npm run dev
 
 ローカルでは `http://localhost:3000` を使用します。
 
+## ChatGPT Sitesへのデプロイ
+
+デプロイ作業では、最初に [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) を読み、そのRunbookを正本として使います。Siteの選択は `.openai/hosting.json` の `project_id` に従い、完全SHA一致・保存version一致・deployment `succeeded`・owner-private維持まで確認して完了とします。
+
 ## 検証
 
 通常の変更では、次を実行します。

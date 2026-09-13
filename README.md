@@ -4,6 +4,12 @@
 
 > **非公式教材です。** 情報処理推進機構（IPA）による承認・後援・提供を受けたものではありません。掲載する第三者の名称・商標・公式資料は各権利者に帰属します。サイト内の正答率は学習上の目安であり、公式のIRT評価点は再現しません。
 
+## 最優先: ChatGPT Sitesへのデプロイ
+
+このリポジトリをChatGPT Sitesへデプロイするときは、**最初に [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) を読むこと**。今回実際に成功したprivate deployの順序、正しいProjectの確認方法、完全SHAのpush、`Invalid revision range` の原因と安全な回避、version保存、private deploy、`succeeded` / owner-privateの最終確認まで記録しています。
+
+フォルダ名や過去のSite名からProjectを推測せず、`.openai/hosting.json` の `project_id` を正本として扱います。
+
 ## 主な機能
 
 - 12章の教材で、基礎理論から科目Bの擬似言語・セキュリティ事例まで学習
