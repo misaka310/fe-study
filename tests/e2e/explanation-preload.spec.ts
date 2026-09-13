@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => localStorage.clear());
 });
 
-test('次へで次問のWebP解説画像を先読みし、解説で表示できる', async ({ page }) => {
+test('次へで次問のWebP解説画像を先読みし、回答直後の解説で表示できる', async ({ page }) => {
   const browserErrors: string[] = [];
   page.on('console', (message) => { if (message.type() === 'error') browserErrors.push(`console: ${message.text()}`); });
   page.on('pageerror', (error) => browserErrors.push(`page: ${error.message}`));
@@ -22,7 +22,6 @@ test('次へで次問のWebP解説画像を先読みし、解説で表示でき�
 
   await page.getByRole('radio').first().check();
   await page.getByRole('button', { name: '解答する' }).click();
-  await page.getByRole('button', { name: '解説を見る' }).click();
 
   const image = page.locator('.practice-explanation-visual img');
   await expect(image).toBeVisible();
