@@ -62,7 +62,6 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const [index, setIndex] = useState(0);
   const [pick, setPick] = useState<number | null>(null);
   const [revealed, setRevealed] = useState(false);
-  const [showExplanation, setShowExplanation] = useState(false);
   const [answeredContext, setAnsweredContext] = useState<AnsweredContext | null>(null);
   const [practiceSession, setPracticeSession] = useState<PracticeSession | null>(null);
   const [activeSessionKey, setActiveSessionKey] = useState<string | null>(null);
@@ -104,7 +103,6 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
       setIndex(nextSession ? firstUnansweredIndex(nextSession) : 0);
       setPick(null);
       setRevealed(false);
-      setShowExplanation(false);
       setAnsweredContext(null);
       setActiveSessionKey(sessionKey);
     });
@@ -149,7 +147,6 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     setIndex(target);
     setPick(null);
     setRevealed(false);
-    setShowExplanation(false);
     setAnsweredContext(null);
   };
 
@@ -160,7 +157,6 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     setIndex(0);
     setPick(null);
     setRevealed(false);
-    setShowExplanation(false);
     setAnsweredContext(null);
   };
 
@@ -235,15 +231,13 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
                   setPracticeSession(savePracticeAnswer(sessionKey, practiceSession, answeredQuestion.id));
                   update((value) => recordAttempt(value, answeredQuestion.id, [pick], answeredQuestion.correct.includes(pick), new Date().toISOString()));
                   setRevealed(true);
-                  setShowExplanation(false);
                 }} type="button">解答する</button> : (
                   <div className="practice-answer-summary" aria-live="polite">
                     <div className={pick !== null && displayQuestion.correct.includes(pick) ? 'practice-result-good' : 'practice-result-bad'}>{pick !== null && displayQuestion.correct.includes(pick) ? '正解' : '不正解'}</div>
-                    <button aria-controls="practice-explanation" aria-expanded={showExplanation} className="practice-explanation-toggle" onClick={() => setShowExplanation((value) => !value)} type="button">{showExplanation ? '解説を閉じる' : '解説を見る'}</button>
                   </div>
                 )}
                 <nav className="practice-question-actions" aria-label="問題の移動"><button disabled={previousDisabled} onClick={() => move(-1)} type="button">前へ</button><button className={revealed ? 'practice-next-primary' : undefined} disabled={nextDisabled} onClick={() => move(1)} type="button">次へ</button></nav>
-                {revealed && showExplanation ? (
+                {revealed ? (
                   <section className="practice-answer-panel" id="practice-explanation">
                     <div className="practice-answer-block"><strong>条件</strong><p><RichText text={displayQuestion.stem} /></p></div>
                     <div className="practice-answer-block"><strong>決め手</strong><p><RichText text={displayQuestion.explanation} /></p></div>
