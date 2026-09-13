@@ -17,15 +17,14 @@ describe('基本問題', () => {
     }
   });
 
-  it('セット5を選ぶと20問だけ表示し、回答後に任意で解説を表示できる', async () => {
+  it('セット5を選ぶと20問だけ表示し、回答直後に解説を表示する', async () => {
     localStorage.clear();
     render(<PracticeRunner questionCount={217} mode="vocabulary" vocabSet="5" />);
     expect(await screen.findByText('基本問題 · セット5')).toBeInTheDocument();
     expect(screen.getByText('基本問題 · 20問')).toBeInTheDocument();
     fireEvent.click((await screen.findAllByRole('radio'))[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
-    expect(screen.queryByText('決め手')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: '解説を見る' }));
+    expect(screen.queryByRole('button', { name: '解説を見る' })).not.toBeInTheDocument();
     expect(screen.getByText('決め手')).toBeInTheDocument();
     expect(screen.getByText('選択肢ごとの判定')).toBeInTheDocument();
   });
