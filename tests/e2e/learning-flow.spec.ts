@@ -102,10 +102,10 @@ test('問題回答を保存して誤答復習と学習記録へ反映する', as
     if (!sawWrong) await page.getByRole('button', { name: '次へ' }).click();
   }
   expect(sawWrong).toBe(true);
-  await page.getByRole('button', { name: '解説を見る' }).click();
   await expect(page.getByText('条件', { exact: true })).toBeVisible();
   await expect(page.getByText('決め手', { exact: true })).toBeVisible();
   await expect(page.getByTestId('choice-reason')).toHaveCount(4);
+  await expect(page.getByRole('button', { name: '解説を見る' })).toHaveCount(0);
   await page.goto('/?view=practice&mode=wrong');
   await expect(page.getByText(/間違いだけ · 1問/)).toBeVisible();
   await page.goto('/?view=dashboard');
@@ -113,7 +113,7 @@ test('問題回答を保存して誤答復習と学習記録へ反映する', as
   assertNoErrors();
 });
 
-test('基本問題の20問セットを選び、回答後は解説を開かず次へ進める', async ({ page }) => {
+test('基本問題の20問セットを選び、回答直後の解説を確認して次へ進める', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=vocabulary&vocabSet=2');
   await expect(page.getByText('基本問題 · セット2')).toBeVisible();
@@ -127,8 +127,8 @@ test('基本問題の20問セットを選び、回答後は解説を開かず次
   await page.getByRole('button', { name: '解答する' }).click();
   await expect(page.getByText(/^(正解|不正解)$/)).toBeVisible();
   await expect(questionHeading).toHaveText(stemBeforeAnswer);
-  await expect(page.getByRole('button', { name: '解説を見る' })).toBeVisible();
-  await expect(page.getByText('決め手', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '解説を見る' })).toHaveCount(0);
+  await expect(page.getByText('決め手', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: '次へ' }).click();
   await expect(questionHeading).not.toHaveText(stemBeforeAnswer);
   assertNoErrors();
@@ -149,7 +149,6 @@ test('TCO問題の解説では正式名称を表示し、CPUのような基本�
   await expect(page.locator('.practice-question-card h2')).toContainText('5年間');
   await page.getByRole('radio').first().check();
   await page.getByRole('button', { name: '解答する' }).click();
-  await page.getByRole('button', { name: '解説を見る' }).click();
 
   await expect(page.getByText('略語メモ', { exact: true })).toBeVisible();
   const acronymList = page.locator('.practice-acronym-list');
