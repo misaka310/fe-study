@@ -9,7 +9,7 @@ afterEach(() => {
 });
 
 describe('PracticeRunner', () => {
-  it('回答後は次へ進め、必要なときだけ解説を展開できる', async () => {
+  it('回答直後に解説を自動表示し、解説を見るボタンを出さない', async () => {
     localStorage.clear();
     render(<PracticeRunner questionCount={217} mode="all" />);
     const choices = await screen.findAllByRole('radio');
@@ -17,10 +17,7 @@ describe('PracticeRunner', () => {
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     expect(screen.getByText(/^(正解|不正解)$/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '次へ' })).toBeEnabled();
-    const explanationButton = screen.getByRole('button', { name: '解説を見る' });
-    expect(explanationButton).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByText('条件')).not.toBeInTheDocument();
-    fireEvent.click(explanationButton);
+    expect(screen.queryByRole('button', { name: '解説を見る' })).not.toBeInTheDocument();
     expect(screen.getByText('条件')).toBeInTheDocument();
     expect(screen.getByText('決め手')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '選択肢ごとの判定' })).toBeInTheDocument();
