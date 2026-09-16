@@ -5,7 +5,7 @@ import { questions } from '../content/questions';
 import { vocabularyQuestions } from '../content/vocabulary';
 import type { LearningState } from '../domain/types';
 import { createEmptyState } from './state';
-import { loadLearningState, saveLearningState } from './storage';
+import { LEARNING_STATE_CHANGED_EVENT, loadLearningState, saveLearningState } from './storage';
 
 const knownIds = new Set([...questions, ...vocabularyQuestions].map((question) => question.id));
 
@@ -16,14 +16,19 @@ export function useLearningState() {
 
   useEffect(() => {
     let active = true;
-    queueMicrotask(() => {
+    const reload = () => {
       if (!active) return;
       const loaded = loadLearningState(knownIds);
       setState(loaded.state);
       setMessage(loaded.message);
       setReady(true);
-    });
-    return () => { active = false; };
+    };
+    queueMicrotask(reload);
+    window.addEventListener(LEARNING_STATE_CHANGED_EVENT, reload);
+    return () => {
+      active = false;
+      window.removeEventListener(LEARNING_STATE_CHANGED_EVENT, reload);
+    };
   }, []);
 
   const update = useCallback((next: LearningState | ((current: LearningState) => LearningState)) => {

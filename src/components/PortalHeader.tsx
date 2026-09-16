@@ -1,3 +1,5 @@
+import { GoogleSyncControl } from './GoogleSyncControl';
+
 type PortalArea = 'materials' | 'practice' | 'weakness' | 'exams' | 'dashboard';
 
 const links: Array<{ area: PortalArea; label: string; href: string }> = [
@@ -17,10 +19,13 @@ export function PortalHeader({ active, questionCount }: { active?: PortalArea; q
           <h1><a href="?">基本情報技術者 合格ナビ</a></h1>
           <p>基礎整理から問題演習、弱点補強、模試、最終確認まで順番に進められます。</p>
         </div>
-        <div className="exam-card" aria-label="試験構成">
-          <span>問題バンク</span>
-          <strong>{questionCount}問</strong>
-          <b>科目A・B模試に対応</b>
+        <div className="portal-header-actions">
+          <GoogleSyncControl />
+          <div className="exam-card" aria-label="試験構成">
+            <span>問題バンク</span>
+            <strong>{questionCount}問</strong>
+            <b>科目A・B模試に対応</b>
+          </div>
         </div>
       </header>
       <nav className="purpose-nav" aria-label="主な機能">
