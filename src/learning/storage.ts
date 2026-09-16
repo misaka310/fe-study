@@ -3,9 +3,13 @@ import { parseBackup, serializeBackup } from './backup';
 import { createEmptyState } from './state';
 
 export const STORAGE_KEY = 'fe-study-learning-state-v1';
+export const LEARNING_STATE_CHANGED_EVENT = 'fe-study-learning-state-changed';
 
 export function saveLearningState(state: LearningState): void {
   localStorage.setItem(STORAGE_KEY, serializeBackup(state));
+  if (typeof window !== 'undefined') {
+    queueMicrotask(() => window.dispatchEvent(new Event(LEARNING_STATE_CHANGED_EVENT)));
+  }
 }
 
 export function loadLearningState(knownIds: ReadonlySet<string>): {
