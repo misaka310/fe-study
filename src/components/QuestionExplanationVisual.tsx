@@ -12,7 +12,7 @@ export function QuestionExplanationVisual({ visual }: { visual: ExplanationVisua
 
   return (
     <figure className="practice-explanation-visual">
-      <img src={visual.src} alt={visual.alt} loading="lazy" decoding="async" onError={() => setFailed(true)} />
+      <img src={visual.src} alt={visual.alt} loading="eager" decoding="async" onError={() => setFailed(true)} />
       <figcaption><strong>{visual.label}</strong><span>{visual.description}</span></figcaption>
     </figure>
   );

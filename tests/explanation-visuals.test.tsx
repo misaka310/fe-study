@@ -16,12 +16,14 @@ afterEach(() => {
 });
 
 describe('問題解説図', () => {
-  it('次の問題へ進む前に解説画像を先読みできる', () => {
+  it('同じ解説画像の先読み要求を共有し、読み込み完了を待てる', async () => {
     const visual = Object.values(explanationVisuals)[0];
-    const createdImages: Array<{ src: string }> = [];
+    const createdImages: Array<MockImage> = [];
 
     class MockImage {
       src = '';
+      onload: (() => void) | null = null;
+      onerror: (() => void) | null = null;
 
       constructor() {
         createdImages.push(this);
@@ -29,10 +31,15 @@ describe('問題解説図', () => {
     }
 
     vi.stubGlobal('Image', MockImage);
-    preloadExplanationVisual(visual);
+    const first = preloadExplanationVisual(visual);
+    const second = preloadExplanationVisual(visual);
 
     expect(createdImages).toHaveLength(1);
     expect(createdImages[0].src).toBe(visual.src);
+    expect(first).toBe(second);
+
+    createdImages[0].onload?.();
+    await expect(first).resolves.toBeUndefined();
   });
 
   it('図解対象の全候補へ一意に付与する', () => {
@@ -59,5 +66,12 @@ describe('問題解説図', () => {
     render(<QuestionExplanationVisual visual={visual!} />);
     fireEvent.error(screen.getByRole('img'));
     expect(screen.getByRole('status')).toHaveTextContent('説明画像を読み込めませんでした');
+  });
+
+  it('解説表示時はブラウザのlazy遅延を使わない', () => {
+    const visual = questions.find((question) => question.explanationVisual)?.explanationVisual;
+    expect(visual).toBeTruthy();
+    render(<QuestionExplanationVisual visual={visual!} />);
+    expect(screen.getByRole('img')).toHaveAttribute('loading', 'eager');
   });
 });

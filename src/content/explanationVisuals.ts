@@ -1143,13 +1143,35 @@ export const explanationVisuals: Readonly<Record<string, ExplanationVisual>> = O
   }
 } satisfies Record<string, ExplanationVisual>);
 
+const explanationPreloadCache = new Map<string, { image: HTMLImageElement; promise: Promise<void> }>();
+
 export function attachExplanationVisual(question: Question): Question {
   const visual = explanationVisuals[question.id];
   return visual ? { ...question, explanationVisual: visual } : question;
 }
 
-export function preloadExplanationVisual(visual?: ExplanationVisual) {
-  if (!visual || typeof Image === 'undefined') return;
+export function preloadExplanationVisual(visual?: ExplanationVisual): Promise<void> {
+  if (!visual || typeof Image === 'undefined') return Promise.resolve();
+  const cached = explanationPreloadCache.get(visual.src);
+  if (cached) return cached.promise;
+
   const image = new Image();
-  image.src = visual.src;
+  const promise = new Promise<void>((resolve) => {
+    let settled = false;
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+
+    image.onload = settle;
+    image.onerror = () => {
+      explanationPreloadCache.delete(visual.src);
+      settle();
+    };
+    image.src = visual.src;
+    if (image.complete) settle();
+  });
+  explanationPreloadCache.set(visual.src, { image, promise });
+  return promise;
 }

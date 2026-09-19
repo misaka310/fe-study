@@ -25,16 +25,18 @@ describe('PracticeRunner', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toContain('attempts');
   });
 
-  it('次へを押すと次のアルゴリズム問題の解説画像を先読みする', async () => {
+  it('次へを押す前に次のアルゴリズム問題の解説画像を先読みし、移動時に再要求しない', async () => {
     localStorage.clear();
     const loadedSources: string[] = [];
 
     class MockImage {
       private value = '';
+      onload: (() => void) | null = null;
 
       set src(value: string) {
         this.value = value;
         loadedSources.push(value);
+        this.onload?.();
       }
 
       get src() {
@@ -44,9 +46,34 @@ describe('PracticeRunner', () => {
 
     vi.stubGlobal('Image', MockImage);
     render(<PracticeRunner questionCount={questions.length} mode="all" domain="algorithm" />);
+    await screen.findAllByRole('radio');
+    expect(loadedSources).toHaveLength(1);
+    expect(loadedSources[0]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
+
     fireEvent.click((await screen.findAllByRole('radio'))[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     fireEvent.click(screen.getByRole('button', { name: '次へ' }));
+
+    expect(loadedSources).toHaveLength(2);
+    expect(loadedSources[1]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
+  });
+
+  it('現在の問題を解いている間に次のアルゴリズム問題の解説画像を先読みする', async () => {
+    localStorage.clear();
+    const loadedSources: string[] = [];
+
+    class MockImage {
+      onload: (() => void) | null = null;
+
+      set src(value: string) {
+        loadedSources.push(value);
+        this.onload?.();
+      }
+    }
+
+    vi.stubGlobal('Image', MockImage);
+    render(<PracticeRunner questionCount={questions.length} mode="all" domain="algorithm" />);
+    await screen.findAllByRole('radio');
 
     expect(loadedSources).toHaveLength(1);
     expect(loadedSources[0]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
