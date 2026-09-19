@@ -1,6 +1,768 @@
 import type { ExplanationVisual, Question } from '../domain/types';
 
 export const explanationVisuals: Readonly<Record<string, ExplanationVisual>> = Object.freeze({
+  "a-theory-001": {
+    "src": "/images/explanations/a-theory-001.webp",
+    "alt": "基数変換について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "基数変換の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-002": {
+    "src": "/images/explanations/a-theory-002.webp",
+    "alt": "基数変換について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "基数変換の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-004": {
+    "src": "/images/explanations/a-theory-004.webp",
+    "alt": "論理演算について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "論理演算の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-005": {
+    "src": "/images/explanations/a-theory-005.webp",
+    "alt": "論理演算について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "論理演算の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-008": {
+    "src": "/images/explanations/a-theory-008.webp",
+    "alt": "組合せについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "組合せの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-009": {
+    "src": "/images/explanations/a-theory-009.webp",
+    "alt": "期待値について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "期待値の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-010": {
+    "src": "/images/explanations/a-theory-010.webp",
+    "alt": "情報量について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "情報量の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-011": {
+    "src": "/images/explanations/a-theory-011.webp",
+    "alt": "符号化について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "符号化の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-012": {
+    "src": "/images/explanations/a-theory-012.webp",
+    "alt": "浮動小数点について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "浮動小数点の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-013": {
+    "src": "/images/explanations/a-theory-013.webp",
+    "alt": "標本化について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "標本化の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-015": {
+    "src": "/images/explanations/a-theory-015.webp",
+    "alt": "行列について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "行列の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-theory-017": {
+    "src": "/images/explanations/a-theory-017.webp",
+    "alt": "誤り検出について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "誤り検出の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-001": {
+    "src": "/images/explanations/a-computer-001.webp",
+    "alt": "ALUについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ALUの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-002": {
+    "src": "/images/explanations/a-computer-002.webp",
+    "alt": "制御装置について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "制御装置の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-003": {
+    "src": "/images/explanations/a-computer-003.webp",
+    "alt": "レジスタについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "レジスタの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-004": {
+    "src": "/images/explanations/a-computer-004.webp",
+    "alt": "キャッシュメモリについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "キャッシュメモリの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-006": {
+    "src": "/images/explanations/a-computer-006.webp",
+    "alt": "ROMについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ROMの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-007": {
+    "src": "/images/explanations/a-computer-007.webp",
+    "alt": "仮想記憶について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "仮想記憶の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-008": {
+    "src": "/images/explanations/a-computer-008.webp",
+    "alt": "ページフォールトについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ページフォールトの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-009": {
+    "src": "/images/explanations/a-computer-009.webp",
+    "alt": "スラッシングについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "スラッシングの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-011": {
+    "src": "/images/explanations/a-computer-011.webp",
+    "alt": "マルチコアについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "マルチコアの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-012": {
+    "src": "/images/explanations/a-computer-012.webp",
+    "alt": "DMAについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "DMAの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-013": {
+    "src": "/images/explanations/a-computer-013.webp",
+    "alt": "割込みについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "割込みの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-014": {
+    "src": "/images/explanations/a-computer-014.webp",
+    "alt": "RAID 1について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "RAID 1の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-016": {
+    "src": "/images/explanations/a-computer-016.webp",
+    "alt": "GPUについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "GPUの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-017": {
+    "src": "/images/explanations/a-computer-017.webp",
+    "alt": "アムダールの法則について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "アムダールの法則の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-computer-018": {
+    "src": "/images/explanations/a-computer-018.webp",
+    "alt": "MTBFについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "MTBFの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-001": {
+    "src": "/images/explanations/a-software-001.webp",
+    "alt": "プロセスについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "プロセスの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-002": {
+    "src": "/images/explanations/a-software-002.webp",
+    "alt": "スレッドについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "スレッドの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-003": {
+    "src": "/images/explanations/a-software-003.webp",
+    "alt": "排他制御について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "排他制御の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-004": {
+    "src": "/images/explanations/a-software-004.webp",
+    "alt": "デッドロックについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "デッドロックの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-006": {
+    "src": "/images/explanations/a-software-006.webp",
+    "alt": "スプーリングについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "スプーリングの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-007": {
+    "src": "/images/explanations/a-software-007.webp",
+    "alt": "コンパイラについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "コンパイラの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-008": {
+    "src": "/images/explanations/a-software-008.webp",
+    "alt": "インタプリタについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "インタプリタの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-009": {
+    "src": "/images/explanations/a-software-009.webp",
+    "alt": "リンカについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "リンカの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-011": {
+    "src": "/images/explanations/a-software-011.webp",
+    "alt": "APIについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "APIの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-012": {
+    "src": "/images/explanations/a-software-012.webp",
+    "alt": "オープンソースソフトウェアについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "オープンソースソフトウェアの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-013": {
+    "src": "/images/explanations/a-software-013.webp",
+    "alt": "ジャーナリングについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ジャーナリングの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-software-014": {
+    "src": "/images/explanations/a-software-014.webp",
+    "alt": "ガベージコレクションについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ガベージコレクションの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-001": {
+    "src": "/images/explanations/a-database-001.webp",
+    "alt": "主キーについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "主キーの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-002": {
+    "src": "/images/explanations/a-database-002.webp",
+    "alt": "外部キーについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "外部キーの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-003": {
+    "src": "/images/explanations/a-database-003.webp",
+    "alt": "第1正規形について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "第1正規形の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-004": {
+    "src": "/images/explanations/a-database-004.webp",
+    "alt": "第2正規形について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "第2正規形の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-006": {
+    "src": "/images/explanations/a-database-006.webp",
+    "alt": "INNER JOINについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "INNER JOINの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-007": {
+    "src": "/images/explanations/a-database-007.webp",
+    "alt": "LEFT OUTER JOINについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "LEFT OUTER JOINの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-008": {
+    "src": "/images/explanations/a-database-008.webp",
+    "alt": "GROUP BYについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "GROUP BYの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-009": {
+    "src": "/images/explanations/a-database-009.webp",
+    "alt": "HAVINGについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "HAVINGの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-011": {
+    "src": "/images/explanations/a-database-011.webp",
+    "alt": "トランザクションについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "トランザクションの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-012": {
+    "src": "/images/explanations/a-database-012.webp",
+    "alt": "原子性について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "原子性の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-013": {
+    "src": "/images/explanations/a-database-013.webp",
+    "alt": "直列可能性について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "直列可能性の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-014": {
+    "src": "/images/explanations/a-database-014.webp",
+    "alt": "共有ロックについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "共有ロックの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-database-016": {
+    "src": "/images/explanations/a-database-016.webp",
+    "alt": "チェックポイントについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "チェックポイントの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-001": {
+    "src": "/images/explanations/a-network-001.webp",
+    "alt": "OSI基本参照モデルについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "OSI基本参照モデルの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-002": {
+    "src": "/images/explanations/a-network-002.webp",
+    "alt": "IPアドレスについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "IPアドレスの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-003": {
+    "src": "/images/explanations/a-network-003.webp",
+    "alt": "サブネットマスクについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "サブネットマスクの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-004": {
+    "src": "/images/explanations/a-network-004.webp",
+    "alt": "デフォルトゲートウェイについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "デフォルトゲートウェイの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-006": {
+    "src": "/images/explanations/a-network-006.webp",
+    "alt": "DNSについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "DNSの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-007": {
+    "src": "/images/explanations/a-network-007.webp",
+    "alt": "DHCPについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "DHCPの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-008": {
+    "src": "/images/explanations/a-network-008.webp",
+    "alt": "NATについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "NATの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-009": {
+    "src": "/images/explanations/a-network-009.webp",
+    "alt": "TCPについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "TCPの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-011": {
+    "src": "/images/explanations/a-network-011.webp",
+    "alt": "HTTPについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "HTTPの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-012": {
+    "src": "/images/explanations/a-network-012.webp",
+    "alt": "SMTPについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "SMTPの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-013": {
+    "src": "/images/explanations/a-network-013.webp",
+    "alt": "IMAPについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "IMAPの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-014": {
+    "src": "/images/explanations/a-network-014.webp",
+    "alt": "ルーティングについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ルーティングの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-016": {
+    "src": "/images/explanations/a-network-016.webp",
+    "alt": "CDNについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "CDNの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-017": {
+    "src": "/images/explanations/a-network-017.webp",
+    "alt": "ロードバランサについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ロードバランサの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-network-018": {
+    "src": "/images/explanations/a-network-018.webp",
+    "alt": "QoSについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "QoSの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-001": {
+    "src": "/images/explanations/a-security-001.webp",
+    "alt": "機密性について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "機密性の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-002": {
+    "src": "/images/explanations/a-security-002.webp",
+    "alt": "完全性について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "完全性の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-003": {
+    "src": "/images/explanations/a-security-003.webp",
+    "alt": "可用性について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "可用性の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-004": {
+    "src": "/images/explanations/a-security-004.webp",
+    "alt": "多要素認証について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "多要素認証の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-006": {
+    "src": "/images/explanations/a-security-006.webp",
+    "alt": "公開鍵暗号について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "公開鍵暗号の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-007": {
+    "src": "/images/explanations/a-security-007.webp",
+    "alt": "共通鍵暗号について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "共通鍵暗号の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-008": {
+    "src": "/images/explanations/a-security-008.webp",
+    "alt": "ディジタル署名について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ディジタル署名の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-009": {
+    "src": "/images/explanations/a-security-009.webp",
+    "alt": "ハッシュ関数について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ハッシュ関数の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-011": {
+    "src": "/images/explanations/a-security-011.webp",
+    "alt": "TLSについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "TLSの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-012": {
+    "src": "/images/explanations/a-security-012.webp",
+    "alt": "ファイアウォールについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ファイアウォールの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-013": {
+    "src": "/images/explanations/a-security-013.webp",
+    "alt": "WAFについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "WAFの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-014": {
+    "src": "/images/explanations/a-security-014.webp",
+    "alt": "IDSについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "IDSの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-016": {
+    "src": "/images/explanations/a-security-016.webp",
+    "alt": "SQLインジェクションについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "SQLインジェクションの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-017": {
+    "src": "/images/explanations/a-security-017.webp",
+    "alt": "クロスサイトスクリプティングについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "クロスサイトスクリプティングの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-018": {
+    "src": "/images/explanations/a-security-018.webp",
+    "alt": "CSRFについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "CSRFの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-019": {
+    "src": "/images/explanations/a-security-019.webp",
+    "alt": "ランサムウェアについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ランサムウェアの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-021": {
+    "src": "/images/explanations/a-security-021.webp",
+    "alt": "ゼロデイ攻撃について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ゼロデイ攻撃の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-022": {
+    "src": "/images/explanations/a-security-022.webp",
+    "alt": "サンドボックスについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "サンドボックスの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-023": {
+    "src": "/images/explanations/a-security-023.webp",
+    "alt": "ペネトレーションテストについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ペネトレーションテストの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-security-024": {
+    "src": "/images/explanations/a-security-024.webp",
+    "alt": "リスクアセスメントについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "リスクアセスメントの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-001": {
+    "src": "/images/explanations/a-development-001.webp",
+    "alt": "要件定義について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "要件定義の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-002": {
+    "src": "/images/explanations/a-development-002.webp",
+    "alt": "外部設計について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "外部設計の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-003": {
+    "src": "/images/explanations/a-development-003.webp",
+    "alt": "内部設計について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "内部設計の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-004": {
+    "src": "/images/explanations/a-development-004.webp",
+    "alt": "モジュール強度について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "モジュール強度の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-006": {
+    "src": "/images/explanations/a-development-006.webp",
+    "alt": "単体テストについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "単体テストの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-007": {
+    "src": "/images/explanations/a-development-007.webp",
+    "alt": "結合テストについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "結合テストの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-008": {
+    "src": "/images/explanations/a-development-008.webp",
+    "alt": "システムテストについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "システムテストの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-009": {
+    "src": "/images/explanations/a-development-009.webp",
+    "alt": "受入れテストについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "受入れテストの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-011": {
+    "src": "/images/explanations/a-development-011.webp",
+    "alt": "ホワイトボックステストについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ホワイトボックステストの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-012": {
+    "src": "/images/explanations/a-development-012.webp",
+    "alt": "回帰テストについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "回帰テストの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-013": {
+    "src": "/images/explanations/a-development-013.webp",
+    "alt": "アジャイル開発について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "アジャイル開発の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-014": {
+    "src": "/images/explanations/a-development-014.webp",
+    "alt": "継続的インテグレーションについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "継続的インテグレーションの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-development-016": {
+    "src": "/images/explanations/a-development-016.webp",
+    "alt": "構成管理について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "構成管理の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-001": {
+    "src": "/images/explanations/a-management-001.webp",
+    "alt": "WBSについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "WBSの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-002": {
+    "src": "/images/explanations/a-management-002.webp",
+    "alt": "クリティカルパスについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "クリティカルパスの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-003": {
+    "src": "/images/explanations/a-management-003.webp",
+    "alt": "ガントチャートについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ガントチャートの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-004": {
+    "src": "/images/explanations/a-management-004.webp",
+    "alt": "リスク移転について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "リスク移転の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-006": {
+    "src": "/images/explanations/a-management-006.webp",
+    "alt": "SLAについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "SLAの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-007": {
+    "src": "/images/explanations/a-management-007.webp",
+    "alt": "インシデント管理について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "インシデント管理の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-008": {
+    "src": "/images/explanations/a-management-008.webp",
+    "alt": "問題管理について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "問題管理の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-009": {
+    "src": "/images/explanations/a-management-009.webp",
+    "alt": "変更管理について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "変更管理の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-011": {
+    "src": "/images/explanations/a-management-011.webp",
+    "alt": "内部監査について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "内部監査の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-management-012": {
+    "src": "/images/explanations/a-management-012.webp",
+    "alt": "監査証拠について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "監査証拠の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-001": {
+    "src": "/images/explanations/a-strategy-001.webp",
+    "alt": "SWOT分析について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "SWOT分析の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-002": {
+    "src": "/images/explanations/a-strategy-002.webp",
+    "alt": "PPMについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "PPMの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-003": {
+    "src": "/images/explanations/a-strategy-003.webp",
+    "alt": "バリューチェーンについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "バリューチェーンの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-004": {
+    "src": "/images/explanations/a-strategy-004.webp",
+    "alt": "コアコンピタンスについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "コアコンピタンスの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-006": {
+    "src": "/images/explanations/a-strategy-006.webp",
+    "alt": "BPRについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "BPRの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-007": {
+    "src": "/images/explanations/a-strategy-007.webp",
+    "alt": "CRMについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "CRMの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-008": {
+    "src": "/images/explanations/a-strategy-008.webp",
+    "alt": "SCMについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "SCMの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-009": {
+    "src": "/images/explanations/a-strategy-009.webp",
+    "alt": "ERPについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ERPの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-011": {
+    "src": "/images/explanations/a-strategy-011.webp",
+    "alt": "ROIについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ROIの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-012": {
+    "src": "/images/explanations/a-strategy-012.webp",
+    "alt": "KPIについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "KPIの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-013": {
+    "src": "/images/explanations/a-strategy-013.webp",
+    "alt": "特許権について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "特許権の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-strategy-014": {
+    "src": "/images/explanations/a-strategy-014.webp",
+    "alt": "個人情報保護について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "個人情報保護の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-supp-005": {
+    "src": "/images/explanations/a-supp-005.webp",
+    "alt": "絶対パスについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "絶対パスの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-supp-006": {
+    "src": "/images/explanations/a-supp-006.webp",
+    "alt": "SQLについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "SQLの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-supp-008": {
+    "src": "/images/explanations/a-supp-008.webp",
+    "alt": "ネットワーク機器について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ネットワーク機器の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-supp-010": {
+    "src": "/images/explanations/a-supp-010.webp",
+    "alt": "テスト工程について、問題文の条件と解説の流れを図解した説明画像",
+    "label": "テスト工程の解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "a-supp-011": {
+    "src": "/images/explanations/a-supp-011.webp",
+    "alt": "ファンクションポイントについて、問題文の条件と解説の流れを図解した説明画像",
+    "label": "ファンクションポイントの解き方",
+    "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
   "a-theory-003": {
     "src": "/images/explanations/a-theory-003.webp",
     "alt": "補数について、問題文の条件と解説の流れを図解した説明画像",
