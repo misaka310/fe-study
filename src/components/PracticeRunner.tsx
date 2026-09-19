@@ -163,6 +163,10 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const previousDisabled = previousTarget < 0;
   const nextDisabled = nextTarget < 0;
 
+  useEffect(() => {
+    void preloadExplanationVisual(pool[nextTarget]?.explanationVisual);
+  }, [nextTarget, pool]);
+
   if (!ready || activeSessionKey !== sessionKey) return <main className="study-shell"><p>学習履歴を読み込んでいます…</p></main>;
 
   return (
