@@ -69,12 +69,13 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const weakTopics = useMemo(() => new Set(buildWeaknessRanking(state, allPracticeQuestions).map((item) => item.topic)), [allPracticeQuestions, state]);
   const sourceQuestions = useMemo(() => selectedMode === 'vocabulary' ? vocabularyQuestions : selectedMode === 'weakness' ? allPracticeQuestions : questions, [allPracticeQuestions, selectedMode]);
 
-  const subjectPool = useMemo(() => sourceQuestions.filter((question) => {
+  const subjectTotalsPool = useMemo(() => sourceQuestions.filter((question) => {
     if (materialId && question.materialId !== materialId) return false;
-    if (domain && question.domain !== domain) return false;
     if (selectedMode === 'vocabulary' && question.vocabularySet !== selectedVocabularySet) return false;
     return true;
-  }), [domain, materialId, selectedMode, selectedVocabularySet, sourceQuestions]);
+  }), [materialId, selectedMode, selectedVocabularySet, sourceQuestions]);
+
+  const subjectPool = useMemo(() => subjectTotalsPool.filter((question) => !domain || question.domain === domain), [domain, subjectTotalsPool]);
 
   const basePool = useMemo(() => {
     return subjectPool.filter((question) => {
@@ -167,7 +168,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const previousDisabled = previousTarget < 0;
   const nextDisabled = nextTarget < 0;
 
-  const practiceHref = (nextMode = selectedMode, nextSubject = subject, nextDomain = domain) => {
+  const practiceHref = (nextMode: PracticeMode = selectedMode, nextSubject: string | null = subject ?? null, nextDomain: string | null = domain ?? null) => {
     const params = new URLSearchParams({ view: 'practice', mode: nextMode });
     if (materialId) params.set('material', materialId);
     if (nextDomain) params.set('domain', nextDomain);
@@ -176,7 +177,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     return `?${params.toString()}`;
   };
 
-  const subjectCount = (value?: string) => value ? subjectPool.filter((question) => question.subject === value).length : subjectPool.length;
+  const subjectCount = (value?: string) => value ? subjectTotalsPool.filter((question) => question.subject === value).length : subjectTotalsPool.length;
   const subjectLabel = subject ? `科目${subject}` : '全科目';
   const scopeLabel = selectedMode === 'vocabulary' ? `基本問題・セット${selectedVocabularySet}` : subjectLabel;
   const basePoolLabel = subject ? `${subjectLabel}の全${basePool.length}問` : `全${basePool.length}問`;
@@ -198,7 +199,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
             <section className="practice-menu-group" aria-labelledby="practice-mode-title">
               <h2 id="practice-mode-title">モード</h2>
               {Object.entries(labels).map(([key, label]) => (
-                <a aria-current={key === selectedMode ? 'page' : undefined} className={`practice-menu-link${key === selectedMode ? ' is-selected' : ''}`} href={practiceHref(key as PracticeMode, key === 'vocabulary' ? undefined : subject)} key={key}>
+                <a aria-current={key === selectedMode ? 'page' : undefined} className={`practice-menu-link${key === selectedMode ? ' is-selected' : ''}`} href={practiceHref(key as PracticeMode, key === 'vocabulary' ? null : subject ?? null, key === 'vocabulary' ? null : domain ?? null)} key={key}>
                   {label}
                 </a>
               ))}
@@ -207,9 +208,9 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
             {selectedMode !== 'vocabulary' ? (
               <section className="practice-menu-group" aria-labelledby="practice-subject-title">
                 <h2 id="practice-subject-title">科目</h2>
-                <a aria-current={!subject ? 'page' : undefined} className={`practice-menu-link${!subject ? ' is-selected' : ''}`} href={practiceHref(selectedMode, undefined)}>全科目（{subjectCount()}問）</a>
-                <a aria-current={subject === 'A' ? 'page' : undefined} className={`practice-menu-link${subject === 'A' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'A')}>科目A（{subjectCount('A')}問）</a>
-                <a aria-current={subject === 'B' ? 'page' : undefined} className={`practice-menu-link${subject === 'B' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'B')}>科目B（{subjectCount('B')}問）</a>
+                <a aria-current={!subject ? 'page' : undefined} className={`practice-menu-link${!subject ? ' is-selected' : ''}`} href={practiceHref(selectedMode, null, null)}>全科目（{subjectCount()}問）</a>
+                <a aria-current={subject === 'A' ? 'page' : undefined} className={`practice-menu-link${subject === 'A' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'A', null)}>科目A（{subjectCount('A')}問）</a>
+                <a aria-current={subject === 'B' ? 'page' : undefined} className={`practice-menu-link${subject === 'B' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'B', null)}>科目B（{subjectCount('B')}問）</a>
               </section>
             ) : null}
             <section className="practice-menu-group" aria-labelledby="vocabulary-set-title">
@@ -218,9 +219,9 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
             </section>
             <section className="practice-menu-group" aria-labelledby="practice-domain-title">
               <h2 id="practice-domain-title">分野</h2>
-              <a aria-current={!domain ? 'page' : undefined} className="practice-menu-link" href={practiceHref(selectedMode, subject, undefined)}>全分野</a>
+              <a aria-current={!domain ? 'page' : undefined} className={`practice-menu-link${!domain ? ' is-selected' : ''}`} href={practiceHref(selectedMode, subject ?? null, null)}>全分野</a>
               {Object.entries(domainLabels).map(([key, label]) => (
-                <a aria-current={domain === key ? 'page' : undefined} className={`practice-menu-link${domain === key ? ' is-selected' : ''}`} href={practiceHref(selectedMode, subject, key)} key={key}>{label}</a>
+                <a aria-current={domain === key ? 'page' : undefined} className={`practice-menu-link${domain === key ? ' is-selected' : ''}`} href={practiceHref(selectedMode, subject ?? null, key)} key={key}>{label}</a>
               ))}
             </section>
             <div className="practice-notice">現在のセットは、問題文の条件と選択肢の理由を確認しながら進めます。回答履歴はこのブラウザに保存されます。</div>
