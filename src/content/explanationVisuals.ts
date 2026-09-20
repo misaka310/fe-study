@@ -1999,7 +1999,8 @@ export function attachExplanationVisual(question: Question): Question {
 export function preloadExplanationVisual(visual?: ExplanationVisual): Promise<void> {
   if (!visual || typeof Image === 'undefined') return Promise.resolve();
   const cached = explanationPreloadCache.get(visual.src);
-  if (cached) return cached.promise;
+  if (cached?.image.constructor === Image) return cached.promise;
+  if (cached) explanationPreloadCache.delete(visual.src);
 
   const image = new Image();
   const promise = new Promise<void>((resolve) => {
