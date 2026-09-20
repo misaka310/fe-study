@@ -19,7 +19,7 @@ describe('基本問題', () => {
 
   it('セット5を選ぶと20問だけ表示し、回答直後に解説を表示する', async () => {
     localStorage.clear();
-    render(<PracticeRunner questionCount={217} mode="vocabulary" vocabSet="5" />);
+    render(<PracticeRunner questionCount={265} mode="vocabulary" vocabSet="5" />);
     expect(await screen.findByText('基本問題 · セット5')).toBeInTheDocument();
     expect(screen.getByText('基本問題 · 20問')).toBeInTheDocument();
     fireEvent.click((await screen.findAllByRole('radio'))[0]);
