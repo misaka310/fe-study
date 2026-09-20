@@ -8,10 +8,16 @@ import {
 } from '../src/learning/state';
 import type { Question } from '../src/domain/types';
 
-const question = (id: string, subject: 'A' | 'B', topic: string): Question => ({
+const question = (
+  id: string,
+  subject: 'A' | 'B',
+  topic: string,
+  domain = subject === 'A' ? 'security' : 'algorithm',
+  practiceTier?: 'foundation' | 'exam',
+): Question => ({
   id,
   subject,
-  domain: subject === 'A' ? 'security' : 'algorithm',
+  domain,
   topic,
   stem: `${id} の判断に必要な知識を確認する問題文です。`,
   choices: ['選択肢A', '選択肢B', '選択肢C', '選択肢D'],
@@ -20,6 +26,7 @@ const question = (id: string, subject: 'A' | 'B', topic: string): Question => ({
   choiceReasons: ['要件を満たしません。', '要件を満たします。', '別の目的の選択肢です。', '前提条件が異なります。'],
   materialId: '08-security',
   difficulty: 2,
+  ...(practiceTier ? { practiceTier } : {}),
 });
 
 describe('学習状態', () => {
@@ -49,14 +56,17 @@ describe('学習状態', () => {
     ]);
   });
 
-  it('科目A模試を60問90分、科目B模試を20問100分で作る', () => {
+  it('科目Aは60問90分、科目Bは本番レベルから16問＋4問を20問100分で作る', () => {
     const questions = [
       ...Array.from({ length: 70 }, (_, index) => question(`a-${index + 1}`, 'A', '科目A')),
-      ...Array.from({ length: 30 }, (_, index) => question(`b-${index + 1}`, 'B', '科目B')),
+      ...Array.from({ length: 20 }, (_, index) => question(`b-foundation-${index + 1}`, 'B', '基礎', 'algorithm', 'foundation')),
+      ...Array.from({ length: 20 }, (_, index) => question(`b-exam-alg-${index + 1}`, 'B', '本番アルゴリズム', 'algorithm', 'exam')),
+      ...Array.from({ length: 5 }, (_, index) => question(`b-exam-sec-${index + 1}`, 'B', '本番セキュリティ', 'security-case', 'exam')),
     ];
 
     const examA = createExamSession('A', questions, '2026-08-24T02:00:00.000Z', () => 0.5);
     const examB = createExamSession('B', questions, '2026-08-24T03:00:00.000Z', () => 0.5);
+    const selectedB = examB.questionIds.map((id) => questions.find((item) => item.id === id)!);
 
     expect(examA.questionIds).toHaveLength(60);
     expect(new Set(examA.questionIds).size).toBe(60);
@@ -65,6 +75,9 @@ describe('学習状態', () => {
     expect(examB.questionIds).toHaveLength(20);
     expect(new Set(examB.questionIds).size).toBe(20);
     expect(examB.durationMinutes).toBe(100);
+    expect(selectedB.every((item) => item.practiceTier === 'exam')).toBe(true);
+    expect(selectedB.filter((item) => item.domain === 'algorithm')).toHaveLength(16);
+    expect(selectedB.filter((item) => item.domain === 'security-case')).toHaveLength(4);
   });
 
   it('必要数に満たない問題バンクでは模試を開始しない', () => {
@@ -72,6 +85,15 @@ describe('学習状態', () => {
 
     expect(() => createExamSession('A', questions, '2026-08-24T02:00:00.000Z', () => 0.5))
       .toThrow('科目A模試には60問以上が必要です');
+  });
+
+  it('科目Bは本番レベルの16問＋4問を満たさない問題バンクを拒否する', () => {
+    const questions = [
+      ...Array.from({ length: 20 }, (_, index) => question(`b-exam-alg-${index + 1}`, 'B', '本番アルゴリズム', 'algorithm', 'exam')),
+    ];
+
+    expect(() => createExamSession('B', questions, '2026-08-24T03:00:00.000Z', () => 0.5))
+      .toThrow('科目B模試には本番レベルのアルゴリズム16問・セキュリティ4問以上が必要です');
   });
 
   it('演習順は同じセッションなら再現し、別セッションでは変わる', () => {

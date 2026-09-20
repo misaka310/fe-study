@@ -11,6 +11,7 @@ export interface QuestionSeed {
   wrong: [choice: string, reason: string][];
   position: 0 | 1 | 2 | 3;
   difficulty: 1 | 2 | 3;
+  practiceTier?: 'foundation' | 'exam';
   code?: string;
 }
 
@@ -46,6 +47,7 @@ export function makeQuestions(
       choiceReasons: entries.map(([, reason]) => reason),
       materialId,
       difficulty: seed.difficulty,
+      ...(seed.practiceTier ? { practiceTier: seed.practiceTier } : {}),
       ...(seed.code ? { code: seed.code } : {}),
     };
   });

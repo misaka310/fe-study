@@ -22,7 +22,7 @@ function setVisualAlgorithmSession(questionIds = ['b-algorithm-047', 'b-algorith
 describe('PracticeRunner', () => {
   it('回答直後に解説を自動表示し、解説を見るボタンを出さない', async () => {
     localStorage.clear();
-    render(<PracticeRunner questionCount={265} mode="all" subject="A" />);
+    render(<PracticeRunner questionCount={questions.length} mode="all" subject="A" />);
     const choices = await screen.findAllByRole('radio');
     fireEvent.click(choices[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
@@ -73,61 +73,73 @@ describe('PracticeRunner', () => {
 
   it('未回答モードでは回答済み問題を除外する', async () => {
     localStorage.clear();
-    const { unmount } = render(<PracticeRunner questionCount={265} mode="all" />);
+    const { unmount } = render(<PracticeRunner questionCount={questions.length} mode="all" />);
     fireEvent.click((await screen.findAllByRole('radio'))[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     unmount();
-    render(<PracticeRunner questionCount={265} mode="unanswered" />);
+    render(<PracticeRunner questionCount={questions.length} mode="unanswered" />);
     expect(await screen.findByRole('link', { name: /未回答だけ/ })).toBeInTheDocument();
     expect(screen.getByText(new RegExp(`${questions.length - 1}問`))).toBeInTheDocument();
   });
 
   it('通常問題を全科目・科目A・科目Bで分類し、対象件数を表示する', async () => {
     localStorage.clear();
-    const allRender = render(<PracticeRunner questionCount={265} mode="all" />);
+    const allRender = render(<PracticeRunner questionCount={questions.length} mode="all" />);
     await screen.findAllByRole('radio');
 
     expect(screen.getByText('全科目 · 全問題')).toBeInTheDocument();
-    expect(screen.getByText('全科目の全問題：265問')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /全科目.*265問/ })).toHaveAttribute('href', '?view=practice&mode=all');
+    expect(screen.getByText('全科目の全問題：305問')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /全科目.*305問/ })).toHaveAttribute('href', '?view=practice&mode=all');
     expect(screen.getByRole('link', { name: /科目A.*165問/ })).toHaveAttribute('href', '?view=practice&mode=all&subject=A');
-    expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveAttribute('href', '?view=practice&mode=all&subject=B');
+    expect(screen.getByRole('link', { name: /科目B.*140問/ })).toHaveAttribute('href', '?view=practice&mode=all&subject=B&tier=foundation');
 
     allRender.unmount();
-    render(<PracticeRunner questionCount={265} mode="all" subject="B" />);
+    render(<PracticeRunner questionCount={questions.length} mode="all" subject="B" />);
     await screen.findAllByRole('radio');
-    expect(screen.getByText('科目B · 全問題')).toBeInTheDocument();
-    expect(screen.getByText('科目Bの全問題：100問')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveClass('is-selected');
+    expect(screen.getByText('科目B・基礎 · 全問題')).toBeInTheDocument();
+    expect(screen.getByText('科目B・基礎の全問題：100問')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /科目B.*140問/ })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: /科目B.*140問/ })).toHaveClass('is-selected');
+    expect(screen.getByRole('link', { name: '基礎（100問）' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: '本番レベル（40問）' })).toHaveAttribute('href', '?view=practice&mode=all&subject=B&tier=exam');
     expect(screen.getByRole('link', { name: '全問題' })).toHaveClass('is-selected');
     expect(screen.getByRole('link', { name: '未回答だけ' })).not.toHaveClass('is-selected');
     expect(screen.getByRole('link', { name: '全問題' })).not.toHaveTextContent('✓');
   });
 
+  it('科目Bの本番レベル40問へ切り替えられる', async () => {
+    localStorage.clear();
+    render(<PracticeRunner questionCount={questions.length} mode="all" subject="B" practiceTier="exam" />);
+    await screen.findAllByRole('radio');
+    expect(screen.getByText('科目B・本番レベル · 全問題')).toBeInTheDocument();
+    expect(screen.getByText('科目B・本番レベルの全問題：40問')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '本番レベル（40問）' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getAllByText('本番レベル').length).toBeGreaterThanOrEqual(1);
+  });
+
   it('絞り込みモードでは対象全体の件数も表示する', async () => {
     localStorage.clear();
-    const allRender = render(<PracticeRunner questionCount={265} mode="all" />);
+    const allRender = render(<PracticeRunner questionCount={questions.length} mode="all" />);
     fireEvent.click((await screen.findAllByRole('radio'))[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     allRender.unmount();
-    render(<PracticeRunner questionCount={265} mode="unanswered" />);
+    render(<PracticeRunner questionCount={questions.length} mode="unanswered" />);
     await screen.findAllByRole('radio');
-    expect(screen.getByText(/全科目の未回答だけ：\d+問（全265問）/)).toBeInTheDocument();
+    expect(screen.getByText(/全科目の未回答だけ：\d+問（全305問）/)).toBeInTheDocument();
   });
 
   it('科目切替では分野を持ち越さず、未回答の科目Bを全分野で表示する', async () => {
     localStorage.clear();
-    const aRender = render(<PracticeRunner questionCount={265} mode="unanswered" domain="database" subject="A" />);
+    const aRender = render(<PracticeRunner questionCount={questions.length} mode="unanswered" domain="database" subject="A" />);
     await screen.findAllByRole('radio');
 
-    expect(screen.getByRole('link', { name: /全科目.*265問/ })).toHaveAttribute('href', '?view=practice&mode=unanswered');
-    expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveAttribute('href', '?view=practice&mode=unanswered&subject=B');
+    expect(screen.getByRole('link', { name: /全科目.*305問/ })).toHaveAttribute('href', '?view=practice&mode=unanswered');
+    expect(screen.getByRole('link', { name: /科目B.*140問/ })).toHaveAttribute('href', '?view=practice&mode=unanswered&subject=B&tier=foundation');
 
     aRender.unmount();
-    render(<PracticeRunner questionCount={265} mode="unanswered" subject="B" />);
+    render(<PracticeRunner questionCount={questions.length} mode="unanswered" subject="B" />);
     await screen.findAllByRole('radio');
-    expect(screen.getByText('科目Bの未回答だけ：100問')).toBeInTheDocument();
+    expect(screen.getByText('科目B・基礎の未回答だけ：100問')).toBeInTheDocument();
   });
 
   it('未回答モードで解答しても結果表示中の問題文を別問題へすり替えない', async () => {
@@ -148,7 +160,7 @@ describe('PracticeRunner', () => {
   it('基本問題の途中で再読み込みすると解答済みを飛ばして同じセットの続きから再開する', async () => {
     localStorage.clear();
     const now = vi.spyOn(Date, 'now').mockReturnValue(20260908);
-    const firstRender = render(<PracticeRunner questionCount={265} mode="vocabulary" vocabSet="1" />);
+    const firstRender = render(<PracticeRunner questionCount={questions.length} mode="vocabulary" vocabSet="1" />);
     await screen.findAllByRole('radio');
     const answeredStem = firstRender.container.querySelector('.practice-question-card h2')?.textContent;
     expect(answeredStem).toBeTruthy();
@@ -157,7 +169,7 @@ describe('PracticeRunner', () => {
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     firstRender.unmount();
 
-    const resumedRender = render(<PracticeRunner questionCount={265} mode="vocabulary" vocabSet="1" />);
+    const resumedRender = render(<PracticeRunner questionCount={questions.length} mode="vocabulary" vocabSet="1" />);
     await screen.findAllByRole('radio');
     expect(resumedRender.container.querySelector('.practice-question-card h2')?.textContent).not.toBe(answeredStem);
     expect(screen.getByText('2 / 20')).toBeInTheDocument();

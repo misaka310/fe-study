@@ -16,10 +16,10 @@ const similarity = (left: string, right: string) => {
 };
 
 describe('独自問題バンクの品質', () => {
-  it('科目A 165問以上、科目B 100問、合計265問を収録する', () => {
-    expect(questions.length).toBe(265);
-    expect(questions.filter((question) => question.subject === 'A').length).toBeGreaterThanOrEqual(165);
-    expect(questions.filter((question) => question.subject === 'B').length).toBe(100);
+  it('科目A 165問、科目B 140問、合計305問を収録する', () => {
+    expect(questions.length).toBe(305);
+    expect(questions.filter((question) => question.subject === 'A').length).toBe(165);
+    expect(questions.filter((question) => question.subject === 'B').length).toBe(140);
   });
 
   it('追加教材から選別した15問を独立IDで統合する', () => {
@@ -79,12 +79,19 @@ describe('独自問題バンクの品質', () => {
     }
   });
 
-  it('科目Bはアルゴリズム80問とセキュリティ事例20問を持つ', () => {
-    const algorithm = questions.filter((question) => question.subject === 'B' && question.domain === 'algorithm');
-    const security = questions.filter((question) => question.subject === 'B' && question.domain === 'security-case');
-    expect(algorithm.length).toBe(80);
-    expect(security.length).toBe(20);
+  it('科目Bは基礎100問と本番レベル40問を持ち、本番レベルは32問＋8問に分かれる', () => {
+    const subjectB = questions.filter((question) => question.subject === 'B');
+    const foundation = subjectB.filter((question) => question.practiceTier === 'foundation');
+    const exam = subjectB.filter((question) => question.practiceTier === 'exam');
+    const algorithm = subjectB.filter((question) => question.domain === 'algorithm');
+    const security = subjectB.filter((question) => question.domain === 'security-case');
+    expect(foundation).toHaveLength(100);
+    expect(exam).toHaveLength(40);
+    expect(exam.filter((question) => question.domain === 'algorithm')).toHaveLength(32);
+    expect(exam.filter((question) => question.domain === 'security-case')).toHaveLength(8);
+    expect(algorithm).toHaveLength(112);
+    expect(security).toHaveLength(28);
     expect(algorithm.every((question) => question.code && /for|while|if|return|手続/.test(question.code))).toBe(true);
-    expect(security.every((question) => /社|組織|担当|利用者|システム|サービス/.test(question.stem))).toBe(true);
+    expect(security.every((question) => /社|組織|担当|利用者|システム|サービス|会社/.test(question.stem))).toBe(true);
   });
 });

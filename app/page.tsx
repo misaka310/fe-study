@@ -17,8 +17,10 @@ const studyPath = (questionCount: number) => [
 
 const practiceLinks = (questionCount: number) => [
   { href: '?view=practice&mode=all', title: `全${questionCount}問練習`, text: '標準問題を一通り解く' },
+  { href: '?view=practice&mode=all&subject=B&tier=foundation', title: '科目B 基礎100問', text: '短い追跡問題で擬似言語とデータ構造の土台を固める' },
+  { href: '?view=practice&mode=all&subject=B&tier=exam', title: '科目B 本番レベル40問', text: '仕様読解と複数段階の追跡を本番相当の密度で練習する' },
   { href: '?view=practice&mode=vocabulary&vocabSet=1', title: '基本問題 20問×5セット', text: '科目Aで問われる知識判断を100問で確認する' },
-  { href: '?view=exams', title: '科目A・B模試', text: '本番と同じ問題数・時間で確認する' },
+  { href: '?view=exams', title: '科目A・B模試', text: '科目Bは本番レベル問題から16問＋4問で確認する' },
   { href: '?view=practice&mode=unanswered', title: '未回答だけ', text: 'まだ解いていない問題を進める' },
   { href: '?view=practice&mode=wrong', title: '間違いだけ', text: '直近で間違えた問題を解き直す' },
   { href: '?view=practice&mode=weakness', title: '弱点補強', text: '苦手トピックに関連する問題を解く' },
@@ -65,7 +67,7 @@ export default async function Home({ searchParams = Promise.resolve({}) }: PageP
   const params = await searchParams;
   const questionCount = questions.length;
   if (params.view === 'materials') return <MaterialReader initialMaterialId={typeof params.material === 'string' ? params.material : '01-roadmap'} questionCount={questionCount} />;
-  if (params.view === 'practice') return <PracticeRunner mode={typeof params.mode === 'string' ? params.mode : 'all'} materialId={typeof params.material === 'string' ? params.material : undefined} domain={typeof params.domain === 'string' ? params.domain : undefined} subject={typeof params.subject === 'string' ? params.subject : undefined} vocabSet={typeof params.vocabSet === 'string' ? params.vocabSet : undefined} questionCount={questionCount} />;
+  if (params.view === 'practice') return <PracticeRunner mode={typeof params.mode === 'string' ? params.mode : 'all'} materialId={typeof params.material === 'string' ? params.material : undefined} domain={typeof params.domain === 'string' ? params.domain : undefined} subject={typeof params.subject === 'string' ? params.subject : undefined} vocabSet={typeof params.vocabSet === 'string' ? params.vocabSet : undefined} practiceTier={typeof params.tier === 'string' ? params.tier : undefined} questionCount={questionCount} />;
   if (params.view === 'exams') return <ExamCenter questionCount={questionCount} />;
   if (params.view === 'dashboard') return <LearningDashboard questionCount={questionCount} />;
   return <Landing questionCount={questionCount} />;
