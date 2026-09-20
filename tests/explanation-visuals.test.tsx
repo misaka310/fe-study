@@ -41,14 +41,14 @@ describe('問題解説図', () => {
   });
 
   it('解説図を付ける問題へ一意に付与する', () => {
-    expect(Object.keys(explanationVisuals)).toHaveLength(331);
-    expect(visualQuestions).toHaveLength(331);
+    expect(Object.keys(explanationVisuals)).toHaveLength(allQuestions.length);
+    expect(visualQuestions).toHaveLength(allQuestions.length);
     expect(visualQuestions.every((question) => question.explanationVisual?.src === `/images/explanations/${question.id}.webp`)).toBe(true);
   });
 
-  it('画像なしの追加科目B問題は本文解説だけで完結する', () => {
-    const textOnlyB = allQuestions.filter((question) => question.subject === 'B' && !question.explanationVisual);
-    expect(textOnlyB).toHaveLength(34);
+  it('全問題に解説図が付与される', () => {
+    const textOnlyQuestions = allQuestions.filter((question) => !question.explanationVisual);
+    expect(textOnlyQuestions).toHaveLength(0);
   });
 
   it('対象画像が全て実ファイルとして保存されている', () => {
