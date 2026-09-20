@@ -108,7 +108,8 @@ describe('PracticeRunner', () => {
     const allRender = render(<PracticeRunner questionCount={265} mode="all" />);
     await screen.findAllByRole('radio');
 
-    expect(screen.getByText('全問題 · 265問')).toBeInTheDocument();
+    expect(screen.getByText('全科目 · 全問題')).toBeInTheDocument();
+    expect(screen.getByText('全科目の全問題：265問')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /全科目.*265問/ })).toHaveAttribute('href', '?view=practice&mode=all');
     expect(screen.getByRole('link', { name: /科目A.*165問/ })).toHaveAttribute('href', '?view=practice&mode=all&subject=A');
     expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveAttribute('href', '?view=practice&mode=all&subject=B');
@@ -116,7 +117,9 @@ describe('PracticeRunner', () => {
     allRender.unmount();
     render(<PracticeRunner questionCount={265} mode="all" subject="B" />);
     await screen.findAllByRole('radio');
-    expect(screen.getByText('全問題 · 100問')).toBeInTheDocument();
+    expect(screen.getByText('科目B · 全問題')).toBeInTheDocument();
+    expect(screen.getByText('科目Bの全問題：100問')).toBeInTheDocument();
+    expect(screen.getByLabelText('現在の対象')).toHaveTextContent('科目B');
     expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveAttribute('aria-current', 'page');
   });
 
@@ -128,7 +131,7 @@ describe('PracticeRunner', () => {
     allRender.unmount();
     render(<PracticeRunner questionCount={265} mode="unanswered" />);
     await screen.findAllByRole('radio');
-    expect(screen.getByText(/未回答だけ · \d+問（全265問中）/)).toBeInTheDocument();
+    expect(screen.getByText(/全科目の未回答だけ：\d+問（全265問）/)).toBeInTheDocument();
   });
 
   it('未回答モードで解答しても結果表示中の問題文を別問題へすり替えない', async () => {

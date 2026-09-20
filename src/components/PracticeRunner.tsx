@@ -177,6 +177,9 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   };
 
   const subjectCount = (value?: string) => value ? subjectPool.filter((question) => question.subject === value).length : subjectPool.length;
+  const subjectLabel = subject ? `科目${subject}` : '全科目';
+  const scopeLabel = selectedMode === 'vocabulary' ? `基本問題・セット${selectedVocabularySet}` : subjectLabel;
+  const basePoolLabel = subject ? `${subjectLabel}の全${basePool.length}問` : `全${basePool.length}問`;
 
   useEffect(() => {
     void preloadExplanationVisual(pool[nextTarget]?.explanationVisual);
@@ -192,6 +195,11 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
           <aside className="practice-sidebar practice-sidebar-left" aria-label="問題演習のメニュー">
             <p className="eyebrow">Practice</p>
             <h1>問題演習</h1>
+            <div className="practice-current-filter" aria-label="現在の対象">
+              <span>現在の対象</span>
+              <strong>{scopeLabel}</strong>
+              <small>{selectedMode === 'vocabulary' ? '基本問題' : labels[selectedMode]}{selectedMode !== 'vocabulary' && domain ? ` / ${domainLabels[domain] ?? domain}` : ''}</small>
+            </div>
             <section className="practice-menu-group" aria-labelledby="practice-mode-title">
               <h2 id="practice-mode-title">モード</h2>
               {Object.entries(labels).map(([key, label]) => (
@@ -229,8 +237,8 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
           </aside>
 
           <section className="practice-center" aria-labelledby="practice-board-title">
-            <div className="practice-board-title" id="practice-board-title">{selectedMode === 'vocabulary' ? `基本問題 · セット${selectedVocabularySet}` : labels[selectedMode]}</div>
-            <p className="practice-set-count">{labels[selectedMode]} · {displayTotal}問{displayTotal < basePool.length ? `（全${basePool.length}問中）` : ''}</p>
+            <div className="practice-board-title" id="practice-board-title">{scopeLabel} · {selectedMode === 'vocabulary' ? '基本問題' : labels[selectedMode]}</div>
+            <p className="practice-set-count">{selectedMode === 'vocabulary' ? `${scopeLabel}：${displayTotal}問` : `${scopeLabel}の${labels[selectedMode]}：${displayTotal}問${displayTotal < basePool.length ? `（${basePoolLabel}）` : ''}`}</p>
             {message ? <p className="status-message" role="status">{message}</p> : null}
             {!displayQuestion ? (
               <section className="practice-empty"><h2>該当する問題はありません</h2><p>{selectedMode === 'weakness' ? 'まだ弱点履歴がありません。まず問題を解いて誤答すると、ここへ関連問題が表示されます。' : '別のモードか分野を選ぶと、対象の問題が表示されます。'}</p><a href="?view=practice&mode=all">全問題へ戻る</a></section>
