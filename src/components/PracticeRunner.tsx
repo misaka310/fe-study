@@ -67,17 +67,21 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const [activeSessionKey, setActiveSessionKey] = useState<string | null>(null);
   const allPracticeQuestions = useMemo(() => [...questions, ...vocabularyQuestions], []);
   const weakTopics = useMemo(() => new Set(buildWeaknessRanking(state, allPracticeQuestions).map((item) => item.topic)), [allPracticeQuestions, state]);
+  const sourceQuestions = useMemo(() => selectedMode === 'vocabulary' ? vocabularyQuestions : selectedMode === 'weakness' ? allPracticeQuestions : questions, [allPracticeQuestions, selectedMode]);
+
+  const subjectPool = useMemo(() => sourceQuestions.filter((question) => {
+    if (materialId && question.materialId !== materialId) return false;
+    if (domain && question.domain !== domain) return false;
+    if (selectedMode === 'vocabulary' && question.vocabularySet !== selectedVocabularySet) return false;
+    return true;
+  }), [domain, materialId, selectedMode, selectedVocabularySet, sourceQuestions]);
 
   const basePool = useMemo(() => {
-    const sourceQuestions = selectedMode === 'vocabulary' ? vocabularyQuestions : selectedMode === 'weakness' ? allPracticeQuestions : questions;
-    return sourceQuestions.filter((question) => {
+    return subjectPool.filter((question) => {
       if (subject && question.subject !== subject) return false;
-      if (materialId && question.materialId !== materialId) return false;
-      if (domain && question.domain !== domain) return false;
-      if (selectedMode === 'vocabulary' && question.vocabularySet !== selectedVocabularySet) return false;
       return true;
     });
-  }, [allPracticeQuestions, domain, materialId, selectedMode, selectedVocabularySet, subject]);
+  }, [subject, subjectPool]);
 
   const candidatePool = useMemo(() => basePool.filter((question) => {
     const attempts = state.attempts[question.id] ?? [];
@@ -163,6 +167,17 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const previousDisabled = previousTarget < 0;
   const nextDisabled = nextTarget < 0;
 
+  const practiceHref = (nextMode = selectedMode, nextSubject = subject, nextDomain = domain) => {
+    const params = new URLSearchParams({ view: 'practice', mode: nextMode });
+    if (materialId) params.set('material', materialId);
+    if (nextDomain) params.set('domain', nextDomain);
+    if (nextSubject) params.set('subject', nextSubject);
+    if (nextMode === 'vocabulary') params.set('vocabSet', String(selectedVocabularySet));
+    return `?${params.toString()}`;
+  };
+
+  const subjectCount = (value?: string) => value ? subjectPool.filter((question) => question.subject === value).length : subjectPool.length;
+
   useEffect(() => {
     void preloadExplanationVisual(pool[nextTarget]?.explanationVisual);
   }, [nextTarget, pool]);
@@ -180,21 +195,29 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
             <section className="practice-menu-group" aria-labelledby="practice-mode-title">
               <h2 id="practice-mode-title">モード</h2>
               {Object.entries(labels).map(([key, label]) => (
-                <a aria-current={key === selectedMode ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=${key}`} key={key}>
+                <a aria-current={key === selectedMode ? 'page' : undefined} className="practice-menu-link" href={practiceHref(key as PracticeMode, key === 'vocabulary' ? undefined : subject)} key={key}>
                   <span>✓</span>{label}
                 </a>
               ))}
               <a className="practice-menu-link" href="?view=exams"><span>→</span>科目A・B模試</a>
             </section>
+            {selectedMode !== 'vocabulary' ? (
+              <section className="practice-menu-group" aria-labelledby="practice-subject-title">
+                <h2 id="practice-subject-title">科目</h2>
+                <a aria-current={!subject ? 'page' : undefined} className="practice-menu-link" href={practiceHref(selectedMode, undefined)}><span>✓</span>全科目（{subjectCount()}問）</a>
+                <a aria-current={subject === 'A' ? 'page' : undefined} className="practice-menu-link" href={practiceHref(selectedMode, 'A')}><span>Ａ</span>科目A（{subjectCount('A')}問）</a>
+                <a aria-current={subject === 'B' ? 'page' : undefined} className="practice-menu-link" href={practiceHref(selectedMode, 'B')}><span>Ｂ</span>科目B（{subjectCount('B')}問）</a>
+              </section>
+            ) : null}
             <section className="practice-menu-group" aria-labelledby="vocabulary-set-title">
               <h2 id="vocabulary-set-title">基本問題 20問×5セット</h2>
               {[1, 2, 3, 4, 5].map((set) => <a aria-current={selectedMode === 'vocabulary' && selectedVocabularySet === set ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=vocabulary&vocabSet=${set}`} key={set}><span>#{set}</span>セット{set}（20問）</a>)}
             </section>
             <section className="practice-menu-group" aria-labelledby="practice-domain-title">
               <h2 id="practice-domain-title">分野</h2>
-              <a aria-current={!domain ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=${selectedMode}${selectedMode === 'vocabulary' ? `&vocabSet=${selectedVocabularySet}` : ''}`}>全分野</a>
+              <a aria-current={!domain ? 'page' : undefined} className="practice-menu-link" href={practiceHref(selectedMode, subject, undefined)}>全分野</a>
               {Object.entries(domainLabels).map(([key, label]) => (
-                <a aria-current={domain === key ? 'page' : undefined} className="practice-menu-link" href={`?view=practice&mode=${selectedMode}&domain=${key}${selectedMode === 'vocabulary' ? `&vocabSet=${selectedVocabularySet}` : ''}`} key={key}>{label}</a>
+                <a aria-current={domain === key ? 'page' : undefined} className="practice-menu-link" href={practiceHref(selectedMode, subject, key)} key={key}>{label}</a>
               ))}
             </section>
             <div className="practice-notice">現在のセットは、問題文の条件と選択肢の理由を確認しながら進めます。回答履歴はこのブラウザに保存されます。</div>
@@ -207,7 +230,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
 
           <section className="practice-center" aria-labelledby="practice-board-title">
             <div className="practice-board-title" id="practice-board-title">{selectedMode === 'vocabulary' ? `基本問題 · セット${selectedVocabularySet}` : labels[selectedMode]}</div>
-            <p className="practice-set-count">{labels[selectedMode]} · {displayTotal}問</p>
+            <p className="practice-set-count">{labels[selectedMode]} · {displayTotal}問{displayTotal < basePool.length ? `（全${basePool.length}問中）` : ''}</p>
             {message ? <p className="status-message" role="status">{message}</p> : null}
             {!displayQuestion ? (
               <section className="practice-empty"><h2>該当する問題はありません</h2><p>{selectedMode === 'weakness' ? 'まだ弱点履歴がありません。まず問題を解いて誤答すると、ここへ関連問題が表示されます。' : '別のモードか分野を選ぶと、対象の問題が表示されます。'}</p><a href="?view=practice&mode=all">全問題へ戻る</a></section>
