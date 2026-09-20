@@ -7,6 +7,7 @@ import { explanationVisuals, preloadExplanationVisual } from '../src/content/exp
 import { vocabularyQuestions } from '../src/content/vocabulary';
 
 const allQuestions = [...questions, ...vocabularyQuestions];
+const visualQuestions = allQuestions.filter((question) => question.explanationVisual);
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -39,18 +40,19 @@ describe('問題解説図', () => {
     await expect(first).resolves.toBeUndefined();
   });
 
-  it('全問題へ一意に付与する', () => {
-    expect(Object.keys(explanationVisuals)).toHaveLength(allQuestions.length);
-    expect(allQuestions.every((question) => question.explanationVisual)).toBe(true);
-    expect(allQuestions.every((question) => question.explanationVisual?.src === `/images/explanations/${question.id}.webp`)).toBe(true);
+  it('解説図を付ける問題へ一意に付与する', () => {
+    expect(Object.keys(explanationVisuals)).toHaveLength(331);
+    expect(visualQuestions).toHaveLength(331);
+    expect(visualQuestions.every((question) => question.explanationVisual?.src === `/images/explanations/${question.id}.webp`)).toBe(true);
   });
 
-  it('全問題に解説図が付く', () => {
-    expect(allQuestions.every((question) => question.explanationVisual)).toBe(true);
+  it('画像なしの追加科目B問題は本文解説だけで完結する', () => {
+    const textOnlyB = allQuestions.filter((question) => question.subject === 'B' && !question.explanationVisual);
+    expect(textOnlyB).toHaveLength(34);
   });
 
   it('対象画像が全て実ファイルとして保存されている', () => {
-    for (const question of allQuestions) {
+    for (const question of visualQuestions) {
       expect(existsSync(`public${question.explanationVisual!.src}`), question.id).toBe(true);
     }
   });

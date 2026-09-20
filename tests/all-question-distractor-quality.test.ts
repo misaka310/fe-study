@@ -33,13 +33,13 @@ const unrelatedFillerPatterns = [
 ];
 
 describe('全問題バンクの選択肢品質', () => {
-  it('通常217問と基本100問の合計317問を同じ監査対象にする', () => {
-    expect(questions).toHaveLength(217);
+  it('通常265問と基本100問の合計365問を同じ監査対象にする', () => {
+    expect(questions).toHaveLength(265);
     expect(vocabularyQuestions).toHaveLength(100);
-    expect(allQuestions).toHaveLength(317);
+    expect(allQuestions).toHaveLength(365);
   });
 
-  it('設問と無関係な埋め草を317問の選択肢へ入れない', () => {
+  it('設問と無関係な埋め草を365問の選択肢へ入れない', () => {
     for (const question of allQuestions) {
       for (const choice of question.choices) {
         for (const pattern of unrelatedFillerPatterns) {
@@ -49,7 +49,7 @@ describe('全問題バンクの選択肢品質', () => {
     }
   });
 
-  it('全317問で選択肢重複と理由欠落を許さない', () => {
+  it('全365問で選択肢重複と理由欠落を許さない', () => {
     for (const question of allQuestions) {
       expect(new Set(question.choices).size, question.id).toBe(question.choices.length);
       expect(question.choiceReasons).toHaveLength(question.choices.length);
