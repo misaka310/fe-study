@@ -183,8 +183,9 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const basePoolLabel = subject ? `${subjectLabel}の全${basePool.length}問` : `全${basePool.length}問`;
 
   useEffect(() => {
+    void preloadExplanationVisual(current?.explanationVisual);
     void preloadExplanationVisual(pool[nextTarget]?.explanationVisual);
-  }, [nextTarget, pool]);
+  }, [current, nextTarget, pool]);
 
   if (!ready || activeSessionKey !== sessionKey) return <main className="study-shell"><p>学習履歴を読み込んでいます…</p></main>;
 

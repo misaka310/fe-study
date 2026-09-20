@@ -59,37 +59,16 @@ describe('PracticeRunner', () => {
     vi.stubGlobal('Image', MockImage);
     render(<PracticeRunner questionCount={questions.length} mode="all" domain="algorithm" />);
     await screen.findAllByRole('radio');
-    expect(loadedSources).toHaveLength(1);
+    expect(loadedSources).toHaveLength(2);
     expect(loadedSources[0]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
+    expect(loadedSources[1]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
 
     fireEvent.click((await screen.findAllByRole('radio'))[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     fireEvent.click(screen.getByRole('button', { name: '次へ' }));
 
-    expect(loadedSources).toHaveLength(2);
-    expect(loadedSources[1]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
-  });
-
-  it('現在の問題を解いている間に次のアルゴリズム問題の解説画像を先読みする', async () => {
-    localStorage.clear();
-    setVisualAlgorithmSession(['b-algorithm-047', 'b-algorithm-065', 'b-algorithm-066']);
-    const loadedSources: string[] = [];
-
-    class MockImage {
-      onload: (() => void) | null = null;
-
-      set src(value: string) {
-        loadedSources.push(value);
-        this.onload?.();
-      }
-    }
-
-    vi.stubGlobal('Image', MockImage);
-    render(<PracticeRunner questionCount={questions.length} mode="all" domain="algorithm" />);
-    await screen.findAllByRole('radio');
-
-    expect(loadedSources).toHaveLength(1);
-    expect(loadedSources[0]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
+    expect(loadedSources).toHaveLength(3);
+    expect(loadedSources[2]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
   });
 
   it('未回答モードでは回答済み問題を除外する', async () => {
