@@ -21,6 +21,12 @@ import { RichText } from './RichText';
 
 type PracticeMode = 'all' | 'unanswered' | 'wrong' | 'weakness' | 'vocabulary';
 type BasicSet = 1 | 2 | 3 | 4 | 5;
+type PracticeTier = 'foundation' | 'exam';
+
+function questionTier(question: Question): PracticeTier | undefined {
+  if (question.subject !== 'B') return undefined;
+  return question.practiceTier ?? 'foundation';
+}
 
 interface AnsweredContext {
   question: Question;
@@ -53,11 +59,12 @@ function parseBasicSet(value?: string): BasicSet {
   return 1;
 }
 
-export function PracticeRunner({ mode = 'all', materialId, domain, subject, vocabSet, questionCount }: {
-  mode?: string; materialId?: string; domain?: string; subject?: string; vocabSet?: string; questionCount: number;
+export function PracticeRunner({ mode = 'all', materialId, domain, subject, vocabSet, practiceTier, questionCount }: {
+  mode?: string; materialId?: string; domain?: string; subject?: string; vocabSet?: string; practiceTier?: string; questionCount: number;
 }) {
   const selectedMode: PracticeMode = mode in labels ? mode as PracticeMode : 'all';
   const selectedVocabularySet = parseBasicSet(vocabSet);
+  const selectedPracticeTier: PracticeTier | undefined = subject === 'B' ? (practiceTier === 'exam' ? 'exam' : 'foundation') : undefined;
   const { state, update, ready, message } = useLearningState();
   const [index, setIndex] = useState(0);
   const [pick, setPick] = useState<number | null>(null);
@@ -80,9 +87,10 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const basePool = useMemo(() => {
     return subjectPool.filter((question) => {
       if (subject && question.subject !== subject) return false;
+      if (subject === 'B' && selectedPracticeTier && questionTier(question) !== selectedPracticeTier) return false;
       return true;
     });
-  }, [subject, subjectPool]);
+  }, [selectedPracticeTier, subject, subjectPool]);
 
   const candidatePool = useMemo(() => basePool.filter((question) => {
     const attempts = state.attempts[question.id] ?? [];
@@ -92,9 +100,11 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
     return true;
   }), [basePool, selectedMode, state, weakTopics]);
 
-  const sessionKey = useMemo(() => [
-    'practice-v1', selectedMode, subject ?? '', materialId ?? '', domain ?? '', selectedMode === 'vocabulary' ? selectedVocabularySet : '',
-  ].join('|'), [domain, materialId, selectedMode, selectedVocabularySet, subject]);
+  const sessionKey = useMemo(() => {
+    const parts = ['practice-v1', selectedMode, subject ?? '', materialId ?? '', domain ?? '', selectedMode === 'vocabulary' ? selectedVocabularySet : ''];
+    if (subject === 'B') parts.push(selectedPracticeTier ?? 'foundation');
+    return parts.join('|');
+  }, [domain, materialId, selectedMode, selectedPracticeTier, selectedVocabularySet, subject]);
   const candidateIds = useMemo(() => candidatePool.map((question) => question.id), [candidatePool]);
   const validIds = useMemo(() => new Set(basePool.map((question) => question.id)), [basePool]);
 
@@ -168,19 +178,27 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const previousDisabled = previousTarget < 0;
   const nextDisabled = nextTarget < 0;
 
-  const practiceHref = (nextMode: PracticeMode = selectedMode, nextSubject: string | null = subject ?? null, nextDomain: string | null = domain ?? null) => {
+  const practiceHref = (
+    nextMode: PracticeMode = selectedMode,
+    nextSubject: string | null = subject ?? null,
+    nextDomain: string | null = domain ?? null,
+    nextTier: PracticeTier | undefined = selectedPracticeTier,
+  ) => {
     const params = new URLSearchParams({ view: 'practice', mode: nextMode });
     if (materialId) params.set('material', materialId);
     if (nextDomain) params.set('domain', nextDomain);
     if (nextSubject) params.set('subject', nextSubject);
+    if (nextSubject === 'B') params.set('tier', nextTier ?? 'foundation');
     if (nextMode === 'vocabulary') params.set('vocabSet', String(selectedVocabularySet));
     return `?${params.toString()}`;
   };
 
   const subjectCount = (value?: string) => value ? subjectTotalsPool.filter((question) => question.subject === value).length : subjectTotalsPool.length;
+  const tierCount = (tier: PracticeTier) => subjectTotalsPool.filter((question) => question.subject === 'B' && questionTier(question) === tier).length;
   const subjectLabel = subject ? `科目${subject}` : '全科目';
-  const scopeLabel = selectedMode === 'vocabulary' ? `基本問題・セット${selectedVocabularySet}` : subjectLabel;
-  const basePoolLabel = subject ? `${subjectLabel}の全${basePool.length}問` : `全${basePool.length}問`;
+  const tierLabel = selectedPracticeTier === 'exam' ? '本番レベル' : selectedPracticeTier === 'foundation' ? '基礎' : '';
+  const scopeLabel = selectedMode === 'vocabulary' ? '基本問題' : subject === 'B' ? `科目B・${tierLabel}` : subjectLabel;
+  const basePoolLabel = subject === 'B' ? `${scopeLabel}の全${basePool.length}問` : subject ? `${subjectLabel}の全${basePool.length}問` : `全${basePool.length}問`;
 
   useEffect(() => {
     void preloadExplanationVisual(current?.explanationVisual);
@@ -211,7 +229,14 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
                 <h2 id="practice-subject-title">科目</h2>
                 <a aria-current={!subject ? 'page' : undefined} className={`practice-menu-link${!subject ? ' is-selected' : ''}`} href={practiceHref(selectedMode, null, null)}>全科目（{subjectCount()}問）</a>
                 <a aria-current={subject === 'A' ? 'page' : undefined} className={`practice-menu-link${subject === 'A' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'A', null)}>科目A（{subjectCount('A')}問）</a>
-                <a aria-current={subject === 'B' ? 'page' : undefined} className={`practice-menu-link${subject === 'B' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'B', null)}>科目B（{subjectCount('B')}問）</a>
+                <a aria-current={subject === 'B' ? 'page' : undefined} className={`practice-menu-link${subject === 'B' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'B', null, selectedPracticeTier ?? 'foundation')}>科目B（{subjectCount('B')}問）</a>
+              </section>
+            ) : null}
+            {selectedMode !== 'vocabulary' && subject === 'B' ? (
+              <section className="practice-menu-group" aria-labelledby="practice-tier-title">
+                <h2 id="practice-tier-title">科目Bのレベル</h2>
+                <a aria-current={selectedPracticeTier === 'foundation' ? 'page' : undefined} className={`practice-menu-link${selectedPracticeTier === 'foundation' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'B', domain ?? null, 'foundation')}>基礎（{tierCount('foundation')}問）</a>
+                <a aria-current={selectedPracticeTier === 'exam' ? 'page' : undefined} className={`practice-menu-link${selectedPracticeTier === 'exam' ? ' is-selected' : ''}`} href={practiceHref(selectedMode, 'B', domain ?? null, 'exam')}>本番レベル（{tierCount('exam')}問）</a>
               </section>
             ) : null}
             <section className="practice-menu-group" aria-labelledby="vocabulary-set-title">
@@ -234,14 +259,14 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
           </aside>
 
           <section className="practice-center" aria-labelledby="practice-board-title">
-            <div className="practice-board-title" id="practice-board-title">{scopeLabel} · {selectedMode === 'vocabulary' ? '基本問題' : labels[selectedMode]}</div>
-            <p className="practice-set-count">{selectedMode === 'vocabulary' ? `${scopeLabel}：${displayTotal}問` : `${scopeLabel}の${labels[selectedMode]}：${displayTotal}問${displayTotal < basePool.length ? `（${basePoolLabel}）` : ''}`}</p>
+            <div className="practice-board-title" id="practice-board-title">{selectedMode === 'vocabulary' ? `基本問題 · セット${selectedVocabularySet}` : `${scopeLabel} · ${labels[selectedMode]}`}</div>
+            <p className="practice-set-count">{selectedMode === 'vocabulary' ? `基本問題 · ${displayTotal}問` : `${scopeLabel}の${labels[selectedMode]}：${displayTotal}問${displayTotal < basePool.length ? `（${basePoolLabel}）` : ''}`}</p>
             {message ? <p className="status-message" role="status">{message}</p> : null}
             {!displayQuestion ? (
               <section className="practice-empty"><h2>該当する問題はありません</h2><p>{selectedMode === 'weakness' ? 'まだ弱点履歴がありません。まず問題を解いて誤答すると、ここへ関連問題が表示されます。' : '別のモードか分野を選ぶと、対象の問題が表示されます。'}</p><a href="?view=practice&mode=all">全問題へ戻る</a></section>
             ) : (
               <section className="practice-question-card">
-                <div className="practice-meta-row"><span className="practice-pill">科目{displayQuestion.subject}</span><span className="practice-pill">{domainLabels[displayQuestion.domain] ?? displayQuestion.domain}</span><span className="practice-pill">{displayQuestion.topic}</span><span className="practice-pill">難易度 {displayQuestion.difficulty}</span><strong>{displayIndex + 1} / {displayTotal}</strong></div>
+                <div className="practice-meta-row"><span className="practice-pill">科目{displayQuestion.subject}</span>{displayQuestion.subject === 'B' ? <span className="practice-pill">{questionTier(displayQuestion) === 'exam' ? '本番レベル' : '基礎'}</span> : null}<span className="practice-pill">{domainLabels[displayQuestion.domain] ?? displayQuestion.domain}</span><span className="practice-pill">{displayQuestion.topic}</span><span className="practice-pill">難易度 {displayQuestion.difficulty}</span><strong>{displayIndex + 1} / {displayTotal}</strong></div>
                 <div className="practice-progress" aria-label={`進捗 ${displayIndex + 1} / ${displayTotal}`}><span style={{ width: `${displayTotal ? ((displayIndex + 1) / displayTotal) * 100 : 0}%` }} /></div>
                 <h2>{<RichText text={displayQuestion.stem} />}</h2>
                 {displayQuestion.code ? <pre><code>{displayQuestion.code}</code></pre> : null}

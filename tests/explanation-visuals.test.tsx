@@ -8,6 +8,7 @@ import { vocabularyQuestions } from '../src/content/vocabulary';
 
 const allQuestions = [...questions, ...vocabularyQuestions];
 const visualQuestions = allQuestions.filter((question) => question.explanationVisual);
+const examQuestions = questions.filter((question) => question.practiceTier === 'exam');
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -40,15 +41,16 @@ describe('問題解説図', () => {
     await expect(first).resolves.toBeUndefined();
   });
 
-  it('解説図を付ける問題へ一意に付与する', () => {
-    expect(Object.keys(explanationVisuals)).toHaveLength(allQuestions.length);
-    expect(visualQuestions).toHaveLength(allQuestions.length);
+  it('既存365問へ解説図を一意に付与する', () => {
+    expect(Object.keys(explanationVisuals)).toHaveLength(365);
+    expect(visualQuestions).toHaveLength(365);
     expect(visualQuestions.every((question) => question.explanationVisual?.src === `/images/explanations/${question.id}.webp`)).toBe(true);
   });
 
-  it('全問題に解説図が付与される', () => {
+  it('画像未付与は科目B本番レベル40問だけに限定する', () => {
     const textOnlyQuestions = allQuestions.filter((question) => !question.explanationVisual);
-    expect(textOnlyQuestions).toHaveLength(0);
+    expect(examQuestions).toHaveLength(40);
+    expect(textOnlyQuestions.map((question) => question.id).sort()).toEqual(examQuestions.map((question) => question.id).sort());
   });
 
   it('対象画像が全て実ファイルとして保存されている', () => {

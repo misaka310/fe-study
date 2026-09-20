@@ -11,7 +11,7 @@ test('次へで次問のWebP解説画像を先読みし、回答直後の解説�
   page.on('pageerror', (error) => browserErrors.push(`page: ${error.message}`));
   page.on('response', (response) => { if (response.status() >= 400) browserErrors.push(`http ${response.status()}: ${response.url()}`); });
 
-  await page.goto('/?view=practice&mode=all&domain=algorithm');
+  await page.goto('/?view=practice&mode=all&subject=B&tier=foundation&domain=algorithm');
   await page.getByRole('radio').first().check();
   await page.getByRole('button', { name: '解答する' }).click();
 

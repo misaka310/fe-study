@@ -22,6 +22,7 @@ export interface Question {
   code?: string;
   explanationVisual?: ExplanationVisual;
   practiceKind?: 'standard' | 'vocabulary';
+  practiceTier?: 'foundation' | 'exam';
   vocabularySet?: 1 | 2 | 3 | 4 | 5;
 }
 
