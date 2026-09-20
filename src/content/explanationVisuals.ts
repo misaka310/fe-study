@@ -1986,6 +1986,210 @@ export const explanationVisuals: Readonly<Record<string, ExplanationVisual>> = O
     "alt": "ハッシュ表の線形探索で添字を折り返す流れを図解した説明画像",
     "label": "ハッシュ表の再試行",
     "description": "衝突後に次の位置を調べ、末尾から先頭へ戻る流れを図で確認できます。"
+  },
+  "b-algorithm-043": {
+    "src": "/images/explanations/b-algorithm-043.webp",
+    "alt": "ループ変数を2ずつ増やして加算する処理を図解した説明画像",
+    "label": "ループ境界の確認",
+    "description": "1から7まで2ずつ進む値を追跡して合計を求める流れを図で確認できます。"
+  },
+  "b-algorithm-044": {
+    "src": "/images/explanations/b-algorithm-044.webp",
+    "alt": "配列を先頭から調べて最初の一致位置を返す処理を図解した説明画像",
+    "label": "線形探索の早期終了",
+    "description": "最初に一致した位置で直ちにreturnする探索の流れを図で確認できます。"
+  },
+  "b-algorithm-045": {
+    "src": "/images/explanations/b-algorithm-045.webp",
+    "alt": "continueで偶数を飛ばして奇数だけを合計する処理を図解した説明画像",
+    "label": "continueの使い方",
+    "description": "条件に合う要素だけを加算し、continueで次の反復へ進む流れを図で確認できます。"
+  },
+  "b-algorithm-046": {
+    "src": "/images/explanations/b-algorithm-046.webp",
+    "alt": "whileループで値を減らして停止するまでの回数を図解した説明画像",
+    "label": "ループ停止条件",
+    "description": "値の更新を追跡し、条件が偽になるまでの反復回数を図で確認できます。"
+  },
+  "b-algorithm-048": {
+    "src": "/images/explanations/b-algorithm-048.webp",
+    "alt": "選択ソートで未整列部分の最小値を交換する手順を図解した説明画像",
+    "label": "選択ソートの途中状態",
+    "description": "未整列部分から最小値を選び、確定位置へ交換する流れを図で確認できます。"
+  },
+  "b-algorithm-049": {
+    "src": "/images/explanations/b-algorithm-049.webp",
+    "alt": "挿入ソートで整列済み部分へ値を挿入する手順を図解した説明画像",
+    "label": "挿入ソートの途中状態",
+    "description": "大きい値を右へ移し、keyを適切な位置へ挿入する流れを図で確認できます。"
+  },
+  "b-algorithm-051": {
+    "src": "/images/explanations/b-algorithm-051.webp",
+    "alt": "同じキーの要素の相対順序を保つ安定ソートを図解した説明画像",
+    "label": "安定ソート",
+    "description": "同じ得点の要素を元の順序のまま並べる安定性を図で確認できます。"
+  },
+  "b-algorithm-052": {
+    "src": "/images/explanations/b-algorithm-052.webp",
+    "alt": "二ポインタ法で配列の両端から合計を探す流れを図解した説明画像",
+    "label": "二ポインタ法",
+    "description": "合計との大小に応じて左または右のポインタを動かす流れを図で確認できます。"
+  },
+  "b-algorithm-054": {
+    "src": "/images/explanations/b-algorithm-054.webp",
+    "alt": "スライディングウィンドウで連続区間の最大合計を求める説明画像",
+    "label": "スライディングウィンドウ",
+    "description": "窓を一日ずつ移動して連続3日間の合計を更新する流れを図で確認できます。"
+  },
+  "b-algorithm-057": {
+    "src": "/images/explanations/b-algorithm-057.webp",
+    "alt": "単方向リストからノードを削除するポインタ操作を図解した説明画像",
+    "label": "連結リスト削除",
+    "description": "前のノードのnextをつなぎ替えて対象ノードを飛ばす流れを図で確認できます。"
+  },
+  "b-algorithm-058": {
+    "src": "/images/explanations/b-algorithm-058.webp",
+    "alt": "単方向リストへノードを挿入するポインタ操作を図解した説明画像",
+    "label": "連結リスト挿入",
+    "description": "挿入ノードのnextを先に設定してリストへ安全に挿入する流れを図で確認できます。"
+  },
+  "b-algorithm-060": {
+    "src": "/images/explanations/b-algorithm-060.webp",
+    "alt": "最小ヒープの根を取り出して下方向へ調整する流れを図解した説明画像",
+    "label": "最小ヒープの調整",
+    "description": "最後の要素を根へ移して子と交換し、最小要素を根に保つ流れを図で確認できます。"
+  },
+  "b-algorithm-064": {
+    "src": "/images/explanations/b-algorithm-064.webp",
+    "alt": "依存関係を満たすトポロジカルソートの順序を図解した説明画像",
+    "label": "トポロジカルソート",
+    "description": "入次数0の作業から処理して依存関係を満たす順序を作る流れを図で確認できます。"
+  },
+  "b-algorithm-067": {
+    "src": "/images/explanations/b-algorithm-067.webp",
+    "alt": "右または下へ進む表の最小コストを動的計画法で求める説明画像",
+    "label": "最短経路の動的計画法",
+    "description": "上と左の最小コストを利用して各マスを更新し、右下の値を求める流れを図で確認できます。"
+  },
+  "b-algorithm-068": {
+    "src": "/images/explanations/b-algorithm-068.webp",
+    "alt": "貪欲法で硬貨を選び金額18を支払う流れを図解した説明画像",
+    "label": "硬貨選択の貪欲法",
+    "description": "大きい硬貨から順に選んで金額18を支払う流れを図で確認できます。"
+  },
+  "b-algorithm-069": {
+    "src": "/images/explanations/b-algorithm-069.webp",
+    "alt": "分割統治で入力を分けて統合する計算量を図解した説明画像",
+    "label": "分割統治の計算量",
+    "description": "分割の深さlog nと各段階の統合O(n)からO(n log n)を導く流れを図で確認できます。"
+  },
+  "b-algorithm-070": {
+    "src": "/images/explanations/b-algorithm-070.webp",
+    "alt": "最大公約数から最小公倍数を計算する式を図解した説明画像",
+    "label": "最小公倍数の計算",
+    "description": "最大公約数で割ってから積を求め、12と18の最小公倍数36を得る流れを図で確認できます。"
+  },
+  "b-algorithm-072": {
+    "src": "/images/explanations/b-algorithm-072.webp",
+    "alt": "ビットマスクをOR演算してフラグを設定する流れを図解した説明画像",
+    "label": "ビットマスク",
+    "description": "フラグ値とマスクのOR演算で下位ビットを1にする流れを図で確認できます。"
+  },
+  "b-algorithm-073": {
+    "src": "/images/explanations/b-algorithm-073.webp",
+    "alt": "右端の1ビットを消して1の個数を数える処理を図解した説明画像",
+    "label": "1ビット数の計算",
+    "description": "x AND (x−1)で右端の1を順に消し、二進数の1の個数を数える流れを図で確認できます。"
+  },
+  "b-algorithm-074": {
+    "src": "/images/explanations/b-algorithm-074.webp",
+    "alt": "文字列内でパターンが初めて一致する位置を探す流れを図解した説明画像",
+    "label": "文字列探索",
+    "description": "開始位置を一つずつずらしてパターンCADの最初の一致位置を探す流れを図で確認できます。"
+  },
+  "b-algorithm-075": {
+    "src": "/images/explanations/b-algorithm-075.webp",
+    "alt": "連続する文字の回数を表すランレングス符号化を図解した説明画像",
+    "label": "ランレングス符号化",
+    "description": "同じ文字の連続回数を数えて文字と回数へ変換する流れを図で確認できます。"
+  },
+  "b-algorithm-077": {
+    "src": "/images/explanations/b-algorithm-077.webp",
+    "alt": "二次元配列の主対角線以外を走査して合計する流れを図解した説明画像",
+    "label": "二次元配列の走査",
+    "description": "行番号と列番号が異なる要素だけを加算して30を求める流れを図で確認できます。"
+  },
+  "b-algorithm-079": {
+    "src": "/images/explanations/b-algorithm-079.webp",
+    "alt": "最大値を求めるループの不変条件を図解した説明画像",
+    "label": "ループ不変条件",
+    "description": "各反復でmが調査済み範囲の最大値になることを追跡する流れを図で確認できます。"
+  },
+  "b-algorithm-080": {
+    "src": "/images/explanations/b-algorithm-080.webp",
+    "alt": "要素数64の二分探索で比較回数を数える流れを図解した説明画像",
+    "label": "二分探索の最悪計算量",
+    "description": "探索範囲を半分ずつにして64から0まで7回で空にする流れを図で確認できます。"
+  },
+  "b-security-011": {
+    "src": "/images/explanations/b-security-011.webp",
+    "alt": "必要な表だけを読取り専用かつ期限付きで許可する最小権限を図解した説明画像",
+    "label": "最小権限",
+    "description": "必要な範囲と期間だけに権限を限定し、管理者権限を与えない設計を図で確認できます。"
+  },
+  "b-security-012": {
+    "src": "/images/explanations/b-security-012.webp",
+    "alt": "大量通信が続く端末を隔離しログを保全するインシデント初動を図解した説明画像",
+    "label": "インシデント初動",
+    "description": "通信を止めながら証拠を保全し、組織の対応手順へ報告する流れを図で確認できます。"
+  },
+  "b-security-013": {
+    "src": "/images/explanations/b-security-013.webp",
+    "alt": "保存型XSSを出力エスケープで防ぐ流れを図解した説明画像",
+    "label": "XSS対策",
+    "description": "入力をHTMLタグやスクリプトではなく文字列として表示する出力エスケープを図で確認できます。"
+  },
+  "b-security-014": {
+    "src": "/images/explanations/b-security-014.webp",
+    "alt": "CSRFトークンを検証して意図しない状態変更を防ぐ流れを図解した説明画像",
+    "label": "CSRF対策",
+    "description": "セッションと結び付いたトークンで正規の状態変更要求だけを通す流れを図で確認できます。"
+  },
+  "b-security-015": {
+    "src": "/images/explanations/b-security-015.webp",
+    "alt": "脆弱性の悪用可能性と資産重要度と公開範囲で優先順位を決める説明画像",
+    "label": "脆弱性対応の優先順位",
+    "description": "複数のリスク要素を組み合わせて修正計画の優先順位を決める流れを図で確認できます。"
+  },
+  "b-security-016": {
+    "src": "/images/explanations/b-security-016.webp",
+    "alt": "認証や監視など複数の防御層を重ねる多層防御を図解した説明画像",
+    "label": "多層防御",
+    "description": "一つの対策が突破されても被害を抑える複数の防御層を図で確認できます。"
+  },
+  "b-security-017": {
+    "src": "/images/explanations/b-security-017.webp",
+    "alt": "保存データを暗号化し復号鍵を分離管理する流れを図解した説明画像",
+    "label": "保存データの暗号化",
+    "description": "持ち出されたディスクから読まれないようデータと鍵を分けて管理する流れを図で確認できます。"
+  },
+  "b-security-018": {
+    "src": "/images/explanations/b-security-018.webp",
+    "alt": "本番から分離した世代管理バックアップと復元試験を図解した説明画像",
+    "label": "バックアップ復旧",
+    "description": "ランサムウェア被害に備えて分離保管し、復元できることを定期確認する流れを図で確認できます。"
+  },
+  "b-security-019": {
+    "src": "/images/explanations/b-security-019.webp",
+    "alt": "ネットワーク分離とアクセス制御でマルウェアの横展開を抑える説明画像",
+    "label": "ネットワーク分離",
+    "description": "必要な通信だけを許可して感染端末から重要サーバへの到達範囲を限定する流れを図で確認できます。"
+  },
+  "b-security-020": {
+    "src": "/images/explanations/b-security-020.webp",
+    "alt": "委託先の情報漏えい疑いに対して事実と影響を確認し共同対応する説明画像",
+    "label": "委託先インシデント対応",
+    "description": "契約窓口で状況を確認し、証拠保全と共同対応へ進む初動を図で確認できます。"
   }
 } satisfies Record<string, ExplanationVisual>);
 
