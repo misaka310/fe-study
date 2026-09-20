@@ -1902,6 +1902,90 @@ export const explanationVisuals: Readonly<Record<string, ExplanationVisual>> = O
     "alt": "SCMについて、問題文の条件と解説の流れを図解した説明画像",
     "label": "SCMの解き方",
     "description": "問題文の条件から答えへ進む判断の流れを図で確認できます。"
+  },
+  "b-algorithm-047": {
+    "src": "/images/explanations/b-algorithm-047.webp",
+    "alt": "二分探索の範囲更新を配列と矢印で図解した説明画像",
+    "label": "二分探索の範囲更新",
+    "description": "中央値との比較で探索範囲を半分に絞る流れを図で確認できます。"
+  },
+  "b-algorithm-050": {
+    "src": "/images/explanations/b-algorithm-050.webp",
+    "alt": "クイックソートの分割をピボットと配列で図解した説明画像",
+    "label": "クイックソートの分割",
+    "description": "ピボットより小さい値を左へ集める分割の流れを図で確認できます。"
+  },
+  "b-algorithm-053": {
+    "src": "/images/explanations/b-algorithm-053.webp",
+    "alt": "累積和で配列の区間合計を求める流れを図解した説明画像",
+    "label": "累積和の区間取得",
+    "description": "累積和の差で指定区間の合計を求める手順を図で確認できます。"
+  },
+  "b-algorithm-055": {
+    "src": "/images/explanations/b-algorithm-055.webp",
+    "alt": "スタックで括弧の対応を確認する手順を図解した説明画像",
+    "label": "括弧の対応チェック",
+    "description": "開き括弧を積み、閉じ括弧で取り出す判定の流れを図で確認できます。"
+  },
+  "b-algorithm-056": {
+    "src": "/images/explanations/b-algorithm-056.webp",
+    "alt": "循環キューの末尾から先頭への折り返しを図解した説明画像",
+    "label": "循環キューの折り返し",
+    "description": "剰余演算で格納位置を先頭へ戻す流れを図で確認できます。"
+  },
+  "b-algorithm-059": {
+    "src": "/images/explanations/b-algorithm-059.webp",
+    "alt": "二分木の高さを再帰的に求める考え方を図解した説明画像",
+    "label": "二分木の高さ",
+    "description": "左右部分木の大きい方へ根の1を加える定義を図で確認できます。"
+  },
+  "b-algorithm-061": {
+    "src": "/images/explanations/b-algorithm-061.webp",
+    "alt": "グラフの次数を隣接行列から数える流れを図解した説明画像",
+    "label": "隣接行列から次数",
+    "description": "頂点の行にある1の個数から次数を求める流れを図で確認できます。"
+  },
+  "b-algorithm-062": {
+    "src": "/images/explanations/b-algorithm-062.webp",
+    "alt": "スタックを使った深さ優先探索の訪問順を図解した説明画像",
+    "label": "深さ優先探索",
+    "description": "後入れ先出しのスタックで訪問順が決まる流れを図で確認できます。"
+  },
+  "b-algorithm-063": {
+    "src": "/images/explanations/b-algorithm-063.webp",
+    "alt": "幅優先探索で始点からの距離を求める流れを図解した説明画像",
+    "label": "幅優先探索の距離",
+    "description": "キューで層ごとに訪問し最短辺数を求める流れを図で確認できます。"
+  },
+  "b-algorithm-065": {
+    "src": "/images/explanations/b-algorithm-065.webp",
+    "alt": "ダイクストラ法の暫定距離を更新する流れを図解した説明画像",
+    "label": "ダイクストラ法の緩和",
+    "description": "候補距離と既存距離を比較して小さい方へ更新する流れを図で確認できます。"
+  },
+  "b-algorithm-066": {
+    "src": "/images/explanations/b-algorithm-066.webp",
+    "alt": "動的計画法で階段の方法数を更新する流れを図解した説明画像",
+    "label": "階段の動的計画法",
+    "description": "直前二つの結果を再利用して方法数を求める流れを図で確認できます。"
+  },
+  "b-algorithm-071": {
+    "src": "/images/explanations/b-algorithm-071.webp",
+    "alt": "ビット単位XORの計算を二進数の列で図解した説明画像",
+    "label": "ビット演算 XOR",
+    "description": "異なるビットだけを1にするXORの計算を図で確認できます。"
+  },
+  "b-algorithm-076": {
+    "src": "/images/explanations/b-algorithm-076.webp",
+    "alt": "行列の行と列を入れ替える転置を図解した説明画像",
+    "label": "行列の転置",
+    "description": "添字を入れ替えて行列の形と要素配置を変える流れを図で確認できます。"
+  },
+  "b-algorithm-078": {
+    "src": "/images/explanations/b-algorithm-078.webp",
+    "alt": "ハッシュ表の線形探索で添字を折り返す流れを図解した説明画像",
+    "label": "ハッシュ表の再試行",
+    "description": "衝突後に次の位置を調べ、末尾から先頭へ戻る流れを図で確認できます。"
   }
 } satisfies Record<string, ExplanationVisual>);
 

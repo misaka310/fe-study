@@ -11,8 +11,8 @@ import { vocabularyQuestions } from '../src/content/vocabulary';
 const allQuestions = [...questions, ...vocabularyQuestions];
 
 describe('question acronym coverage', () => {
-  it('classifies every acronym-like token across all 317 questions', () => {
-    expect(allQuestions).toHaveLength(317);
+  it('classifies every acronym-like token across all 365 questions', () => {
+    expect(allQuestions).toHaveLength(365);
 
     const covered = new Set([...Object.keys(questionAcronymGlossary), ...questionAcronymExclusions]);
     const unresolved = [...new Set(allQuestions.flatMap(extractQuestionAcronymTokens))]

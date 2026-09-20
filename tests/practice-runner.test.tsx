@@ -11,7 +11,7 @@ afterEach(() => {
 describe('PracticeRunner', () => {
   it('回答直後に解説を自動表示し、解説を見るボタンを出さない', async () => {
     localStorage.clear();
-    render(<PracticeRunner questionCount={217} mode="all" />);
+    render(<PracticeRunner questionCount={265} mode="all" />);
     const choices = await screen.findAllByRole('radio');
     fireEvent.click(choices[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
@@ -81,11 +81,11 @@ describe('PracticeRunner', () => {
 
   it('未回答モードでは回答済み問題を除外する', async () => {
     localStorage.clear();
-    const { unmount } = render(<PracticeRunner questionCount={217} mode="all" />);
+    const { unmount } = render(<PracticeRunner questionCount={265} mode="all" />);
     fireEvent.click((await screen.findAllByRole('radio'))[0]);
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     unmount();
-    render(<PracticeRunner questionCount={217} mode="unanswered" />);
+    render(<PracticeRunner questionCount={265} mode="unanswered" />);
     expect(await screen.findByRole('link', { name: /未回答だけ/ })).toBeInTheDocument();
     expect(screen.getByText(new RegExp(`${questions.length - 1}問`))).toBeInTheDocument();
   });
@@ -108,7 +108,7 @@ describe('PracticeRunner', () => {
   it('基本問題の途中で再読み込みすると解答済みを飛ばして同じセットの続きから再開する', async () => {
     localStorage.clear();
     const now = vi.spyOn(Date, 'now').mockReturnValue(20260908);
-    const firstRender = render(<PracticeRunner questionCount={217} mode="vocabulary" vocabSet="1" />);
+    const firstRender = render(<PracticeRunner questionCount={265} mode="vocabulary" vocabSet="1" />);
     await screen.findAllByRole('radio');
     const answeredStem = firstRender.container.querySelector('.practice-question-card h2')?.textContent;
     expect(answeredStem).toBeTruthy();
@@ -117,7 +117,7 @@ describe('PracticeRunner', () => {
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     firstRender.unmount();
 
-    const resumedRender = render(<PracticeRunner questionCount={217} mode="vocabulary" vocabSet="1" />);
+    const resumedRender = render(<PracticeRunner questionCount={265} mode="vocabulary" vocabSet="1" />);
     await screen.findAllByRole('radio');
     expect(resumedRender.container.querySelector('.practice-question-card h2')?.textContent).not.toBe(answeredStem);
     expect(screen.getByText('2 / 20')).toBeInTheDocument();

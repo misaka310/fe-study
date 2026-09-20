@@ -21,6 +21,8 @@ export const questionAcronymExclusions = Object.freeze(new Set([
   'DISTINCT', 'VALUES', 'NULL', 'CHECK', 'UNIQUE', 'KEY', 'FOREIGN', 'SUM',
   'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'CHECKPOINT', 'REDO', 'UNDO',
   'TCP/IP', 'TCP/UDP', 'LZ77',
+  // 科目Bの擬似コードで使うデータ文字列・配列ラベルであり、略語ではない。
+  'CAD', 'ADE', 'BCA', 'A3B2C2', 'A3B3C1', 'ABC7',
 ]));
 
 const inheritedEntries = Object.fromEntries(
