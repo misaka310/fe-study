@@ -5,6 +5,7 @@ import { supplementQuestions } from './a-supplement';
 import { algorithmQuestions } from './b-algorithm';
 import { securityCaseQuestions } from './b-security';
 import { additionalAlgorithmQuestions, additionalSecurityCaseQuestions } from './b-additional';
+import { examAlgorithmQuestions, examSecurityCaseQuestions } from './b-exam';
 import { strengthenQuestionDistractors } from './quality-refinements';
 import { strengthenAlgorithmDistractors } from './algorithm-quality-refinements';
 
@@ -16,4 +17,6 @@ export const questions = Object.freeze(strengthenAlgorithmDistractors(strengthen
   ...securityCaseQuestions,
   ...additionalAlgorithmQuestions,
   ...additionalSecurityCaseQuestions,
-])).map(attachExplanationVisual));
+  ...examAlgorithmQuestions,
+  ...examSecurityCaseQuestions,
+])).map((question) => question.subject === 'B' && !question.practiceTier ? { ...question, practiceTier: 'foundation' as const } : question).map(attachExplanationVisual));

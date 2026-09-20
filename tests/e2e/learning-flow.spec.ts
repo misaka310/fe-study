@@ -107,7 +107,7 @@ test('問題回答を保存して誤答復習と学習記録へ反映する', as
   await expect(page.getByTestId('choice-reason')).toHaveCount(4);
   await expect(page.getByRole('button', { name: '解説を見る' })).toHaveCount(0);
   await page.goto('/?view=practice&mode=wrong');
-  await expect(page.getByText(/間違いだけ · 1問/)).toBeVisible();
+  await expect(page.getByText(/全科目の間違いだけ：1問/)).toBeVisible();
   await page.goto('/?view=dashboard');
   await expect(page.getByText(new RegExp(`${answeredCount} / \\d+問に回答`))).toBeVisible();
   assertNoErrors();

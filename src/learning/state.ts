@@ -92,9 +92,25 @@ export function createExamSession(
   if (pool.length < blueprint.count) {
     throw new Error(`科目${subject}模試には${blueprint.count}問以上が必要です`);
   }
+  let selected: Question[];
+  if (subject === 'B') {
+    const examPool = pool.filter((question) => question.practiceTier === 'exam');
+    const algorithm = examPool.filter((question) => question.domain === 'algorithm');
+    const security = examPool.filter((question) => question.domain === 'security-case');
+    if (algorithm.length < 16 || security.length < 4) {
+      throw new Error('科目B模試には本番レベルのアルゴリズム16問・セキュリティ4問以上が必要です');
+    }
+    selected = shuffled([
+      ...shuffled(algorithm, random).slice(0, 16),
+      ...shuffled(security, random).slice(0, 4),
+    ], random);
+  } else {
+    selected = shuffled(pool, random).slice(0, blueprint.count);
+  }
+
   return {
     subject,
-    questionIds: shuffled(pool, random).slice(0, blueprint.count).map((question) => question.id),
+    questionIds: selected.map((question) => question.id),
     currentIndex: 0,
     startedAt,
     durationMinutes: blueprint.durationMinutes,

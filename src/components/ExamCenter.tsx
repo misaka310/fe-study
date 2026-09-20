@@ -66,7 +66,7 @@ export function ExamCenter({ questionCount }: { questionCount: number }) {
       {result ? <section className="result-card"><p>直前の結果</p><strong>{result.correct} / {result.total}</strong><span>回答済み {result.answered}問・正答率 {Math.round(result.correct / result.total * 100)}%</span><div><a href="?view=practice&mode=wrong">誤答を復習する</a><a href="?view=materials&material=12-final-review">直前確認へ戻る</a></div></section> : null}
       <div className="exam-grid">
         <section><p className="eyebrow">Subject A</p><h2>科目A 模試</h2><strong>60問 / 90分</strong><p>基礎理論からストラテジまでを横断して出題します。</p><button onClick={() => start('A')}>科目A模試を開始</button></section>
-        <section><p className="eyebrow">Subject B</p><h2>科目B 模試</h2><strong>20問 / 100分</strong><p>擬似言語と情報セキュリティ事例を中心に出題します。</p><button onClick={() => start('B')}>科目B模試を開始</button></section>
+        <section><p className="eyebrow">Subject B</p><h2>科目B 模試</h2><strong>20問 / 100分</strong><p>本番レベル問題からアルゴリズム16問・セキュリティ4問を出題します。</p><button onClick={() => start('B')}>科目B模試を開始</button></section>
       </div>
       </main>
     </div>
