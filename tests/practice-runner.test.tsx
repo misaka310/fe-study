@@ -137,6 +137,20 @@ describe('PracticeRunner', () => {
     expect(screen.getByText(/全科目の未回答だけ：\d+問（全265問）/)).toBeInTheDocument();
   });
 
+  it('科目切替では分野を持ち越さず、未回答の科目Bを全分野で表示する', async () => {
+    localStorage.clear();
+    const aRender = render(<PracticeRunner questionCount={265} mode="unanswered" domain="database" subject="A" />);
+    await screen.findAllByRole('radio');
+
+    expect(screen.getByRole('link', { name: /全科目.*265問/ })).toHaveAttribute('href', '?view=practice&mode=unanswered');
+    expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveAttribute('href', '?view=practice&mode=unanswered&subject=B');
+
+    aRender.unmount();
+    render(<PracticeRunner questionCount={265} mode="unanswered" subject="B" />);
+    await screen.findAllByRole('radio');
+    expect(screen.getByText('科目Bの未回答だけ：100問')).toBeInTheDocument();
+  });
+
   it('未回答モードで解答しても結果表示中の問題文を別問題へすり替えない', async () => {
     localStorage.clear();
     const { container } = render(<PracticeRunner questionCount={questions.length} mode="unanswered" />);
