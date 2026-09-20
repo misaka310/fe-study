@@ -119,8 +119,11 @@ describe('PracticeRunner', () => {
     await screen.findAllByRole('radio');
     expect(screen.getByText('科目B · 全問題')).toBeInTheDocument();
     expect(screen.getByText('科目Bの全問題：100問')).toBeInTheDocument();
-    expect(screen.getByLabelText('現在の対象')).toHaveTextContent('科目B');
     expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: /科目B.*100問/ })).toHaveClass('is-selected');
+    expect(screen.getByRole('link', { name: '全問題' })).toHaveClass('is-selected');
+    expect(screen.getByRole('link', { name: '未回答だけ' })).not.toHaveClass('is-selected');
+    expect(screen.getByRole('link', { name: '全問題' })).not.toHaveTextContent('✓');
   });
 
   it('絞り込みモードでは対象全体の件数も表示する', async () => {
