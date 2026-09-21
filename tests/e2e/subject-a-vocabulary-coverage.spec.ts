@@ -31,4 +31,19 @@ test('科目Aの公開問題補強セット8を20問で開ける', async ({ page
 
   const pageText = await page.locator('main').innerText();
   expect(pageText).toMatch(/エッジコンピューティング|クリッピング|アンチエイリアシング|ping|ドライブバイダウンロード|ハイブリッドクラウド|ダイバーシティマネジメント|イノベータ理論|CIO|ボリュームライセンス|ロジックマッシュアップ|アローダイアグラム|ブルーオーシャン|HRテック|INTERSECT|回線利用率|2要素認証|二分探索木|クイックソート|コーディング規約/);
+
+  await page.getByRole('radio').first().check();
+  await page.getByRole('button', { name: '解答する' }).click();
+  const image = page.locator('.practice-explanation-visual img');
+  await expect(image).toBeVisible();
+  await expect(image).toHaveAttribute('src', /\/images\/explanations\/basic-set8-\d{2}\.webp$/);
+});
+
+test('全問題は基本問題を含む465問として表示する', async ({ page }) => {
+  await page.goto('/?view=practice&mode=all');
+
+  await expect(page.getByText('全科目の全問題：465問')).toBeVisible();
+  await expect(page.getByRole('link', { name: /全科目（465問）/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /科目A（325問）/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /科目B（140問）/ })).toBeVisible();
 });

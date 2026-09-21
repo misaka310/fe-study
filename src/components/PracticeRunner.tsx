@@ -74,7 +74,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   const [activeSessionKey, setActiveSessionKey] = useState<string | null>(null);
   const allPracticeQuestions = useMemo(() => [...questions, ...vocabularyQuestions], []);
   const weakTopics = useMemo(() => new Set(buildWeaknessRanking(state, allPracticeQuestions).map((item) => item.topic)), [allPracticeQuestions, state]);
-  const sourceQuestions = useMemo(() => selectedMode === 'vocabulary' ? vocabularyQuestions : selectedMode === 'weakness' ? allPracticeQuestions : questions, [allPracticeQuestions, selectedMode]);
+  const sourceQuestions = useMemo(() => selectedMode === 'vocabulary' ? vocabularyQuestions : allPracticeQuestions, [allPracticeQuestions, selectedMode]);
 
   const subjectTotalsPool = useMemo(() => sourceQuestions.filter((question) => {
     if (materialId && question.materialId !== materialId) return false;
@@ -101,7 +101,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
   }), [basePool, selectedMode, state, weakTopics]);
 
   const sessionKey = useMemo(() => {
-    const parts = ['practice-v1', selectedMode, subject ?? '', materialId ?? '', domain ?? '', selectedMode === 'vocabulary' ? selectedVocabularySet : ''];
+    const parts = ['practice-v2', selectedMode, subject ?? '', materialId ?? '', domain ?? '', selectedMode === 'vocabulary' ? selectedVocabularySet : ''];
     if (subject === 'B') parts.push(selectedPracticeTier ?? 'foundation');
     return parts.join('|');
   }, [domain, materialId, selectedMode, selectedPracticeTier, selectedVocabularySet, subject]);

@@ -10,14 +10,24 @@ export interface PracticeSession {
 
 type PracticeSessionStore = Record<string, PracticeSession>;
 
+const LEGACY_SESSION_PREFIXES = ['practice-v1|'] as const;
+
 function readStore(): PracticeSessionStore {
   const raw = localStorage.getItem(PRACTICE_SESSION_STORAGE_KEY);
   if (!raw) return {};
   try {
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-      ? parsed as PracticeSessionStore
-      : {};
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    const store = parsed as PracticeSessionStore;
+    let pruned = false;
+    for (const key of Object.keys(store)) {
+      if (LEGACY_SESSION_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+        delete store[key];
+        pruned = true;
+      }
+    }
+    if (pruned) writeStore(store);
+    return store;
   } catch {
     return {};
   }
