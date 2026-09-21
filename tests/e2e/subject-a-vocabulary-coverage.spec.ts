@@ -8,7 +8,7 @@ test('科目Aの用語補強セット6を20問で開ける', async ({ page }) =>
   await expect(page.getByRole('link', { name: 'セット6・用語補強（20問）' })).toHaveAttribute('aria-current', 'page');
 
   const pageText = await page.locator('main').innerText();
-  expect(pageText).toMatch(/ベイズの定理|標準偏差|SRAM|CSMA|SNMP|NTP|CVE|SLCP|サービスデスク|中小受託取引適正化法|JIS/);
+  expect(pageText).toMatch(/ベイズの定理|統計指標|メモリ種別|入出力インタフェース|高信頼化設計|DDLとDML|関数従属|CSMA方式|ネットワーク管理プロトコル|脆弱性識別と評価|監視と端末防御|DMZ|開発プロセス標準|設計パターン|アジャイル手法|サービスデスク|市場成長戦略|生産管理|取引関連法規|標準化/);
 });
 
 test('科目Aの実戦用語補強セット7を20問で開ける', async ({ page }) => {
