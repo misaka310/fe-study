@@ -1,6 +1,6 @@
 import type { Question } from '../../domain/types';
 
-export type BasicSet = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type BasicSet = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 type BasicChoice = readonly [text: string, reason: string];
 

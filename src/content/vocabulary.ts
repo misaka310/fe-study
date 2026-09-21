@@ -7,12 +7,13 @@ import { basicSet4 } from './basic/set4';
 import { basicSet5 } from './basic/set5';
 import { basicSet6 } from './basic/set6';
 import { basicSet7 } from './basic/set7';
+import { basicSet8 } from './basic/set8';
 import { attachExplanationVisual } from './explanationVisuals';
 
 /**
  * 旧「基礎単語」カードは廃止済み。
  * 基本情報技術者 科目Aで問われる知識を、計算・比較・設計判断・障害対応などの
- * 条件付き四肢択一問題として独自作成した20問×7セットを公開する。
+ * 条件付き四肢択一問題として独自作成した20問×8セットを公開する。
  */
 export const vocabularyQuestions = Object.freeze(strengthenBasicDistractors(refineBasicQuestions([
   ...basicSet1,
@@ -22,4 +23,5 @@ export const vocabularyQuestions = Object.freeze(strengthenBasicDistractors(refi
   ...basicSet5,
   ...basicSet6,
   ...basicSet7,
+  ...basicSet8,
 ])).map(attachExplanationVisual));

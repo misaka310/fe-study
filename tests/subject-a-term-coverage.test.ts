@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { materials } from '../src/content/materials';
 import { questions } from '../src/content/questions';
 import { subjectATermCoverage, subjectATermCoverageCount } from '../src/content/subjectATermCoverage';
+import { subjectAOfficialPublicTermCoverage, subjectAOfficialPublicTermCoverageCount } from '../src/content/subjectAOfficialPublicTermCoverage';
 import { vocabularyQuestions } from '../src/content/vocabulary';
 
 const subjectAQuestions = questions.filter((question) => question.subject === 'A');
@@ -20,4 +21,14 @@ describe('科目Aの現行重要用語カバレッジ', () => {
       }
     }
   });
+
+  it('2023〜2026年度のIPA公式公開問題で重要な用語を継続監査する', () => {
+    expect(subjectAOfficialPublicTermCoverageCount).toBeGreaterThanOrEqual(70);
+    for (const [year, terms] of Object.entries(subjectAOfficialPublicTermCoverage)) {
+      for (const term of terms) {
+        expect(learningText, `${year}: ${term}`).toContain(term);
+      }
+    }
+  });
+
 });

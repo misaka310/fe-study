@@ -18,11 +18,11 @@ export const questionAcronymExclusions = Object.freeze(new Set([
   'AB', 'FE24', 'T1', 'T2', 'L2', 'L3',
   'AND', 'OR', 'NOT', 'XOR', 'NAND',
   'SELECT', 'WHERE', 'HAVING', 'GROUP', 'ORDER', 'BY', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'OUTER', 'CROSS',
-  'DISTINCT', 'VALUES', 'NULL', 'CHECK', 'UNIQUE', 'KEY', 'FOREIGN', 'SUM', 'CREATE', 'TABLE',
+  'DISTINCT', 'VALUES', 'NULL', 'CHECK', 'UNIQUE', 'KEY', 'FOREIGN', 'SUM', 'CREATE', 'TABLE', 'UNION', 'INTERSECT', 'BETWEEN', 'IN',
   'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'CHECKPOINT', 'REDO', 'UNDO',
   'TCP/IP', 'TCP/UDP', 'LZ77',
   // 科目Bの擬似コードで使うデータ文字列・配列ラベルであり、略語ではない。
-  'CAD', 'ADE', 'BCA', 'A3B2C2', 'A3B3C1', 'ABC7', 'AI', 'CA', 'CD',
+  'CAD', 'ADE', 'BCA', 'A3B2C2', 'A3B3C1', 'ABC7', 'AI', 'CA', 'CD', 'M002', 'M004',
 ]));
 
 const inheritedEntries = Object.fromEntries(
@@ -166,6 +166,13 @@ export const questionAcronymGlossary: Readonly<Record<string, QuestionAcronymEnt
   PaaS: { term: 'PaaS', expansion: 'Platform as a Service', meaning: 'アプリ開発・実行に必要なプラットフォームをサービスとして提供する形態です。' },
   SaaS: { term: 'SaaS', expansion: 'Software as a Service', meaning: '完成したアプリケーションをサービスとして利用する形態です。' },
   POS: { term: 'POS', expansion: 'Point of Sale', meaning: '販売時点で商品・数量・時刻などの販売情報を記録・集計する仕組みです。' },
+  CEO: { term: 'CEO', expansion: 'Chief Executive Officer', meaning: '企業経営全般を統括する最高経営責任者です。' },
+  CFO: { term: 'CFO', expansion: 'Chief Financial Officer', meaning: '財務戦略や資金管理を統括する最高財務責任者です。' },
+  CIO: { term: 'CIO', expansion: 'Chief Information Officer', meaning: '情報管理や情報システム戦略を統括する最高情報責任者です。' },
+  CTO: { term: 'CTO', expansion: 'Chief Technology Officer', meaning: '技術戦略や研究開発を統括する最高技術責任者です。' },
+  HR: { term: 'HR', expansion: 'Human Resources', meaning: '人材・人事領域を表す語で、HRテックでは人事業務へのIT活用を指します。' },
+  IC: { term: 'IC', expansion: 'Integrated Circuit', meaning: '集積回路を表す略語で、ICカードなどに組み込まれます。' },
+  ICMP: { term: 'ICMP', expansion: 'Internet Control Message Protocol', meaning: 'IPネットワークでエラー通知や疎通確認などの制御メッセージを扱うプロトコルです。' },
 });
 
 function questionSearchText(question: Question) {
