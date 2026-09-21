@@ -9,7 +9,7 @@ import { vocabularyQuestions } from '../src/content/vocabulary';
 const allQuestions = [...questions, ...vocabularyQuestions];
 const visualQuestions = allQuestions.filter((question) => question.explanationVisual);
 const examQuestions = questions.filter((question) => question.practiceTier === 'exam');
-const subjectATermQuestions = vocabularyQuestions.filter((question) => question.vocabularySet === 6);
+const subjectATermQuestions = vocabularyQuestions.filter((question) => question.vocabularySet === 6 || question.vocabularySet === 7);
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -48,10 +48,10 @@ describe('問題解説図', () => {
     expect(visualQuestions.every((question) => question.explanationVisual?.src === `/images/explanations/${question.id}.webp`)).toBe(true);
   });
 
-  it('画像未付与は科目B本番レベル40問と科目A用語補強20問だけに限定する', () => {
+  it('画像未付与は科目B本番レベル40問と科目A用語補強40問だけに限定する', () => {
     const textOnlyQuestions = allQuestions.filter((question) => !question.explanationVisual);
     expect(examQuestions).toHaveLength(40);
-    expect(subjectATermQuestions).toHaveLength(20);
+    expect(subjectATermQuestions).toHaveLength(40);
     const expected = [...examQuestions, ...subjectATermQuestions].map((question) => question.id).sort();
     expect(textOnlyQuestions.map((question) => question.id).sort()).toEqual(expected);
   });
