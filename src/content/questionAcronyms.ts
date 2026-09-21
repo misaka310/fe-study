@@ -159,6 +159,13 @@ export const questionAcronymGlossary: Readonly<Record<string, QuestionAcronymEnt
   USB: { term: 'USB', expansion: 'Universal Serial Bus', meaning: '周辺機器を接続するための汎用的なシリアルインタフェース規格です。' },
   XP: { term: 'XP', expansion: 'Extreme Programming', meaning: '短い反復、継続的なフィードバック、テストなどを重視するアジャイル開発手法です。' },
   XSS: { term: 'XSS', expansion: 'Cross-Site Scripting', meaning: 'Webページへ悪意あるスクリプトを混入させ、利用者のブラウザで実行させる攻撃です。' },
+  CSIRT: { term: 'CSIRT', expansion: 'Computer Security Incident Response Team', meaning: 'セキュリティインシデントの分析、調整、封じ込め、復旧などを担う対応組織です。' },
+  PID: { term: 'PID', expansion: 'Proportional, Integral, Derivative', meaning: '偏差の比例・積分・微分を組み合わせて目標値へ近づける制御方式です。' },
+  SSID: { term: 'SSID', expansion: 'Service Set Identifier', meaning: '無線LANのネットワークを識別するための名称です。' },
+  IaaS: { term: 'IaaS', expansion: 'Infrastructure as a Service', meaning: '仮想マシンやネットワークなどのIT基盤をサービスとして提供する形態です。' },
+  PaaS: { term: 'PaaS', expansion: 'Platform as a Service', meaning: 'アプリ開発・実行に必要なプラットフォームをサービスとして提供する形態です。' },
+  SaaS: { term: 'SaaS', expansion: 'Software as a Service', meaning: '完成したアプリケーションをサービスとして利用する形態です。' },
+  POS: { term: 'POS', expansion: 'Point of Sale', meaning: '販売時点で商品・数量・時刻などの販売情報を記録・集計する仕組みです。' },
 });
 
 function questionSearchText(question: Question) {
