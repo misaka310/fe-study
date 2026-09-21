@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { studyVisuals } from '../content/visuals';
 
 export function VisualGallery({ compact = false, materialId }: { compact?: boolean; materialId?: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const selected = studyVisuals.find((visual) => visual.id === selectedId);
   const related = materialId ? studyVisuals.filter((visual) => visual.relatedMaterialIds.includes(materialId)) : studyVisuals;
   const visibleVisuals = related.length ? related : studyVisuals;
@@ -19,7 +20,7 @@ export function VisualGallery({ compact = false, materialId }: { compact?: boole
       <div className="visual-grid">
         {visibleVisuals.filter((visual) => !compact || visual.id !== 'dns-ttl' || Boolean(materialId)).map((visual) => (
           <figure className="visual-card" key={visual.id}>
-            <button type="button" onClick={() => setSelectedId(visual.id)} aria-label={`${visual.label}を拡大表示`}>
+            <button type="button" disabled={!hydrated} onClick={() => setSelectedId(visual.id)} aria-label={`${visual.label}を拡大表示`}>
               <img src={visual.src} alt={visual.alt} loading="lazy" />
             </button>
             <figcaption><strong>{visual.label}</strong><span>{visual.description}</span></figcaption>
