@@ -20,7 +20,7 @@ import { QuestionExplanationVisual } from './QuestionExplanationVisual';
 import { RichText } from './RichText';
 
 type PracticeMode = 'all' | 'unanswered' | 'wrong' | 'weakness' | 'vocabulary';
-type BasicSet = 1 | 2 | 3 | 4 | 5;
+type BasicSet = 1 | 2 | 3 | 4 | 5 | 6;
 type PracticeTier = 'foundation' | 'exam';
 
 function questionTier(question: Question): PracticeTier | undefined {
@@ -55,7 +55,7 @@ function percent(value: number, total: number) {
 }
 
 function parseBasicSet(value?: string): BasicSet {
-  if (value === '2' || value === '3' || value === '4' || value === '5') return Number(value) as BasicSet;
+  if (value === '2' || value === '3' || value === '4' || value === '5' || value === '6') return Number(value) as BasicSet;
   return 1;
 }
 
@@ -240,8 +240,8 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
               </section>
             ) : null}
             <section className="practice-menu-group" aria-labelledby="vocabulary-set-title">
-              <h2 id="vocabulary-set-title">基本問題 20問×5セット</h2>
-              {[1, 2, 3, 4, 5].map((set) => <a aria-current={selectedMode === 'vocabulary' && selectedVocabularySet === set ? 'page' : undefined} className={`practice-menu-link${selectedMode === 'vocabulary' && selectedVocabularySet === set ? ' is-selected' : ''}`} href={`?view=practice&mode=vocabulary&vocabSet=${set}`} key={set}><span>#{set}</span>セット{set}（20問）</a>)}
+              <h2 id="vocabulary-set-title">基本問題 20問×6セット</h2>
+              {[1, 2, 3, 4, 5, 6].map((set) => <a aria-current={selectedMode === 'vocabulary' && selectedVocabularySet === set ? 'page' : undefined} className={`practice-menu-link${selectedMode === 'vocabulary' && selectedVocabularySet === set ? ' is-selected' : ''}`} href={`?view=practice&mode=vocabulary&vocabSet=${set}`} key={set}><span>#{set}</span>{set === 6 ? 'セット6・用語補強' : `セット${set}`}（20問）</a>)}
             </section>
             <section className="practice-menu-group" aria-labelledby="practice-domain-title">
               <h2 id="practice-domain-title">分野</h2>

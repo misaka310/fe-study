@@ -9,6 +9,7 @@ import { vocabularyQuestions } from '../src/content/vocabulary';
 const allQuestions = [...questions, ...vocabularyQuestions];
 const visualQuestions = allQuestions.filter((question) => question.explanationVisual);
 const examQuestions = questions.filter((question) => question.practiceTier === 'exam');
+const subjectATermQuestions = vocabularyQuestions.filter((question) => question.vocabularySet === 6);
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -47,10 +48,12 @@ describe('問題解説図', () => {
     expect(visualQuestions.every((question) => question.explanationVisual?.src === `/images/explanations/${question.id}.webp`)).toBe(true);
   });
 
-  it('画像未付与は科目B本番レベル40問だけに限定する', () => {
+  it('画像未付与は科目B本番レベル40問と科目A用語補強20問だけに限定する', () => {
     const textOnlyQuestions = allQuestions.filter((question) => !question.explanationVisual);
     expect(examQuestions).toHaveLength(40);
-    expect(textOnlyQuestions.map((question) => question.id).sort()).toEqual(examQuestions.map((question) => question.id).sort());
+    expect(subjectATermQuestions).toHaveLength(20);
+    const expected = [...examQuestions, ...subjectATermQuestions].map((question) => question.id).sort();
+    expect(textOnlyQuestions.map((question) => question.id).sort()).toEqual(expected);
   });
 
   it('対象画像が全て実ファイルとして保存されている', () => {
