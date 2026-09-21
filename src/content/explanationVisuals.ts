@@ -1,6 +1,7 @@
 import type { ExplanationVisual, Question } from '../domain/types';
+import { supplementalExplanationVisuals } from './supplementalExplanationVisuals';
 
-export const explanationVisuals: Readonly<Record<string, ExplanationVisual>> = Object.freeze({
+const baseExplanationVisuals: Readonly<Record<string, ExplanationVisual>> = Object.freeze({
   "a-theory-001": {
     "src": "/images/explanations/a-theory-001.webp",
     "alt": "基数変換について、問題文の条件と解説の流れを図解した説明画像",
@@ -2192,6 +2193,11 @@ export const explanationVisuals: Readonly<Record<string, ExplanationVisual>> = O
     "description": "契約窓口で状況を確認し、証拠保全と共同対応へ進む初動を図で確認できます。"
   }
 } satisfies Record<string, ExplanationVisual>);
+
+export const explanationVisuals: Readonly<Record<string, ExplanationVisual>> = Object.freeze({
+  ...baseExplanationVisuals,
+  ...supplementalExplanationVisuals,
+});
 
 const explanationPreloadCache = new Map<string, { image: HTMLImageElement; promise: Promise<void> }>();
 
