@@ -9,10 +9,10 @@ const definitionOnlyPatterns = [
   /次の特徴を正しく分類するとき、該当する選択肢はどれか/,
 ];
 
-describe('基本問題 20問×7セット', () => {
-  it('140問を7セットに20問ずつ収録する', () => {
-    expect(vocabularyQuestions).toHaveLength(140);
-    for (const set of [1, 2, 3, 4, 5, 6, 7]) {
+describe('基本問題 20問×8セット', () => {
+  it('160問を8セットに20問ずつ収録する', () => {
+    expect(vocabularyQuestions).toHaveLength(160);
+    for (const set of [1, 2, 3, 4, 5, 6, 7, 8]) {
       expect(vocabularyQuestions.filter((question) => question.vocabularySet === set)).toHaveLength(20);
     }
   });
@@ -35,7 +35,7 @@ describe('基本問題 20問×7セット', () => {
   it('各セットで主要9分野と難易度3を扱い、同じ問題や選択肢セットを使い回さない', () => {
     const stems = new Set<string>();
     const choiceSets = new Set<string>();
-    for (const set of [1, 2, 3, 4, 5, 6, 7]) {
+    for (const set of [1, 2, 3, 4, 5, 6, 7, 8]) {
       const setQuestions = vocabularyQuestions.filter((question) => question.vocabularySet === set);
       expect(new Set(setQuestions.map((question) => question.domain)).size).toBe(9);
       expect(setQuestions.filter((question) => question.difficulty === 3).length).toBeGreaterThanOrEqual(4);

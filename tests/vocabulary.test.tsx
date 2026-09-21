@@ -4,9 +4,9 @@ import { PracticeRunner } from '../src/components/PracticeRunner';
 import { vocabularyQuestions } from '../src/content/vocabulary';
 
 describe('基本問題', () => {
-  it('20問ずつの7セットを持ち、出題データが完全である', () => {
-    expect(vocabularyQuestions).toHaveLength(140);
-    for (const set of [1, 2, 3, 4, 5, 6, 7] as const) {
+  it('20問ずつの8セットを持ち、出題データが完全である', () => {
+    expect(vocabularyQuestions).toHaveLength(160);
+    for (const set of [1, 2, 3, 4, 5, 6, 7, 8] as const) {
       const setQuestions = vocabularyQuestions.filter((question) => question.vocabularySet === set);
       expect(setQuestions, `セット${set}`).toHaveLength(20);
       expect(new Set(setQuestions.map((question) => question.id)).size).toBe(20);

@@ -23,7 +23,7 @@ export interface Question {
   explanationVisual?: ExplanationVisual;
   practiceKind?: 'standard' | 'vocabulary';
   practiceTier?: 'foundation' | 'exam';
-  vocabularySet?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  vocabularySet?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 }
 
 export interface MaterialSection {
