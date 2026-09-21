@@ -5,6 +5,7 @@ import { PortalHeader } from '../src/components/PortalHeader';
 import { PracticeRunner } from '../src/components/PracticeRunner';
 import { VisualGallery } from '../src/components/VisualGallery';
 import { questions } from '../src/content/questions';
+import { vocabularyQuestions } from '../src/content/vocabulary';
 
 const studyPath = (questionCount: number) => [
   { href: '?view=materials&material=01-roadmap', title: '1. はじめる', text: '試験の全体像と、今日からの学習順を確認する' },
@@ -16,7 +17,7 @@ const studyPath = (questionCount: number) => [
 ];
 
 const practiceLinks = (questionCount: number) => [
-  { href: '?view=practice&mode=all', title: `全${questionCount}問練習`, text: '標準問題を一通り解く' },
+  { href: '?view=practice&mode=all', title: `全${questionCount}問練習`, text: '通常問題と基本問題をまとめて一通り解く' },
   { href: '?view=practice&mode=all&subject=B&tier=foundation', title: '科目B 基礎100問', text: '短い追跡問題で擬似言語とデータ構造の土台を固める' },
   { href: '?view=practice&mode=all&subject=B&tier=exam', title: '科目B 本番レベル40問', text: '仕様読解と複数段階の追跡を本番相当の密度で練習する' },
   { href: '?view=practice&mode=vocabulary&vocabSet=1', title: '基本問題 20問×8セット', text: '科目Aで問われる知識判断を160問で確認する' },
@@ -67,7 +68,7 @@ interface PageProps { searchParams?: Promise<Record<string, string | string[] | 
 
 export default async function Home({ searchParams = Promise.resolve({}) }: PageProps = {}) {
   const params = await searchParams;
-  const questionCount = questions.length;
+  const questionCount = questions.length + vocabularyQuestions.length;
   if (params.view === 'materials') return <MaterialReader initialMaterialId={typeof params.material === 'string' ? params.material : '01-roadmap'} questionCount={questionCount} />;
   if (params.view === 'practice') return <PracticeRunner mode={typeof params.mode === 'string' ? params.mode : 'all'} materialId={typeof params.material === 'string' ? params.material : undefined} domain={typeof params.domain === 'string' ? params.domain : undefined} subject={typeof params.subject === 'string' ? params.subject : undefined} vocabSet={typeof params.vocabSet === 'string' ? params.vocabSet : undefined} practiceTier={typeof params.tier === 'string' ? params.tier : undefined} questionCount={questionCount} />;
   if (params.view === 'exams') return <ExamCenter questionCount={questionCount} />;

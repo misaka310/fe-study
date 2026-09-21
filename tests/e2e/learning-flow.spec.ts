@@ -138,7 +138,7 @@ test('TCO問題の解説では正式名称を表示し、CPUのような基本�
   const assertNoErrors = rejectBrowserErrors(page);
   await page.evaluate(() => {
     localStorage.setItem('fe-study-practice-sessions-v1', JSON.stringify({
-      'practice-v1|vocabulary|||strategy|3': {
+      'practice-v2|vocabulary|||strategy|3': {
         seed: 1,
         questionIds: ['basic-set3-19'],
         answeredIds: [],

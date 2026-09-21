@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { GlossaryEntry } from '../content/glossary';
 
 export function GlossaryTooltip({ entry }: { entry: GlossaryEntry }) {
   const [open, setOpen] = useState(false);
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLSpanElement>(null);
   const dialogId = `glossary-${entry.term.toLocaleLowerCase('en-US').replace(/[^a-z0-9]+/g, '-')}`;
@@ -34,6 +35,7 @@ export function GlossaryTooltip({ entry }: { entry: GlossaryEntry }) {
         aria-expanded={open}
         aria-label={`${entry.term} 用語解説`}
         className="glossary-trigger"
+        disabled={!hydrated}
         onClick={() => setOpen((value) => !value)}
         ref={buttonRef}
         type="button"

@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { QuestionExplanationVisual } from '../src/components/QuestionExplanationVisual';
@@ -8,8 +8,6 @@ import { vocabularyQuestions } from '../src/content/vocabulary';
 
 const allQuestions = [...questions, ...vocabularyQuestions];
 const visualQuestions = allQuestions.filter((question) => question.explanationVisual);
-const examQuestions = questions.filter((question) => question.practiceTier === 'exam');
-const subjectATermQuestions = vocabularyQuestions.filter((question) => question.vocabularySet === 6 || question.vocabularySet === 7 || question.vocabularySet === 8);
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -42,24 +40,24 @@ describe('問題解説図', () => {
     await expect(first).resolves.toBeUndefined();
   });
 
-  it('既存365問へ解説図を一意に付与する', () => {
-    expect(Object.keys(explanationVisuals)).toHaveLength(365);
-    expect(visualQuestions).toHaveLength(365);
+  it('全465問へ解説図を一意に付与する', () => {
+    expect(Object.keys(explanationVisuals)).toHaveLength(465);
+    expect(visualQuestions).toHaveLength(465);
     expect(visualQuestions.every((question) => question.explanationVisual?.src === `/images/explanations/${question.id}.webp`)).toBe(true);
   });
 
-  it('画像未付与は科目B本番レベル40問と科目A用語補強60問だけに限定する', () => {
-    const textOnlyQuestions = allQuestions.filter((question) => !question.explanationVisual);
-    expect(examQuestions).toHaveLength(40);
-    expect(subjectATermQuestions).toHaveLength(60);
-    const expected = [...examQuestions, ...subjectATermQuestions].map((question) => question.id).sort();
-    expect(textOnlyQuestions.map((question) => question.id).sort()).toEqual(expected);
+  it('追加した科目B本番レベルと科目Aセット6〜8を含め、画像未付与を許容しない', () => {
+    expect(allQuestions).toHaveLength(465);
+    expect(allQuestions.filter((question) => !question.explanationVisual)).toHaveLength(0);
   });
 
-  it('対象画像が全て実ファイルとして保存されている', () => {
+  it('対象画像が全て実ファイルとして保存され、余分・不足なく465件で対応する', () => {
     for (const question of visualQuestions) {
       expect(existsSync(`public${question.explanationVisual!.src}`), question.id).toBe(true);
     }
+    const expectedFiles = visualQuestions.map((question) => `${question.id}.webp`).sort();
+    const actualFiles = readdirSync('public/images/explanations').filter((file) => file.endsWith('.webp')).sort();
+    expect(actualFiles).toEqual(expectedFiles);
   });
 
   it('画像の読み込み失敗時は日本語の復旧メッセージを表示する', () => {
