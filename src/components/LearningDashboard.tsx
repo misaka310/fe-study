@@ -21,8 +21,8 @@ export function LearningDashboard({ questionCount }: { questionCount: number }) 
   const correct = attempts.filter((attempt) => attempt.correct).length;
   const weaknesses = buildWeaknessRanking(state, allQuestions).slice(0, 10);
   const progress = Math.round(answered / allQuestions.length * 100);
-  const domainScores = [...new Set(questions.map((question) => question.domain))].map((domain) => {
-    const ids = new Set(questions.filter((question) => question.domain === domain).map((question) => question.id));
+  const domainScores = [...new Set(allQuestions.map((question) => question.domain))].map((domain) => {
+    const ids = new Set(allQuestions.filter((question) => question.domain === domain).map((question) => question.id));
     const domainAttempts = Object.entries(state.attempts).filter(([id]) => ids.has(id)).flatMap(([, values]) => values);
     return { domain, attempts: domainAttempts.length, rate: domainAttempts.length ? Math.round(domainAttempts.filter((attempt) => attempt.correct).length / domainAttempts.length * 100) : 0 };
   });
@@ -46,7 +46,7 @@ export function LearningDashboard({ questionCount }: { questionCount: number }) 
       <PortalHeader active="dashboard" questionCount={questionCount} />
       <main className="study-shell portal-main">
       <section className="study-toolbar"><div><p className="eyebrow">Learning record</p><h1>学習記録</h1></div></section>
-      <div className="stats-grid"><section><span>学習進捗</span><strong>{progress}%</strong><p>{answered} / {allQuestions.length}問に回答（標準{questions.length}＋単語{vocabularyQuestions.length}）</p></section><section><span>累計正答率</span><strong>{attempts.length ? Math.round(correct / attempts.length * 100) : 0}%</strong><p>{correct} / {attempts.length}回答が正解</p></section><section><span>弱点トピック</span><strong>{weaknesses.length}</strong><p>標準問題と基礎単語の誤答履歴から算出</p></section></div>
+      <div className="stats-grid"><section><span>学習進捗</span><strong>{progress}%</strong><p>{answered} / {allQuestions.length}問に回答（通常{questions.length}＋基本{vocabularyQuestions.length}）</p></section><section><span>累計正答率</span><strong>{attempts.length ? Math.round(correct / attempts.length * 100) : 0}%</strong><p>{correct} / {attempts.length}回答が正解</p></section><section><span>弱点トピック</span><strong>{weaknesses.length}</strong><p>通常問題と基本問題の誤答履歴から算出</p></section></div>
       <section className="weakness-card"><h2>復習優先トピック</h2>{weaknesses.length ? <ol>{weaknesses.map((item) => <li key={item.topic}><strong>{item.topic}</strong><span>誤答 {item.wrong}・正解 {item.correct}</span><a href="?view=practice&mode=weakness">復習する</a></li>)}</ol> : <p>まだ弱点データがありません。問題演習から始めましょう。</p>}</section>
       <section className="weakness-card"><h2>分野別成績</h2><div className="domain-scores">{domainScores.map((item) => <a href={`?view=practice&domain=${item.domain}`} key={item.domain}><strong>{item.domain}</strong><span>{item.attempts ? `正答率 ${item.rate}%（${item.attempts}回答）` : '未着手'}</span></a>)}</div></section>
       <section className="backup-card"><h2>学習履歴のバックアップ</h2><p>履歴はこのブラウザ内に保存されます。端末変更やブラウザ消去に備えてJSONを保管できます。</p><div><button onClick={exportData}>JSONを書き出す</button><button onClick={() => input.current?.click()}>JSONから復元</button><input accept="application/json" hidden onChange={(event) => importData(event.target.files?.[0])} ref={input} type="file" /></div>{notice ? <p role="status">{notice}</p> : null}</section>
