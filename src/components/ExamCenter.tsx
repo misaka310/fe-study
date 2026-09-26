@@ -59,7 +59,7 @@ export function ExamCenter({ questionCount }: { questionCount: number }) {
   if (!ready) return <main className="study-shell"><p>模試データを読み込んでいます…</p></main>;
   if (!session || !current) return (
     <div className="portal-page">
-      <PortalHeader active="exams" questionCount={questionCount} />
+      <PortalHeader active="practice" questionCount={questionCount} />
       <main className="study-shell portal-main">
       <section className="study-toolbar"><div><p className="eyebrow">Mock exams</p><h1>模擬試験</h1></div></section>
       <p className="exam-note">本番と同じ問題数・制限時間で実施します。正答率は学習目安であり、公式のIRT評価点は再現しません。</p>
@@ -75,7 +75,7 @@ export function ExamCenter({ questionCount }: { questionCount: number }) {
   const pick = session.picks[current.id]?.[0];
   return (
     <div className="portal-page">
-      <PortalHeader active="exams" questionCount={questionCount} />
+      <PortalHeader active="practice" questionCount={questionCount} />
       <main className="study-shell portal-main exam-active">
       <header className="exam-header"><div><span>科目{session.subject} 模試</span><strong>{session.currentIndex + 1} / {session.questionIds.length}</strong></div><div aria-live="polite"><span>残り時間</span><strong>{formatTime(remaining)}</strong></div><a href="?">保存して中断</a></header>
       <article className="question-card">

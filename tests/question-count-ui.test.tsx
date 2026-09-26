@@ -15,7 +15,6 @@ describe('問題数表示', () => {
   it('問題バンクの件数からUI表示を導出する', async () => {
     render(await Home());
 
-    expect(screen.getByText('5問')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /全5問練習/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /問題演習.*5問から選んで解く/ })).toBeInTheDocument();
   });
 });
