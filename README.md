@@ -1,29 +1,52 @@
 # 基本情報技術者 合格ナビ
 
-基本情報技術者試験（FE）の科目A・科目Bを、教材・問題演習・弱点復習・模擬試験まで一つのブラウザ画面で学べる日本語学習サイトです。12章の教材と合計465問（通常問題305問＋科目A基本問題160問）を収録し、回答履歴や弱点はブラウザ内に保存します。
+[![CI](https://github.com/misaka310/fe-study/actions/workflows/ci.yml/badge.svg)](https://github.com/misaka310/fe-study/actions/workflows/ci.yml)
+![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22.13-339933?logo=nodedotjs&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
+基本情報技術者試験（FE）の科目A・科目Bを、**教材 → 問題演習 → 弱点復習 → 模擬試験**まで一つのWebアプリで学べる日本語学習サイトです。
+
+12章の教材と合計 **465問**（通常問題305問＋科目A基本問題160問）を収録し、回答履歴・分野別成績・弱点をブラウザ内に保存します。Googleログインは任意で、有効化した環境では学習履歴をFirebaseへ同期できます。
 
 > **非公式教材です。** 情報処理推進機構（IPA）による承認・後援・提供を受けたものではありません。掲載する第三者の名称・商標・公式資料は各権利者に帰属します。サイト内の正答率は学習上の目安であり、公式のIRT評価点は再現しません。
 
-## 最優先: ChatGPT Sitesへのデプロイ
+## プロジェクトの特徴
 
-このリポジトリをChatGPT Sitesへデプロイするときは、**最初に [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) を読むこと**。今回実際に成功したprivate deployの順序、正しいProjectの確認方法、完全SHAのpush、`Invalid revision range` の原因と安全な回避、version保存、private deploy、`succeeded` / owner-privateの最終確認まで記録しています。
+- **科目A・科目Bを一体化** — 教材、通常問題、基本問題、模試、弱点復習を同じ学習状態で扱います。
+- **465問をデータとして検証** — 問題ID、選択肢、正答、解説、分野、問題数、解説画像との対応を自動テストで確認します。
+- **「なぜ他の選択肢が違うか」まで説明** — 正答だけでなく、各選択肢を外す理由を保持します。
+- **local-first** — 未ログインでも学習履歴は `localStorage` に保存され、JSONでバックアップ・復元できます。
+- **任意のクラウド同期** — Firebase設定がある環境では、Googleログイン後だけ利用者別領域へ学習履歴を同期します。
+- **ブラウザ導線をE2E検証** — 教材の章切替、URL履歴、戻る／進む、問題演習、模試、レスポンシブ表示をPlaywrightで確認します。
+- **公式問題の転載を避ける** — IPA公開問題そのものは収録せず、公式ページへのリンクと独自作成問題で構成します。
 
-フォルダ名や過去のSite名からProjectを推測せず、`.openai/hosting.json` の `project_id` を正本として扱います。
+## 技術スタック
+
+| 領域 | 技術 |
+| --- | --- |
+| UI | React 19 / Next.js 16互換構成 / TypeScript |
+| Build | Vinext / Vite |
+| Styling | CSS / Tailwind CSS toolchain |
+| Local persistence | Web Storage (`localStorage`) |
+| Optional sync | Firebase Authentication / Firestore |
+| Unit & integration tests | Vitest / Testing Library |
+| E2E | Playwright |
+| Hosting | ChatGPT Sites互換ビルド構成 |
 
 ## 主な機能
 
 - 12章の教材で、基礎理論から科目Bの擬似言語・セキュリティ事例まで学習
-- 独自問題 **305問**（科目A 165問・科目B 140問）。科目Bは基礎100問と本番レベル40問（アルゴリズム32問・セキュリティ8問）を分けて収録
-- 科目Aの主要9分野から構成する **基本問題160問（20問×8セット）**。第6セットは現行シラバスで不足していた重要語、第7セットは2025・2026年度、第8セットは2023〜2026年度のIPA公式公開問題を横断して既存教材で薄かった実戦用語を重点補強
-- 問題演習の「全問題」は **465問** を対象にし、全科目465問・科目A325問・科目B140問を切り替え可能。各分類の中で分野別、未回答、誤答、弱点優先の演習が可能
-- 問題順をセッションごとに安定シャッフルし、回答済み問題が除外されても残りの相対順序を維持
-- 全問題で「条件」「決め手」「正答理由」「各選択肢を外す理由」を確認
-- 全465問にWebPの解説図を表示し、表示中の問題と次問の解説図を先読み。追加した科目B本番レベル40問と科目Aセット6〜8の60問も既存問題と同じ画像フローで表示
+- 独自の通常問題 **305問**（科目A 165問・科目B 140問）
+- 科目Aの基本問題 **160問（20問×8セット）**
+- 全科目465問・科目A325問・科目B140問を切り替える問題演習
+- 科目Bを基礎100問 / 本番レベル40問で切り替え
+- 未回答・誤答・弱点優先・分野別の演習
 - 科目A **60問 / 90分**、科目B **20問 / 100分**の模擬試験
-- TTL、DNS、TCP、UDPなどの略語を本文中で確認できる用語チップ
-- 教材内容を補助する説明図と、章・節から関連問題へ進める導線
-- 回答履歴、正答率、分野別成績、弱点ランキングをブラウザ内へ保存
-- 学習履歴をJSONで書き出し・復元
+- 全465問に対応するWebP解説図
+- TTL、DNS、TCP、UDPなどの略語・専門語を確認できる用語チップ
+- 学習履歴・正答率・分野別成績・弱点ランキング
+- JSONバックアップ / 復元
+- 任意のGoogleログイン / Firebase同期
 - IPAのシラバス、試験要綱、公開問題への公式リンク
 
 ## ローカルで起動
@@ -33,20 +56,74 @@
 - Node.js 22.13以上
 - npm
 
-### 起動手順
-
 ```bash
+git clone https://github.com/misaka310/fe-study.git
+cd fe-study
 npm ci
 npm run dev
 ```
 
 ブラウザで `http://localhost:3000` を開きます。
 
+Firebase設定を行わなくても、教材・問題演習・模試・学習履歴のローカル保存は利用できます。Google同期を有効化する場合だけ `FE_FIREBASE_CONFIG_JSON` または `FE_FIREBASE_CONFIG_URL` を設定します。詳細は [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) を参照してください。
+
+## 品質確認
+
+通常の変更は次の4項目を通すことを基準にしています。
+
+```bash
+npm run lint
+npm test
+npm run typecheck
+npm run build
+```
+
+ブラウザ導線を変更した場合は、追加で次を実行します。
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+テスト対象や品質基準の詳細は [docs/QUALITY.md](./docs/QUALITY.md) にまとめています。
+
+## アーキテクチャ
+
+```mermaid
+flowchart LR
+  UI["app / React UI"] --> CONTENT["src/content\n教材・問題・用語・画像メタデータ"]
+  UI --> STATE["src/learning\n回答履歴・模試・弱点・バックアップ"]
+  STATE --> LOCAL["localStorage"]
+  STATE -. "Googleログイン時のみ" .-> FIREBASE["Firebase"]
+  TESTS["Vitest / Playwright"] --> UI
+  TESTS --> CONTENT
+  TESTS --> STATE
+```
+
+教材・問題・正答・解説・学習状態を分離し、問題数や表示件数は正本データから算出します。詳しくは [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) を参照してください。
+
 ## データとプライバシー
 
-学習履歴は利用中のブラウザの `localStorage` に保存します。未ログイン時はローカルだけで動作し、ヘッダーの「Googleで同期」から任意でGoogleログインすると、Firebaseの利用者別領域へ学習履歴を同期できます。外部解析サービスは使用しません。履歴はJSONとして書き出し・復元できます。
+未ログイン時の学習履歴は利用中のブラウザの `localStorage` に保存します。ブラウザのサイトデータを削除すると履歴も削除されるため、必要に応じてJSONバックアップを利用してください。
 
-ブラウザのサイトデータを削除すると、そのブラウザに保存された学習履歴も削除されます。必要な場合は事前にJSONバックアップを書き出してください。
+Firebase設定が存在する環境で利用者がGoogleログインを選んだ場合だけ、学習履歴を利用者別のFirestore領域へ同期します。外部解析サービスは使用しません。
+
+## リポジトリ構成
+
+- `app/` — ページ構成と全体スタイル
+- `src/components/` — 教材、問題演習、模試、学習記録などのUI
+- `src/content/materials/` — 12章の教材
+- `src/content/questions/` — 独自問題
+- `src/content/basic/` — 科目A基本問題
+- `src/learning/` — 学習状態、保存、同期、バックアップ
+- `public/images/` — 教材図・問題解説図
+- `tests/` — 単体・統合・E2Eテスト
+- `docs/SPEC.md` — ユーザー向け仕様の正本
+- `docs/ARCHITECTURE.md` — 実装構成
+- `docs/QUALITY.md` — 品質保証と検証範囲
+- `docs/QUESTION_AUTHORING.md` — 問題作成・レビュー基準
+
+開発ルールは [CONTRIBUTING.md](./CONTRIBUTING.md) を参照してください。
 
 ## 教材構成
 
@@ -63,24 +140,6 @@ npm run dev
 11. ストラテジ・企業活動
 12. 科目B攻略・直前確認
 
-## リポジトリ構成
-
-- `app/` — ページ構成とスタイル
-- `src/components/` — UIコンポーネント
-- `src/content/materials/` — 教材本文
-- `src/content/questions/` — 独自問題
-- `src/content/glossary.ts` — 用語データ
-- `src/content/visuals.ts` / `public/images/` — 教材説明図のメタデータと画像資産
-- `src/content/explanationVisuals.ts` / `public/images/explanations/` — 問題解説図のメタデータとWebP画像資産
-- `src/learning/` — 学習状態、保存、バックアップ
-- `tests/` — 単体・統合・E2Eテスト
-- [`docs/SPEC.md`](./docs/SPEC.md) — 仕様の正本
-- [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — 実装構成の概要
-
-開発・検証手順は [`CONTRIBUTING.md`](./CONTRIBUTING.md) を参照してください。
-
-問題は本リポジトリ向けに独自作成しています。IPA公開問題の本文は収録せず、公式ページへのリンクだけを掲載しています。
-
 ## 公式情報
 
 - [IPA 試験要綱・シラバス](https://www.ipa.go.jp/shiken/syllabus/gaiyou.html)
@@ -90,4 +149,4 @@ npm run dev
 
 ## ライセンス
 
-このリポジトリは [MIT License](./LICENSE) で提供します。第三者の名称・商標・公式資料へのリンクなど、本リポジトリが権利を持たないものには、それぞれの権利者の条件が適用されます。
+このリポジトリで独自に作成したコードと文書は [MIT License](./LICENSE) で提供します。第三者の名称・商標・公式資料へのリンクなど、本リポジトリが権利を持たないものには、それぞれの権利者の条件が適用されます。

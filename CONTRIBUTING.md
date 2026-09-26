@@ -1,6 +1,6 @@
 # Contributing
 
-このリポジトリを変更する場合は、ユーザー向け仕様と検証を同じ変更で更新してください。
+このリポジトリを変更する場合は、ユーザー向け仕様・実装・検証・公開文書を同じ変更で整合させてください。
 
 ## 開発環境
 
@@ -14,9 +14,11 @@ npm run dev
 
 ローカルでは `http://localhost:3000` を使用します。
 
-## ChatGPT Sitesへのデプロイ
+## Firebase同期は任意
 
-デプロイ作業では、最初に [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) を読み、そのRunbookを正本として使います。Siteの選択は `.openai/hosting.json` の `project_id` に従い、完全SHA一致・保存version一致・deployment `succeeded`・owner-private維持まで確認して完了とします。
+教材・問題演習・模試・学習履歴のローカル保存はFirebase設定なしで動作します。Googleログインによる同期を有効化する場合だけ、`FE_FIREBASE_CONFIG_JSON` または `FE_FIREBASE_CONFIG_URL` を設定してください。
+
+設定が無い開発環境やCIで、Firebase同期を理由にbuildを失敗させないことを製品境界とします。
 
 ## 検証
 
@@ -29,7 +31,7 @@ npm run typecheck
 npm run build
 ```
 
-ブラウザ導線を変更した場合はPlaywrightも実行します。初回だけChromiumを導入してください。
+ブラウザ導線を変更した場合はPlaywrightも実行します。
 
 ```bash
 npx playwright install chromium
@@ -40,7 +42,8 @@ npm run test:e2e
 
 ## 仕様とコンテンツのルール
 
-- 仕様の正本は [`docs/SPEC.md`](./docs/SPEC.md) です。ユーザー向け挙動を変える場合は、実装より先に意図を反映します。
+- 仕様の正本は [`docs/SPEC.md`](./docs/SPEC.md) です。
+- 問題作成・選択肢レビューは [`docs/QUESTION_AUTHORING.md`](./docs/QUESTION_AUTHORING.md) に従います。
 - 教材、問題、正答、解説、用語、模試設計は分離し、自動検査可能な状態を維持します。
 - IPA公開問題の本文は転載せず、公式ページへのリンクだけを掲載します。
 - 問題数など正本データから導出できる表示値は固定値として重複記載しません。
@@ -49,8 +52,15 @@ npm run test:e2e
 
 ## データとプライバシー
 
-学習履歴はブラウザの `localStorage` に保存します。認証、サーバー側の学習履歴保存、外部解析サービスを追加しないことが現在の製品境界です。
+未ログイン時の学習履歴はブラウザの `localStorage` に保存します。Firebase設定がある環境で利用者がGoogleログインを選んだ場合だけ、利用者別のFirestore領域へ同期します。外部解析サービスは追加しません。
 
-## 変更前の確認
+## 公開リポジトリとしてのルール
 
-変更対象と無関係なファイルを巻き込まず、生成物、キャッシュ、ログ、認証情報、ローカル設定をコミットしないでください。`.gitignore` に該当しない新しい生成物が増える場合は、同じ変更でignoreルールも見直します。
+- 端末固有パス、credential、token、個人専用の設定、過去のdeployment IDを文書へ残さないでください。
+- 一時生成物、キャッシュ、ログ、ローカル設定はコミットしません。
+- デプロイ先固有のIDやURLは、必要な設定ファイルまたは環境変数へ閉じ込め、一般手順へ埋め込みません。
+- READMEは公開サイトの有無に依存せず、クローンした第三者がローカルで評価できる内容を維持します。
+
+## デプロイ
+
+一般的な手順と公開リポジトリで扱う範囲は [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) を参照してください。認証情報やアカウント固有のdeployment履歴はリポジトリへ保存しません。
