@@ -1,31 +1,18 @@
-import { GoogleSyncControl } from './GoogleSyncControl';
-
-type PortalArea = 'materials' | 'practice' | 'weakness' | 'exams' | 'dashboard';
+type PortalArea = 'materials' | 'practice';
 
 const links: Array<{ area: PortalArea; label: string; href: string }> = [
   { area: 'materials', label: '教材', href: '?view=materials' },
   { area: 'practice', label: '問題演習', href: '?view=practice&mode=all' },
-  { area: 'weakness', label: '弱点補強', href: '?view=practice&mode=weakness' },
-  { area: 'exams', label: '模試', href: '?view=exams' },
-  { area: 'dashboard', label: '学習記録', href: '?view=dashboard' },
 ];
 
-export function PortalHeader({ active, questionCount }: { active?: PortalArea; questionCount: number }) {
+export function PortalHeader({ active }: { active?: PortalArea; questionCount: number }) {
   return (
     <>
       <header className="portal-header">
         <div>
           <p className="eyebrow">Fundamental Information Technology Engineer</p>
           <h1><a href="?">基本情報技術者 合格ナビ</a></h1>
-          <p>基礎整理から問題演習、弱点補強、模試、最終確認まで順番に進められます。</p>
-        </div>
-        <div className="portal-header-actions">
-          <GoogleSyncControl />
-          <div className="exam-card" aria-label="試験構成">
-            <span>問題バンク</span>
-            <strong>{questionCount}問</strong>
-            <b>科目A・B模試に対応</b>
-          </div>
+          <p>教材で理解し、問題演習で定着させます。</p>
         </div>
       </header>
       <nav className="purpose-nav" aria-label="主な機能">

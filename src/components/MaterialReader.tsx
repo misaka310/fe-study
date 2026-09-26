@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type MouseEvent } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState, type MouseEvent } from 'react';
 import { materials } from '../content/materials';
 import { officialLinks } from '../content/official-links';
 import { VisualGallery } from './VisualGallery';
@@ -26,6 +26,10 @@ export function MaterialReader({ initialMaterialId = '01-roadmap', questionCount
   const previous = materials[currentIndex - 1];
   const next = materials[currentIndex + 1];
 
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [selectedId]);
+
   useEffect(() => {
     const syncFromLocation = () => {
       const materialId = new URLSearchParams(window.location.search).get('material');
@@ -33,7 +37,6 @@ export function MaterialReader({ initialMaterialId = '01-roadmap', questionCount
         ? materialId
         : materials[initialIndex].id;
       setSelectedId(nextId);
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     };
 
     window.addEventListener('popstate', syncFromLocation);
@@ -46,7 +49,6 @@ export function MaterialReader({ initialMaterialId = '01-roadmap', questionCount
     const href = `?view=materials&material=${materialId}`;
     setSelectedId(materialId);
     window.history.pushState(null, '', href);
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
   return (

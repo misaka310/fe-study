@@ -209,7 +209,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
 
   return (
     <div className="portal-page">
-      <PortalHeader active={selectedMode === 'weakness' ? 'weakness' : 'practice'} questionCount={questionCount} />
+      <PortalHeader active="practice" questionCount={questionCount} />
       <main className="portal-main practice-page-main">
         <div className="practice-layout">
           <aside className="practice-sidebar practice-sidebar-left" aria-label="問題演習のメニュー">
@@ -222,7 +222,11 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
                   {label}
                 </a>
               ))}
-              <a className="practice-menu-link" href="?view=exams"><span>→</span>科目A・B模試</a>
+            </section>
+            <section className="practice-menu-group" aria-labelledby="practice-review-title">
+              <h2 id="practice-review-title">模試・記録</h2>
+              <a className="practice-menu-link" href="?view=exams">科目A・B模試</a>
+              <a className="practice-menu-link" href="?view=dashboard">学習記録</a>
             </section>
             {selectedMode !== 'vocabulary' ? (
               <section className="practice-menu-group" aria-labelledby="practice-subject-title">
@@ -254,7 +258,7 @@ export function PracticeRunner({ mode = 'all', materialId, domain, subject, voca
             <section className="practice-menu-group" aria-labelledby="practice-action-title">
               <h2 id="practice-action-title">操作</h2>
               <button className="practice-menu-button" onClick={shuffle} type="button"><span>⇄</span>現在のセットをシャッフル</button>
-              <a className="practice-menu-link" href="?view=dashboard"><span>→</span>学習記録を開く</a>
+
             </section>
           </aside>
 

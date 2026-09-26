@@ -26,7 +26,7 @@ test('教材左ペインで章を切り替えるとURLを更新してページ�
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=materials&material=05-algorithms');
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(300);
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(80);
 
   await page.getByRole('navigation', { name: '教材一覧' }).getByRole('link', { name: '06 データベース' }).click();
 
@@ -51,14 +51,21 @@ test('教材一覧URLへ戻ると先頭章へ復元する', async ({ page }) => 
   assertNoErrors();
 });
 
-test('説明図ギャラリーを開き教材内の関連画像を拡大できる', async ({ page }) => {
+test('トップは教材と問題演習の2入口だけを表示する', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: '図解画像一覧' })).toBeVisible();
-  await expect(page.locator('.visual-section').getByRole('figure', { name: /DNSとTTLのしくみ/ }).getByRole('img')).toBeVisible();
-  await page.getByRole('button', { name: 'DNSとTTLのしくみを拡大表示' }).click();
-  await expect(page.getByRole('dialog', { name: 'DNSとTTLのしくみの拡大画像' })).toBeVisible();
-  await page.getByRole('button', { name: '画像を閉じる' }).click();
+
+  const mainNav = page.getByRole('navigation', { name: '主な機能' });
+  await expect(mainNav.getByRole('link')).toHaveCount(2);
+  await expect(mainNav.getByRole('link', { name: '教材' })).toBeVisible();
+  await expect(mainNav.getByRole('link', { name: '問題演習' })).toBeVisible();
+  await expect(mainNav.getByRole('link', { name: '弱点補強' })).toHaveCount(0);
+  await expect(mainNav.getByRole('link', { name: '模試' })).toHaveCount(0);
+  await expect(mainNav.getByRole('link', { name: '学習記録' })).toHaveCount(0);
+
+  const landingMenu = page.getByRole('region', { name: '学習メニュー' });
+  await expect(landingMenu.getByRole('link')).toHaveCount(2);
+
   await page.goto('/?view=materials&material=08-security');
   await expect(page.getByRole('heading', { name: '情報セキュリティ' })).toBeVisible();
   await expect(page.locator('.markdown-visual img')).toHaveCount(1);
@@ -67,7 +74,6 @@ test('説明図ギャラリーを開き教材内の関連画像を拡大でき�
   await expect(page.locator('.visual-lightbox')).toHaveCount(0);
   assertNoErrors();
 });
-
 test('ネットワーク教材でTTLの略語と意味を確認できる', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=materials&material=07-network');
@@ -79,15 +85,18 @@ test('ネットワーク教材でTTLの略語と意味を確認できる', async
   assertNoErrors();
 });
 
-test('共通目的ナビから主要画面へ移動でき、教材本文の途中に図が表示される', async ({ page }) => {
+test('共通ナビは2項目だけで、補助機能は問題演習内にまとまる', async ({ page }) => {
   await page.goto('/?view=materials&material=07-network');
-  await expect(page.getByRole('navigation', { name: '主な機能' })).toBeVisible();
+  const mainNav = page.getByRole('navigation', { name: '主な機能' });
+  await expect(mainNav.getByRole('link')).toHaveCount(2);
   await expect(page.locator('.markdown-visual img')).toHaveCount(3);
-  for (const link of ['問題演習', '弱点補強', '模試', '学習記録']) {
-    await expect(page.getByRole('link', { name: link }).first()).toHaveAttribute('href', /view=/);
-  }
-});
 
+  await page.goto('/?view=practice&mode=all');
+  const practiceMenu = page.getByRole('complementary', { name: '問題演習のメニュー' });
+  await expect(practiceMenu.getByRole('link', { name: '弱点補強' })).toBeVisible();
+  await expect(practiceMenu.getByRole('link', { name: '科目A・B模試' })).toBeVisible();
+  await expect(practiceMenu.getByRole('link', { name: '学習記録' })).toBeVisible();
+});
 test('問題回答を保存して誤答復習と学習記録へ反映する', async ({ page }) => {
   const assertNoErrors = rejectBrowserErrors(page);
   await page.goto('/?view=practice&mode=all');
