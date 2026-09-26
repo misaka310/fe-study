@@ -1,58 +1,56 @@
-# 解説画像100枚の再生成・差し替え
+# 解説画像の再生成
 
-対象は科目B本番レベル40問（`b-exam-algorithm-001..032`、`b-exam-security-001..008`）と基本問題セット6〜8の各20問、計100問。既存のWebPは、新画像の内容検品が完了するまで保全する。
+問題解説画像は、問題本文・選択肢・解説と同じく学習コンテンツの一部として扱います。生成手段そのものではなく、**意味の正確性・可読性・問題との対応・再現可能な検品手順**を品質基準にします。
 
-## 完了条件
+## 対象
 
-1. 100問それぞれの問題内容と正答に合った日本語図解PNGを生成する。
-2. 100枚すべてについて、実画像を開いて日本語文字・計算・構造図を確認し、元の問題と矛盾する画像を修正する。
-3. 検品済みPNGだけをWebPへ変換して問題IDと一対一で差し替え、既存画像は`artifacts/image-regeneration-batch/originals/`へ保全する。
-4. 既存テストと画像完全性テストに加え、lint、型チェック、build、対象画像の404がないことと実画面の読みやすさを検証する。
-5. 検証済み統合HEADを既定branchへpushし、`docs/DEPLOYMENT.md`に従って同じ完全SHAをowner-privateのSitesへデプロイする。
+- 問題解説画像: `public/images/explanations/`
+- 画像メタデータ: `src/content/explanationVisuals.ts`
+- 補助メタデータ: `src/content/supplementalExplanationVisuals.ts`
+- 生成・検品スクリプト: `scripts/image-regeneration-*.mjs`
 
-## 準備と再開
+問題IDと画像は一対一で対応させ、画像追加・差し替え時も既存の先読みと読み込み失敗フォールバックを維持します。
 
-```text
-node scripts/image-regeneration-batch.mjs plan
-node scripts/image-regeneration-batch.mjs status
+## 品質基準
+
+採用する画像は次を満たす必要があります。
+
+1. 問題の条件、判断軸、結論のいずれかを視覚的に説明している。
+2. 問題本文・正答・解説と矛盾しない。
+3. 日本語文字が判読でき、文字化け・潰れ・不自然な記号がない。
+4. 装飾だけの画像や、設問と無関係な一般的IT画像ではない。
+5. 対応する問題ID・出力ファイル・メタデータが一致する。
+6. WebP化後も学習画面で必要な可読性を保つ。
+
+## 再生成の流れ
+
+1. 対象問題と既存画像を特定する。
+2. 問題文・正答・各選択肢理由から、画像に必要な概念だけを抽出する。
+3. 再生成用の入力とmanifestを作成する。
+4. 生成物を自動検査し、サイズ・形式・対応IDを確認する。
+5. 人が内容を確認し、正確性と可読性を満たす画像だけを採用する。
+6. WebP資産とメタデータを同じ変更で更新する。
+7. 単体テスト、画像対応テスト、build、必要なE2Eを実行する。
+
+## 検証
+
+少なくとも次を確認します。
+
+```bash
+npm test
+npm run typecheck
+npm run build
 ```
 
-上記は`src/content/questions/b-exam.ts`と`src/content/basic/set6.ts`〜`set8.ts`の**最終問題データ**を読み、100問のマニフェストと各画像プロンプトを`artifacts/image-regeneration-batch/`以下に作る。生成成功枚数は、既存WebPの枚数ではなく`pending/<ID>.png`の実在・PNG署名・IEND・全ピクセルのデコード成功で数える。破損/途中ダウンロードPNGはエラーとして数えない。問題を更新した場合は、マニフェストを再作成し、古いプロンプトとその検品記録を流用しない。
+画像の表示や先読み経路を変更した場合は、追加で `npm run test:e2e` を実行します。
 
-## ブラウザとフォーカスの必須条件
+## リポジトリへ残さないもの
 
-このバッチのChatGPT Web経路は、**メインChromeの認証を利用する一方で、現在表示中のタブとOSの前面ウィンドウを一度も変更しない**ことを必要とする。旧`chatgpt_web_fallback.py`は`tab new`および`tab <番号>`で前面化するため、そのままバッチ実行しない。背景タブ作成だけのCDPプローブ合格は、生成中のブラウザ操作まで非前面化される証明ではない。認証Cookieの書き出し、メインプロファイルの複製、既存タブ再利用を代替手段としない。
+- ブラウザの個人プロファイルやCookie
+- 認証情報
+- 個人端末の操作手順
+- 一時的な接続診断や障害対応ログ
+- 採用しなかった生成物や作業用スクリーンショット
+- 特定の生成サービスにしか通用しない個人環境依存の操作メモ
 
-### 非前面化ブラウザ経路の復旧状況（2026-09-23）
-
-- 既存の `agent-browser-stealth 0.27.0-fork.11` で、ログイン済みメインChromeからPNGを**1枚生成・保存できた**。ただし旧runnerの `tab new` と `tab <ID>` がユーザーの前面タブを奪うため、旧runnerをそのままバッチ実行しない。
-- `chrome-use 1.5.136` の公式Windows配布物はSHA-256照合済みで、`%USERPROFILE%\\.local\\bin\\chrome-use.exe` にある。Native Messagingホスト登録は済みだが、拡張のrelayは未接続。**専用拡張は任意の選択肢であり、必須ではない。**
-- 拡張なしの既存Chrome接続を検証した。`chrome://inspect/#remote-debugging` が公開する `127.0.0.1:9222` はChromeプロセスが待ち受け、HTTP `/json/version` は404。これは新しいChromeのWebSocket-onlyモードと整合し、`chrome-use --session fe117-background connect ws://127.0.0.1:9222/devtools/browser --json` は実際に `success:true` を返した。単に `connect 9222` とするとHTTP discovery経由でタイムアウトするので使わない。
-- **背景タブ操作とOS前面不変はまだ未証明**。当初は `tab list` でCodexProのArtifact Visual lifecycle gateエラーも発生していたが、共有Gate側は2026-09-24に修復済み（worktreeごとのVisual state分離、完了済みsnapshot圧縮、stale mutation回復）。Normal 8787も `completion_start` の短すぎる3秒上限を10秒へ拡張した `b09c6f7` がlive runtimeへ反映済みで、修復後にこのリポジトリを3回連続でopenして全て成功、policy runtimeは `healthy` を確認した。したがって**現在の残課題はVisual GateではなくChrome/CDP経路**である。後続の `chrome-use connect` はCDP WebSocket接続のHTTP 403で失敗しており、接続成功だけで100枚の生成へ進まない。GateやChromeの拒否を迂回しない。
-- 拡張なしの代替として、公式 `browser-harness 0.1.13` をユーザー環境に追加した。匿名テレメトリは無効、ローカル画面記録はデフォルトOFF。一度は**既存12タブの読取専用一覧取得に成功し、前面ウィンドウも不変**だった。一方、後続の背景タブ作成試験ではCDP WebSocket接続時にHTTP 403が発生し、非前面での新規タブ作成・画像生成は未証明。診断用の一時スクリプトは成果物から除外し、この事実だけを記録する。
-- 再開時はユーザーの既存Chrome側でリモートデバッグが許可されているか確認する。403が継続する場合、権限・Chrome側の診断を優先し、拒否を回避する独自CDP実装やCookie抽出はしない。接続許可後、読取専用一覧→非前面タブ1件→OS前面不変→試験画像1件→実PNG保存→100件へ進む。既存ユーザータブは採用・選択・遷移せず、新規背景タブだけを使用し、`bringToFront`も使わない。
-- 拡張経路へ切り替えるのはユーザーが明示的に選んだときのみ。別プロファイル、認証Cookie抽出、メインChromeのプロファイル複製も自動代替にしない。
-- **2026-09-24一時停止:** ユーザー指示により画像生成・画像差し替え・Sitesデプロイは行わない。生成バッチは0/100。再開に備えて、プロンプト/manifest生成スクリプト、PNG検品・統合スクリプト、テストと本書だけをGit管理する。既存WebPは変更しない。後処理時の確認は21ファイル・87テスト、lint、typecheck、buildが成功。試験用の背景操作スクリプト3本は削除し、接続試験結果のみ本書に残した。
-
-実行器が非前面化を**画像生成・取得までの全操作で**実証できてから、各`prompts/<ID>.txt`を一件ずつ送り、成功したPNGだけを`pending/<ID>.png`へ原子的に保存する。失敗時は成功済みファイルを保持し、未生成IDのみ再試行する。
-
-## 画像検品・差し替え
-
-実画像を確認後、`artifacts/image-regeneration-batch/review.json`を次の形で記録する。`pngSha256`は**実際に確認した**`pending/<ID>.png`のSHA-256と完全一致させる。
-
-```json
-{
-  "items": {
-    "b-exam-algorithm-001": {
-      "verdict": "PASS",
-      "pngSha256": "<64桁のSHA-256>",
-      "textVerified": true,
-      "conceptVerified": true
-    }
-  }
-}
-```
-
-差し替えは`node scripts/image-regeneration-batch.mjs integrate --id <ID>`、または全件検品済みなら`integrate`。PNGの署名・寸法、検品SHA、未変更の既存WebPのSHAをチェックし、1254×1254のWebPへ変換する。検品がないIDは上書きしない。出力の存在だけでは視覚品質の合格としない。
-
-この作業をデプロイ完了とするには、作成・検品・置換が100/100となり、受入条件とSitesのSHA照合まで成立している必要がある。
+生成サービスやツールを変更しても、最終画像と検証手順が同じ品質基準を満たす限り、製品仕様は変わりません。
