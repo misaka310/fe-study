@@ -1,35 +1,79 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const read = (path: string) => readFileSync(path, 'utf8');
 
-const publicDocs = ['README.md', 'AGENTS.md', 'docs/SPEC.md'];
+const publicMarkdown = [
+  'README.md',
+  'AGENTS.md',
+  'CONTRIBUTING.md',
+  ...readdirSync('docs')
+    .filter((name) => name.endsWith('.md'))
+    .map((name) => join('docs', name)),
+];
 
 describe('repository presentation quality', () => {
-  it('does not expose machine-specific development paths in current public-facing docs', () => {
-    for (const path of publicDocs) {
-      const text = read(path);
-      expect(text, path).not.toMatch(/[A-Za-z]:\\/);
-      expect(text, path).not.toMatch(/\/Users\//);
-      expect(text, path).not.toMatch(/\/home\//);
+  it('does not expose machine-specific paths or deployment history in public markdown', () => {
+    for (const path of publicMarkdown) {
+      const value = read(path);
+      expect(value, path).not.toMatch(/[A-Za-z]:\\/);
+      expect(value, path).not.toMatch(/\/Users\//);
+      expect(value, path).not.toMatch(/\/home\//);
+      expect(value, path).not.toMatch(/appgdep_[a-zA-Z0-9]+/);
+      expect(value, path).not.toMatch(/appgver_[a-zA-Z0-9]+/);
+      expect(value, path).not.toMatch(/appgprj_[a-zA-Z0-9]+/);
     }
   });
 
-  it('README is usable without access to the private hosted preview', () => {
+  it('README is useful to a first-time public visitor', () => {
     const readme = read('README.md');
-    expect(readme).toContain('npm ci');
-    expect(readme).toContain('npm run dev');
+    for (const required of [
+      'プロジェクトの特徴',
+      '技術スタック',
+      '主な機能',
+      'ローカルで起動',
+      '品質確認',
+      'アーキテクチャ',
+      'データとプライバシー',
+      'MIT License',
+      'npm ci',
+      'npm run dev',
+      'npm test',
+    ]) {
+      expect(readme).toContain(required);
+    }
     expect(readme).not.toContain('所有者限定サイトを開く');
-    expect(readme).not.toContain('chatgpt.site');
+    expect(readme).not.toContain('最優先: ChatGPT Sitesへのデプロイ');
   });
 
-  it('README states the unofficial status, local data handling, and MIT license', () => {
+  it('states unofficial status and local-first data handling', () => {
     const readme = read('README.md');
     expect(readme).toContain('非公式');
     expect(readme).toContain('localStorage');
-    expect(readme).toContain('MIT License');
+    expect(readme).toContain('Firebase設定を行わなくても');
     expect(existsSync('LICENSE')).toBe(true);
     expect(read('LICENSE')).toContain('MIT License');
+  });
+
+  it('publishes architecture, quality, contribution and CI documentation', () => {
+    for (const path of [
+      'CONTRIBUTING.md',
+      'docs/ARCHITECTURE.md',
+      'docs/QUALITY.md',
+      'docs/DEPLOYMENT.md',
+      '.github/workflows/ci.yml',
+    ]) {
+      expect(existsSync(path), path).toBe(true);
+    }
+  });
+
+  it('keeps optional Firebase sync free of hard-coded private infrastructure dependencies', () => {
+    const prepare = read('scripts/prepare-firebase-config.mjs');
+    expect(prepare).toContain('FE_FIREBASE_CONFIG_JSON');
+    expect(prepare).toContain('FE_FIREBASE_CONFIG_URL');
+    expect(prepare).toContain('local-only mode');
+    expect(prepare).not.toContain('task-picker.onrender.com');
   });
 
   it('does not keep stale agent implementation plans as end-user repository documentation', () => {
@@ -42,5 +86,6 @@ describe('repository presentation quality', () => {
     expect(gitignore).toContain('.ai-bridge/');
     expect(gitignore).toContain('*.pem');
     expect(gitignore).toContain('*.key');
+    expect(gitignore).toContain('public/firebase-config.json');
   });
 });

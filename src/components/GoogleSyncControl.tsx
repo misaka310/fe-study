@@ -26,9 +26,12 @@ type FirebaseRuntime = {
   firestoreModule: FirestoreModule;
 };
 
-async function loadFirebaseOptions(): Promise<FirebaseOptions> {
+async function loadFirebaseOptions(): Promise<FirebaseOptions | null> {
   const response = await fetch('/firebase-config.json', { cache: 'no-store' });
+  if (response.status === 404) return null;
   if (!response.ok) throw new Error(`firebase-config:${response.status}`);
+  const contentType = response.headers.get('content-type') ?? '';
+  if (!contentType.includes('application/json')) return null;
   const value = await response.json() as FirebaseOptions;
   if (!value.apiKey || !value.authDomain || !value.projectId || !value.appId) throw new Error('firebase-config:invalid');
   return value;
@@ -52,6 +55,7 @@ export function GoogleSyncControl() {
   const [status, setStatus] = useState<SyncStatus>('loading');
   const [user, setUser] = useState<User | null>(null);
   const [busy, setBusy] = useState(false);
+  const [syncAvailable, setSyncAvailable] = useState(false);
   const runtimeRef = useRef<FirebaseRuntime | null>(null);
   const unsubscribeCloudRef = useRef<(() => void) | null>(null);
   const writeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -107,6 +111,11 @@ export function GoogleSyncControl() {
     void (async () => {
       try {
         const options = await loadFirebaseOptions();
+        if (!options) {
+          if (active) setStatus('local');
+          return;
+        }
+        setSyncAvailable(true);
         const [appModule, authModule, firestoreModule] = await Promise.all([
           import('firebase/app'),
           import('firebase/auth'),
@@ -132,7 +141,10 @@ export function GoogleSyncControl() {
           void startCloudSync(nextUser).catch(() => setStatus('error'));
         });
       } catch {
-        if (active) setStatus('error');
+        if (active) {
+          setSyncAvailable(false);
+          setStatus('error');
+        }
       }
     })();
 
@@ -196,11 +208,11 @@ export function GoogleSyncControl() {
           </span>
           <button className="google-sync-signout" type="button" onClick={() => void logout()} disabled={busy}>ログアウト</button>
         </div>
-      ) : (
+      ) : syncAvailable ? (
         <button className="google-sync-button" type="button" onClick={() => void login()} disabled={status === 'loading' || busy}>
           {busy ? 'ログイン中…' : 'Googleで同期'}
         </button>
-      )}
+      ) : null}
       <small className={`google-sync-status is-${status}`}>{statusText}</small>
     </div>
   );
