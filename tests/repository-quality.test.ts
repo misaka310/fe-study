@@ -17,7 +17,7 @@ describe('repository presentation quality', () => {
   it('does not expose machine-specific paths or deployment history in public markdown', () => {
     for (const path of publicMarkdown) {
       const value = read(path);
-      expect(value, path).not.toMatch(/[A-Za-z]:\\\\/);
+      expect(value, path).not.toMatch(/[A-Za-z]:\\/);
       expect(value, path).not.toMatch(/\/Users\//);
       expect(value, path).not.toMatch(/\/home\//);
       expect(value, path).not.toMatch(/appgdep_[a-zA-Z0-9]+/);
