@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"
+ignoreUntil = 2026-12-31
+reason = "Upstream braces has no patched release as of 2026-10-09. In this repository braces is only a transitive dependency of developer/build glob tooling (eslint-config-next and vinext); application code does not pass untrusted brace patterns to it. Re-evaluate when upstream publishes a patched release."
