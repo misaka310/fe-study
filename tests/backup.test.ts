@@ -1,3 +1,4 @@
+import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { parseBackup, serializeBackup } from '../src/learning/backup';
 import { createEmptyState, recordAttempt } from '../src/learning/state';
@@ -35,5 +36,14 @@ describe('学習履歴バックアップ', () => {
     const json = JSON.stringify({ schemaVersion: 1, attempts: {}, activeExam: null, futureField: 'ignored' });
 
     expect(parseBackup(json, new Set())).toEqual({ ok: true, state: createEmptyState() });
+  });
+
+  it('property: 任意文字列を入力しても例外を外へ漏らさない', () => {
+    fc.assert(
+      fc.property(fc.string(), (input) => {
+        const result = parseBackup(input, new Set());
+        expect(result.ok === true || result.ok === false).toBe(true);
+      }),
+    );
   });
 });
