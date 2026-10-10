@@ -32,10 +32,14 @@ function mergeExam(left: ExamSession | null, right: ExamSession | null): ExamSes
   return cloneExam(examVersion(right) > examVersion(left) ? right : left);
 }
 
+function ownAttempts(attempts: LearningState['attempts'], id: string): Attempt[] {
+  return Object.hasOwn(attempts, id) ? attempts[id] : [];
+}
+
 export function mergeLearningStates(left: LearningState, right: LearningState): LearningState {
   const attempts: LearningState['attempts'] = {};
   const ids = new Set([...Object.keys(left.attempts), ...Object.keys(right.attempts)]);
-  for (const id of ids) attempts[id] = mergeAttempts(left.attempts[id] ?? [], right.attempts[id] ?? []);
+  for (const id of ids) attempts[id] = mergeAttempts(ownAttempts(left.attempts, id), ownAttempts(right.attempts, id));
   return {
     schemaVersion: 1,
     attempts,
