@@ -1,0 +1,13 @@
+{
+  "project_type": "static-web",
+  "expected_start_commands": [
+    "npm run dev",
+    "npm start"
+  ],
+  "expected_ports": [
+    3000
+  ],
+  "ignore_checks": [
+    "missing-favicon"
+  ]
+}
