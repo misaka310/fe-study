@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
+import type { Question } from '../src/domain/types';
 import { extractQuestionAcronymTokens } from '../src/content/questionAcronyms';
 
 describe('property fuzzing', () => {
   it('extracts only unique non-empty tokens and is deterministic for arbitrary text', () => {
     fc.assert(
       fc.property(fc.string(), (text) => {
-        const question = { id: 'fuzz', subject: 'A', domain: 'fuzz', topic: text, stem: text, choices: [text], correct: [0], explanation: text, choiceReasons: [text], materialId: 'fuzz', difficulty: 1 } as const;
+        const question: Question = { id: 'fuzz', subject: 'A', domain: 'fuzz', topic: text, stem: text, choices: [text], correct: [0], explanation: text, choiceReasons: [text], materialId: 'fuzz', difficulty: 1 };
         const first = extractQuestionAcronymTokens(question);
         const second = extractQuestionAcronymTokens(question);
         expect(first).toEqual(second);
