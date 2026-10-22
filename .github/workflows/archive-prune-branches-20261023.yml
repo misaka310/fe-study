@@ -22,9 +22,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       PRUNE_TARGETS: |
-      privacy-clean-root-20261015 eb242a1991116782898d7fd1eb72f798c754d11f
-      security/clear-all-alerts-20261009 70f78e0baadeec528a6052fa9da73300f2e6593b
-      security/clear-scorecard-alerts 4603e65f304539a9442b01bd03d90ffb6878432e
+        privacy-clean-root-20261015 eb242a1991116782898d7fd1eb72f798c754d11f
+        security/clear-all-alerts-20261009 70f78e0baadeec528a6052fa9da73300f2e6593b
+        security/clear-scorecard-alerts 4603e65f304539a9442b01bd03d90ffb6878432e
     steps:
       - name: Verify heads and open PRs, tag exact SHAs, then remove branches
         shell: bash
