@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PracticeRunner } from '../src/components/PracticeRunner';
 import { questions } from '../src/content/questions';
@@ -62,7 +62,7 @@ describe('PracticeRunner', () => {
     vi.stubGlobal('Image', MockImage);
     render(<PracticeRunner questionCount={totalQuestionCount} mode="all" domain="algorithm" />);
     await screen.findAllByRole('radio');
-    expect(loadedSources).toHaveLength(2);
+    await waitFor(() => expect(loadedSources).toHaveLength(2));
     expect(loadedSources[0]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
     expect(loadedSources[1]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
 
@@ -70,7 +70,7 @@ describe('PracticeRunner', () => {
     fireEvent.click(screen.getByRole('button', { name: '解答する' }));
     fireEvent.click(screen.getByRole('button', { name: '次へ' }));
 
-    expect(loadedSources).toHaveLength(3);
+    await waitFor(() => expect(loadedSources).toHaveLength(3));
     expect(loadedSources[2]).toMatch(/^\/images\/explanations\/b-algorithm-\d{3}\.webp$/);
   });
 
